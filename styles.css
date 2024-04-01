@@ -1,0 +1,113 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+}
+
+h1, h2{
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 50px;
+    line-height: 84px;
+    align-items: center;
+    text-align: center;
+}
+
+p {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 33px;
+    align-items: center;
+    text-align: center;
+}
+
+.purple-bar {
+    background-color: #371e49;
+    height: 20px;
+    width: 100%;
+}
+
+header {
+    position: relative;
+    background-color:#fff;
+    color: #371e49;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100px;
+
+}
+
+.uach-logo {
+    width: 80px;
+    height: auto;
+}
+
+.container {
+    margin-top: 100px;
+    display: flex;
+    padding: 10px;
+
+}
+
+.text-container {
+    flex: 1;
+    padding-right: 20px;
+    color: #371e49;
+    display: grid;
+}
+
+.login {
+    flex: 1;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+    width: 100%;;
+}
+
+input {
+    width: 95%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button{
+    width: 70%;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in;
+}
+
+.login-button {
+    background-color: #371e49;
+    color: #fff;
+    border: none;
+    margin-bottom: 20px;
+}
+.forgot-button {
+    border: none;
+    background-color: #fff;
+    color: #371e49;
+}
+
+.login-button:hover {
+    background-color: rgba(55, 30, 73, 0.5);
+}
+
+.forgot-button:hover {
+    background-color: #371e49;
+    color: #fff;
+}
+
