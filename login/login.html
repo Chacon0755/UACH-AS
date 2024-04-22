@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UACH-AS</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="stylesLogin.css">
 </head>
 <body>
     <div class="purple-bar"></div>
@@ -22,7 +22,7 @@
             <p>Facultad de Ingeniería de la Universidad Autónoma de Chihuahua</p>
         </div>
         <div class="login">
-            <form id="loginForm">
+            <form id="loginForm" action="" method="post" >
                 <div class="form-group">
                     <input type="text" id="username" name="username" placeholder="Correo Electrónico" required>
                 </div>
@@ -30,8 +30,8 @@
                     <input type="password" id="password" name="password" placeholder="Contraseña" required>
                 </div>
                 <button type="submit" class="login-button">Iniciar Sesión</button>
-                <button type="submit" class="forgot-button">¿Olvidaste tu contraseña?</button>
             </form>
+            <button type="submit" class="forgot-button">¿Olvidaste tu contraseña?</button>
             <p id="message"></p>
         </div>
 </div>
