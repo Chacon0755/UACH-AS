@@ -3,6 +3,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f2f2f2;
+    
 }
 
 h1, h2{
@@ -31,6 +32,18 @@ p {
     width: 100%;
 }
 
+.purple-bar-footer {
+    background-color: #371e49;;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: absolute;
+    width: 100%;
+    bottom: 0; 
+    font-size: small;
+}
+
+
 header {
     position: relative;
     background-color:#fff;
@@ -48,76 +61,53 @@ header {
     height: auto;
 }
 
-.container {
-    margin-top: 100px;
-    display: flex;
-    padding: 10px;
-
-}
-
-.text-container {
-    flex: 1;
-    padding-right: 20px;
+.welcome-container {
+    text-align: center;
     color: #371e49;
-    display: grid;
+    padding: 20px;
+    width: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
 }
 
-.login {
-    flex: 1;
-    background-color: #fff;
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.user-icon img {
+    width: 100px;
+    height: 100px;
 }
 
-.form-group {
-    margin-bottom: 20px;
-    width: 100%;;
-}
-
-input {
-    width: 95%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-button{
-    width: 70%;
+button {
+    width: 20%;
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease-in;
 }
 
-.login-button {
+.configuration-button {
     background-color: #371e49;
     color: #fff;
     border: none;
     margin-bottom: 20px;
-}
-.forgot-button {
-    border: none;
-    background-color: #fff;
-    color: #371e49;
-}
-
-.login-button:hover {
-    background-color: rgba(55, 30, 73, 0.5);
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    position: absolute;
+    right: 10px;
+    top: 150px;
 }
 
-.forgot-button:hover {
+.new-users {
+    display: flex;
+    justify-content: space-around;
+    
+}
+
+.admin-options {
     background-color: #371e49;
     color: #fff;
-}
-
-.purple-bar-footer {
-    background-color: #371e49;;
-    color: white;
-    text-align: center;
-    padding: 10px 0;
-    position: absolute;
-    width: 100%;
-    bottom: 0; 
-    font-size: small;
+    border: none;
+    display: inline-block;
+    align-items: center;
 }
