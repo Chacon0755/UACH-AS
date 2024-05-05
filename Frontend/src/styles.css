@@ -1,0 +1,50 @@
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+}
+
+h1, h2{
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 50px;
+    line-height: 84px;
+    align-items: center;
+    text-align: center;
+}
+
+header {
+    position: relative;
+    background-color:#fff;
+    color: #371e49;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100px;
+
+}
+
+.uach-logo {
+    width: 80px;
+    height: auto;
+}
+
+.purple-bar-header {
+    background-color: #371e49;
+    height: 20px;
+    width: 100%;
+}
+
+.purple-bar-footer {
+    background-color: #371e49;;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: absolute;
+    width: 100%;
+    bottom: 0%; 
+    font-size: small;
+}
