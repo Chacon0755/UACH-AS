@@ -8,6 +8,8 @@ import { AdminHomeComponent } from './admin-home/admin-home.component';
 import { FormsModule } from '@angular/forms';
 import { StudentHomeComponent } from './student-home/student-home.component';
 import { TeacherHomeComponent } from './teacher-home/teacher-home.component';
+import { NewTeacherComponent } from './new-teacher/new-teacher.component';
+import { NewStudentComponent } from './new-student/new-student.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +17,9 @@ import { TeacherHomeComponent } from './teacher-home/teacher-home.component';
     LoginComponent,
     AdminHomeComponent,
     StudentHomeComponent,
-    TeacherHomeComponent
+    TeacherHomeComponent,
+    NewTeacherComponent,
+    NewStudentComponent
   ],
   imports: [
     BrowserModule,

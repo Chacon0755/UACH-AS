@@ -1,0 +1,46 @@
+<div class="container">
+    <h2>Registro de Docentes</h2>
+    <form (ngSubmit)="onSubmit()" #docenteForm="ngForm">
+      <div class="form-group">
+        <label>Nombre(s)</label>
+        <input type="text" class="form-control" [(ngModel)]="teacher.name" name="nombre" required>
+      </div>
+      <div class="form-group">
+        <label>Apellido Paterno</label>
+        <input type="text" class="form-control" [(ngModel)]="teacher.lastName1" name="apellidoPaterno" required>
+      </div>
+      <div class="form-group">
+        <label>Apellido Materno</label>
+        <input type="text" class="form-control" [(ngModel)]="teacher.lastName2" name="apellidoMaterno" required>
+      </div>
+      <div class="form-group">
+        <label>Correo</label>
+        <input type="email" class="form-control" [(ngModel)]="teacher.email" name="correo" required>
+      </div>
+      <div class="form-group">
+        <label>Carreras que imparte</label>
+        <input type="text" class="form-control" [(ngModel)]="teacher.major" name="carreras">
+      </div>
+      <div class="form-group">
+        <label>Materias que imparte</label>
+        <input type="text" class="form-control" [(ngModel)]="teacher.courses" name="materias">
+      </div>
+      <div class="form-group">
+        <label>Horario de asesorías (Día)</label>
+        <select class="form-control" [(ngModel)]="teacher.advisoryDays" name="diaAsesoria">
+          <option value="lunes">Lunes</option>
+          <option value="martes">Martes</option>
+          <!-- Añadir más días según necesidad -->
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Horario de asesorías (Hora)</label>
+        <input type="time" class="form-control" [(ngModel)]="teacher.advisoryHours" name="horaAsesoria">
+      </div>
+      <div class="button-group">
+        <button type="button" class="btn cancel" (click)="onCancel()">Cancelar</button>
+        <button type="submit" class="btn save">Guardar</button>
+      </div>
+    </form>
+  </div>
+  
