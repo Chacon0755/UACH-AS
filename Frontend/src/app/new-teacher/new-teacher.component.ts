@@ -1,4 +1,8 @@
 import { Component } from '@angular/core';
+import { scheduled } from 'rxjs';
+type WeekDay = 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes';
+type Schedule = { [key in WeekDay]: { [key: string]: boolean } };
+
 
 @Component({
   selector: 'app-new-teacher',
@@ -11,30 +15,37 @@ export class NewTeacherComponent {
     lastName1: '',
     lastName2: '',
     email: '',
-    major: '',
-    courses: '',
-    advisorys: [] as any[]
+    majors: [],
+    courses: [],
+    schedule: {} as Schedule
   };
 
-  availability = {
-    lunes: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
-    martes: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
-    miercoles: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
-    jueves: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
-    viernes: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00']
+  allMajors = ['ICC']
+  allCourses = ['Alhebra Superior', 'Calculo integral', 'Calculo diferencial', 'Ingenieria de Sfotware']
+
+  availability: { [key in WeekDay]: string[] } = {
+      lunes: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
+      martes: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
+      miercoles: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
+      jueves: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
+      viernes: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00']
   }
 
-  days = Object.keys(this.availability)
+  days = Object.keys(this.availability) as WeekDay[];
 
-  constructor() { }
-
-  addDay(): void{
-    this.teacher.advisorys.push({ day: '', selectedHourd: []})
+  constructor() {
+    this.teacher.schedule = this.initSchedule();
   }
 
-  updateHours(index: number): void{
-    const selectedDay = this.teacher.advisorys[index].day;
-    this.teacher.advisorys[index].availableHours = this.availability[selectedDay];
+  initSchedule(): Schedule {
+    const schedule: Schedule = {} as Schedule;
+    this.days.forEach(day => {
+      schedule[day] = {};
+      this.availability[day].forEach(time => {
+        schedule[day][time] = false;
+      });
+    });
+    return schedule
   }
 
   onSubmit(): void {

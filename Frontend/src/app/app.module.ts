@@ -10,6 +10,10 @@ import { StudentHomeComponent } from './student-home/student-home.component';
 import { TeacherHomeComponent } from './teacher-home/teacher-home.component';
 import { NewTeacherComponent } from './new-teacher/new-teacher.component';
 import { NewStudentComponent } from './new-student/new-student.component';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { MatSelectModule } from '@angular/material/select'
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 
 @NgModule({
   declarations: [
@@ -24,9 +28,14 @@ import { NewStudentComponent } from './new-student/new-student.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    BrowserAnimationsModule,
+    MatFormFieldModule,
+    MatSelectModule,
   ],
-  providers: [],
+  providers: [
+    provideAnimationsAsync()
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
