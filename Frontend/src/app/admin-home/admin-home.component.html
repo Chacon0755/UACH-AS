@@ -1,15 +1,25 @@
 <main>
     <div class="welcome-container">
         <div class="user-icon">
-            <img src="/Frontend/src/assets/images/User.jpg" alt="User Icon">
+            <img [src]="userImageURL || '/Frontend/src/assets/images/User.jpg'" alt="User Icon">
+            <input type="file" (change)="onFileSelectedevent($event)" hidden #fileInput>
         </div>
         <h1>Bienvenido {{userName}}</h1>
     </div>
-    <div class="config">
-        <button routerLink="/admin-settings" class="configuration-button">Configuración</button>
+    <div>
+        <button mat-button [matMenuTriggerFor]="menu" class="mat-button">Configuracion</button>
+        <mat-menu #menu="matMenu" class="mat-menu-panel">
+            <button mat-menu-item (click)="logOut()" class="mat-menu-item">Salir</button>
+            <button mat-menu-item (click)="fileInput.click()" class="mat-menu-item">Cambiar foto</button>
+        </mat-menu>
     </div>
-    <div class="new-users">
+    <div class="new-options">
         <button routerLink="/new-teacher" class="admin-options">Nuevo Docente</button>
         <button routerLink="/new-student" class="admin-options">Nuevo Alumno</button>
     </div>
+    <div class="new-options">
+        <button routerLink="/new-major" class="admin-options">Nueva Carrera</button>
+        <button routerLink="/new-course" class="admin-options">Nuevo Materia</button>
+    </div>
+
 </main>

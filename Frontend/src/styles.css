@@ -6,6 +6,16 @@ body {
     background-color: #f2f2f2;
 }
 
+.main-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content {
+    flex: 1;
+}
+
 h1, h2{
     font-family: 'Roboto';
     font-style: normal;
@@ -25,9 +35,21 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 100px;
+    height: 50px;
 
 }
+
+div.header-header-2 {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 50px;
+    line-height: 84px;
+    align-items: center;
+    text-align: center;
+    color:#371e49
+}
+
 
 .uach-logo {
     width: 80px;
@@ -50,5 +72,5 @@ header {
     bottom: 0%; 
     font-size: small;
 }
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* html, body { height: 100%; }
+body { margin: 0; font-family: "Roboto", "Helvetica Neue", sans-serif; } */

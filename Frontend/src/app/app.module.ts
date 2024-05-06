@@ -14,6 +14,10 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { MatSelectModule } from '@angular/material/select'
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatButtonModule } from '@angular/material/button';
+import { NewMajorComponent } from './new-major/new-major.component';
+import { NewCourseComponent } from './new-course/new-course.component' 
 
 @NgModule({
   declarations: [
@@ -23,7 +27,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
     StudentHomeComponent,
     TeacherHomeComponent,
     NewTeacherComponent,
-    NewStudentComponent
+    NewStudentComponent,
+    NewMajorComponent,
+    NewCourseComponent
   ],
   imports: [
     BrowserModule,
@@ -32,6 +38,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
     BrowserAnimationsModule,
     MatFormFieldModule,
     MatSelectModule,
+    MatButtonModule,
+    MatMenuModule,
   ],
   providers: [
     provideAnimationsAsync()

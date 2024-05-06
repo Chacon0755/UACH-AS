@@ -1,0 +1,23 @@
+<main class="container">
+    <div class="new-major-container">
+        <h2>Registro de Carreras</h2>
+    <form #majorForm="ngForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+            <label for="major">Carrera</label>
+            <input type="text" id="major" class="form-control" [(ngModel)]="major.name" name="major" required>
+        </div>
+        <div class="form-group">
+            <label for="code">Clave</label>
+            <input type="text" id="code" class="form-control" [(ngModel)]="major.code" name="code" required>
+        </div>
+        <div class="form-group">
+            <label for="plan">Plan de estudios</label>
+            <input type="text" id="plan" class="form-control" [(ngModel)]="major.plan" name="plan">
+        </div>
+        <div class="button-group">
+            <button type="button" class="btn cancel" (click)="onCancel()">Cancelar</button>
+            <button type="submit" class="btn save">Guardar</button>
+        </div>
+    </form>
+    </div>
+</main>

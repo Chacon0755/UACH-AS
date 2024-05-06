@@ -7,6 +7,8 @@ import { TeacherHomeComponent } from './teacher-home/teacher-home.component';
 // import { authGuard } from './auth.guard';
 import { NewTeacherComponent } from './new-teacher/new-teacher.component';
 import { NewStudentComponent } from './new-student/new-student.component';
+import { NewMajorComponent } from './new-major/new-major.component';
+import { NewCourseComponent } from './new-course/new-course.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -15,7 +17,9 @@ const routes: Routes = [
   { path: 'student-home', component: StudentHomeComponent},
   { path: 'teacher-home', component: TeacherHomeComponent },
   { path: 'new-teacher', component: NewTeacherComponent },
-  {path: 'new-student', component: NewStudentComponent}
+  { path: 'new-student', component: NewStudentComponent },
+  { path: 'new-major', component: NewMajorComponent },
+  { path: 'new-course', component: NewCourseComponent},
 ];
 
 @NgModule({
