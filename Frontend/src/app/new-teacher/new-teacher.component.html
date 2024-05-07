@@ -40,7 +40,7 @@
                 <tbody>
                     <tr *ngFor="let time of availability[days[0]]"> 
                     <td *ngFor="let day of days">
-                        <input type="checkbox" [(ngModel)]="teacher.schedule[day][time]" [ngModelOptions]="{standalone: true}">
+                        <input type="checkbox" [ngModel]="getScheduleValue(day, time)" (ngModelChange)="setScheduleValue(day, time, $event.target)"  [ngModelOptions]="{standalone: true}">
                         {{ time }}
                     </td>
                     </tr>

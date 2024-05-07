@@ -5,7 +5,7 @@
             <div class="form-group">
                 <mat-form-field appearance="fill">
                     <mat-label>Carrera</mat-label>
-                    <mat-select [(ngModel)]="course.major">
+                    <mat-select [(ngModel)]="course.majorCode">
                         <mat-option *ngFor="let major of allMajors" [value]="major">{{major}}</mat-option>
                     </mat-select>
                 </mat-form-field>

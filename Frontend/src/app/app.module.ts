@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -17,8 +18,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatButtonModule } from '@angular/material/button';
 import { NewMajorComponent } from './new-major/new-major.component';
-import { NewCourseComponent } from './new-course/new-course.component' 
-
+import { NewCourseComponent } from './new-course/new-course.component';
+import { AdvisoryRequestStudentComponent } from './advisory-request-student/advisory-request-student.component' 
+import { HttpClientModule } from '@angular/common/http';
 @NgModule({
   declarations: [
     AppComponent,
@@ -29,7 +31,8 @@ import { NewCourseComponent } from './new-course/new-course.component'
     NewTeacherComponent,
     NewStudentComponent,
     NewMajorComponent,
-    NewCourseComponent
+    NewCourseComponent,
+    AdvisoryRequestStudentComponent
   ],
   imports: [
     BrowserModule,
@@ -40,6 +43,8 @@ import { NewCourseComponent } from './new-course/new-course.component'
     MatSelectModule,
     MatButtonModule,
     MatMenuModule,
+    ReactiveFormsModule,
+    HttpClientModule,
   ],
   providers: [
     provideAnimationsAsync()

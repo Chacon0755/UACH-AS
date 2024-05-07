@@ -9,6 +9,7 @@ import { NewTeacherComponent } from './new-teacher/new-teacher.component';
 import { NewStudentComponent } from './new-student/new-student.component';
 import { NewMajorComponent } from './new-major/new-major.component';
 import { NewCourseComponent } from './new-course/new-course.component';
+import { AdvisoryRequestStudentComponent } from './advisory-request-student/advisory-request-student.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -19,7 +20,9 @@ const routes: Routes = [
   { path: 'new-teacher', component: NewTeacherComponent },
   { path: 'new-student', component: NewStudentComponent },
   { path: 'new-major', component: NewMajorComponent },
-  { path: 'new-course', component: NewCourseComponent},
+  { path: 'new-course', component: NewCourseComponent },
+  { path: 'advisory-request-student', component: AdvisoryRequestStudentComponent },
+  
 ];
 
 @NgModule({

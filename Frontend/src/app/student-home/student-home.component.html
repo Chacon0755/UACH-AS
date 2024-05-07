@@ -1,5 +1,5 @@
 
-<div class="student-home-container">
+<div class="container">
     <div class="student-home-container">
         <aside class="sidebar">
             <div class="profile-info">
@@ -35,12 +35,17 @@
                 </div>
             </div>
         </main>
-        <aside class="student-options">
-            <button mat-button [matMenuTriggerFor]="menu" class="mat-button">Configuracion</button>
-            <mat-menu #menu="matMenu" class="mat-menu-panel">
+        <aside class="sidebar options">
+            <div class="options">
+                <button mat-button [matMenuTriggerFor]="menu" class="btn mat-button">Configuracion</button>
+                <mat-menu #menu="matMenu" class="mat-menu-panel">
                 <button mat-menu-item (click)="logOut()" class="mat-menu-item">Salir</button>
                 <button mat-menu-item (click)="fileInput.click()" class="mat-menu-item">Cambiar foto</button>
             </mat-menu>
+            </div>
+            <div class="options">
+                <button class="btn" routerLink="/advisory-request-student">Agendar asesoria</button>
+            </div>
         </aside>
     </div>
 </div>

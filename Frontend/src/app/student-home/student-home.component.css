@@ -1,10 +1,11 @@
 .student-home-container {
     display: flex;
+    justify-content: space-evenly;
     height: 100vh;
   }
   
   .sidebar {
-    width: 15%;
+    width: 10%;
     background-color: #FFD700; 
     padding: 20px;
   }
@@ -25,9 +26,7 @@
   }
   
   main.content {
-    min-width: auto;
-    width: 60%;
-    max-width: 1000px;
+    width: 80%;
     flex-grow: 1;
     padding: 20px;
     background-color: #FFF;
@@ -74,5 +73,16 @@
     border-radius: 4px;
     cursor: pointer;
     margin-left: 5px;
+  }
+  button.btn.mat-button{
+    color: white ;
+  }
+
+  .sidebar.options{
+    display: block;
+  }
+
+  .options {
+    margin-bottom: 10px;
   }
 

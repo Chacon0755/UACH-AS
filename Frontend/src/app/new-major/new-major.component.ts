@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { MajorService } from '../services/major.service';
+import { Major } from '../models/major.model';
 
 @Component({
   selector: 'app-new-major',
@@ -7,24 +9,31 @@ import { Router } from '@angular/router';
   styleUrl: './new-major.component.css'
 })
 export class NewMajorComponent {
-  major = {
+  major: Major = {
     name: '',
-    code: '',
+    code: 0,
     plan: ''
   }
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private majorService: MajorService) { }
   
   onSubmit(): void {
-    console.log('Form data: ', this.major)
-    this.router.navigate(['/admin-home'])
+    this.majorService.createMajor(this.major).subscribe({
+      next: (major) => {
+        console.log('yaaay', major);
+        this.router.navigate(['/admin-home']);
+      },
+      error: (error) => {
+        console.error('rayos:(', error);
+      }
+    });
   }
 
   onCancel() {
     console.log('bai bai')
     this.major = {
       name: '',
-      code: '',
+      code: 0,
       plan: ''
     }
     this.router.navigate(['/admin-home'])
