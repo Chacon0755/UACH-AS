@@ -1,18 +1,16 @@
-
 <div class="container">
     <div class="student-home-container">
         <aside class="sidebar">
             <div class="profile-info">
                 <img [src]="userImageURL || '/Frontend/src/assets/images/User.jpg'" alt="User Icon">
-            <input type="file" (change)="onFileSelectedevent($event)" hidden #fileInput>
-                <p>{{userName}}</p>
+                <input type="file" (change)="onFileSelectedEvent($event)" hidden #fileInput>
+                <p>{{ student?.name }} {{student?.lastName1}}</p>
             </div>
             <div class="course-list">
                 <h3>Cursos inscritos</h3>
                 <ul>
-                    <li>Cursos inscrito</li>
-                    <li>Cursos inscrito</li>
-                    <li>Cursos inscrito</li>
+                    <li *ngFor="let course of courses">{{course}}</li>
+
                 </ul>
             </div>
         </aside>
@@ -24,13 +22,13 @@
             <div class="publications">
                 <h2>Publicaciones</h2>
                 <div *ngFor="let post of posts; let i = index" class="publication">
-                    <p><strong>{{ post.author }}</strong>: {{ post.content }}</p>
+                    <p><strong>{{ post.author }}</strong> ({{ post.role }}): {{ post.content }}</p>
                     <div *ngFor="let response of post.responses" class="response">
-                        <p><strong>{{ response.author }}</strong>: {{ response.content }}</p>
+                        <p><strong>{{ response.author }}</strong> ({{ response.role }}): {{ response.content }}</p>
                     </div>
                     <div class="responses-input">
                         <input type="text" [(ngModel)]="newResponseContent" placeholder="Responder..." class="response-input">
-                        <button (click)="reply(i)" class="btn response">Responder</button>
+                        <button (click)="reply(post.id, i)" class="btn response">Responder</button>
                     </div>
                 </div>
             </div>

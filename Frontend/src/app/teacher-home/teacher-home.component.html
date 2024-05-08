@@ -1,1 +1,49 @@
-<p>teacher-home works!</p>
+<div class="container">
+    <div class="student-home-container">
+        <aside class="sidebar">
+            <div class="profile-info">
+                <img [src]="userImageUrl || '/Frontend/src/assets/images/User.jpg'" alt="User Icon">
+                <input type="file" (change)="onFileSelectedEvent($event)" hidden #fileInput>
+                <p>{{ teacher?.name }} {{teacher?.name}}</p>
+            </div>
+            <div class="course-list">
+                <h3>Materias impartidas</h3>
+                <ul>
+                    <li *ngFor="let course of teacher?.courses">{{course}}</li>
+                </ul>
+            </div>
+        </aside>
+        <main class="content">
+            <div class="publication-section">
+                <input type="text" [(ngModel)]="newPostContent" placeholder="Nueva publicación..." class="new-publication-input">
+                <button (click)="postPublication()" class="btn publication">Publicar</button>
+            </div>
+            <div class="publications">
+                <h2>Publicaciones</h2>
+                <div *ngFor="let post of posts; let i = index" class="publication">
+                    <p><strong>{{ post.author }}</strong> ({{ post.role }}): {{ post.content }}</p>
+                    <div *ngFor="let response of post.responses" class="response">
+                        <p><strong>{{ response.author }}</strong> ({{ response.role }}): {{ response.content }}</p>
+                    </div>
+                    <div class="responses-input">
+                        <input type="text" [(ngModel)]="newResponseContent" placeholder="Responder..." class="response-input">
+                        <button (click)="reply(post.id, i)" class="btn response">Responder</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <aside class="sidebar options">
+            <div class="options">
+                <button mat-button [matMenuTriggerFor]="menu" class="btn mat-button">Configuracion</button>
+                <mat-menu #menu="matMenu" class="mat-menu-panel">
+                <button mat-menu-item (click)="logOut()" class="mat-menu-item">Salir</button>
+                <button mat-menu-item (click)="fileInput.click()" class="mat-menu-item">Cambiar foto</button>
+            </mat-menu>
+            </div>
+            <div class="options">
+                <button class="btn" routerLink="/advisory-request-student">Agendar asesoria</button>
+            </div>
+        </aside>
+    </div>
+</div>
+

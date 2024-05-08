@@ -2,7 +2,7 @@
     <div class="welcome-container">
         <div class="user-icon">
             <img [src]="userImageURL || '/Frontend/src/assets/images/User.jpg'" alt="User Icon">
-            <input type="file" (change)="onFileSelectedevent($event)" hidden #fileInput>
+            <input type="file" (change)="onFileSelectedEvent($event)" hidden #fileInput>
         </div>
         <h1>Bienvenido {{userName}}</h1>
     </div>

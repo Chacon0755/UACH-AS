@@ -13,7 +13,7 @@ export class AdminHomeComponent {
 
   constructor(private authService: AuthService, private router: Router) { }
 
-  onFileSelectedevent(event: Event) {
+  onFileSelectedEvent(event: Event) {
     const element = event.target as HTMLInputElement;
     const file = element.files ? element.files[0] : null;
     if (file) {

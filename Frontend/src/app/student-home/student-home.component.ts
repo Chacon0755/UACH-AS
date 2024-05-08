@@ -1,17 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
+import { ForumService } from '../services/forum.service';
+import { Post, Response } from '../models/forum.model';
+import { Student } from '../models/student.model';
+import { StudentService } from '../services/student.service';
 
-interface Post {
-  author: string;
-  content: string;
-  responses?: Response[];
-}
-
-interface Response {
-  author: string;
-  content: string;
-}
 
 @Component({
   selector: 'app-student-home',
@@ -20,28 +14,27 @@ interface Response {
 })
 
 export class StudentHomeComponent implements OnInit {
-  
+  student: Student | null = null;
   posts: Post[] = [];
   newPostContent: string = '';
   newResponseContent: string = '';
   userName: string = '';
   userImageURL: string | ArrayBuffer | null = null;
+  userRole: string = 'student';
+  courses: string[] = []
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router, private forumService: ForumService, private studentService: StudentService) { }
   
   ngOnInit(): void {
     this.loadPosts();
     this.authService.getUser().subscribe(user => {
-
-      if (user) {
-        this.userName = user.name;
-      } else {
-        this.userName = 'Invitado'
-      }
-    })
+      this.userName = user.name;
+      this.userRole = user.role;
+    });
+    this.loadStudentData();
   }
 
-  onFileSelectedevent(event: Event) {
+  onFileSelectedEvent(event: Event) {
     const element = event.target as HTMLInputElement;
     const file = element.files ? element.files[0] : null;
     if (file) {
@@ -58,47 +51,51 @@ export class StudentHomeComponent implements OnInit {
   }
 
   loadPosts(): void{
-    this.posts = [
-      {
-        author: 'Brandon',
-        content: 'Holaaaaaa',
-        responses: [
-          {
-            author: 'Ana',
-            content: "Ya me harte"
-          }
-        ]
-      }
-    ]
+    this.forumService.getPosts().subscribe(posts => {
+      this.posts = posts;
+    })
   }
 
   postPublication(): void{
     if (this.newPostContent.trim()) {
-      this.posts.push({
-        author: 'user',
+      const newPost: Post = {
+        id: 0,
+        author: this.userName,
+        role: this.userRole,
         content: this.newPostContent,
+        createdAt: new Date(),
         responses: []
+      };
+      this.forumService.addPost(newPost).subscribe(post => {
+        this.posts.push(post);
+        this.newPostContent = '';
       });
-      this.newPostContent = '';
     }
   }
 
-  reply(postIndex: number): void {
+  reply(postId: number, postIndex: number): void {
     if (this.newResponseContent.trim()) {
-      const post = this.posts[postIndex];
-      if (post.responses) {
-        post.responses.push({
-          author: 'actual',
-          content: this.newResponseContent
-        });
-      } else {
-        post.responses = [{
-          author: 'actual',
-          content: this.newResponseContent
-        }];
-      }
-      this.newResponseContent = '';
+      const response: Response = {
+        id: 0,
+        author: this.userName,
+        role: this.userRole,
+        content: this.newResponseContent,
+        createdAt: new Date()
+      };
+      this.forumService.addResponse(postId, response).subscribe(res => {
+        this.posts[postIndex].responses?.push(res);
+        this.newResponseContent = ';'
+      });
     }
   }
 
+  loadStudentData(): void{
+    const studentId = 1; //cambiar
+    this.studentService.getStudentDataById(studentId).subscribe({
+      next: (studentData) => {
+        this.student = studentData;
+      },
+      error: (error) => console.error('Sigo sin poder Martha ', error),
+    });
+  }
 }
