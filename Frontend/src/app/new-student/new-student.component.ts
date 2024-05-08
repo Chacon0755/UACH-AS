@@ -21,6 +21,7 @@ export class NewStudentComponent implements OnInit {
     major: '',
     schoolId: 3,
     courses: [],
+    role: 'student'
   }
 
   majors: Major[] = [];
@@ -74,6 +75,7 @@ export class NewStudentComponent implements OnInit {
     major: '',
     schoolId: 3,
     courses: [],
+    role: 'student'
     }
     this.router.navigate(['/admin-home'])
   }

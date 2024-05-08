@@ -24,7 +24,9 @@ export class NewTeacherComponent implements OnInit {
     email: '',
     majors: [],
     courses: [],
-    schedule: {}
+    schedule: {},
+    role: 'teacher'
+
   };
 
   allMajors: Major[] = [];
@@ -115,7 +117,8 @@ export class NewTeacherComponent implements OnInit {
       email: '',
       majors: [],
       courses: [],
-      schedule: this.initSchedule()
+      schedule: this.initSchedule(),
+      role: 'teacher'
     };
     this.router.navigate(['/admin-home'])
   }

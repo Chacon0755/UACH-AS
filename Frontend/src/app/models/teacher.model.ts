@@ -9,5 +9,6 @@ export interface Teacher {
     majors: string[];
     courses: string[];
     schedule: Schedule;
+    role: string;
 }
 

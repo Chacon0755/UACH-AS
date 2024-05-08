@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 // import (Router)
 
@@ -10,13 +9,7 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
   private user = new BehaviorSubject<any>(null);
-  // private currentUserSubject: BehaviorSubject<any>;
-
-
-  // constructor(private http: HttpClient) {
-  //   const currentUser = localStorage.getItem('currentUser');
-  //   this.currentUserSubject = new BehaviorSubject<any>(currentUser ? JSON.parse(currentUser) : null);
-  // }
+  
 
   constructor(private router: Router){}
 
@@ -46,6 +39,20 @@ export class AuthService {
       console.error('te pasaste mijo')
       this.user.next(null)
     }
+  }
+
+  private determineRole(username: string): 'student' | 'teacher' | 'admin' {
+    const firstchar = username.charAt(0);
+    if (username === 'admin') {
+      return 'admin'
+    }
+    else if(!isNaN(parseInt(firstchar, 10))) {
+      return 'student';
+    }
+    else if (firstchar.toLowerCase() !== firstchar.toUpperCase()) {
+      return 'teacher'
+    }
+    throw new Error('nop')
   }
 
   getUser() {

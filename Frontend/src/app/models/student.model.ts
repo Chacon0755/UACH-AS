@@ -7,4 +7,5 @@ export interface Student {
     major: string;
     schoolId: number;
     courses: string[];
+    role: string;
 }
