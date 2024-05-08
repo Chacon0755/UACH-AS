@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Major } from '../models/major.model';
 import { Course } from '../models/course.model';
 import { Teacher } from '../models/teacher.model';
+import { Advisory } from '../models/advisory.model';
 
 
 @Component({

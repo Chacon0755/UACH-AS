@@ -3,16 +3,19 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Teacher } from '../models/teacher.model';
 import { Course } from '../models/course.model';
+import { UtilitiesService } from './utilities.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TeacherService {
   private apiUrl = '';
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private utilitiesService: UtilitiesService) { }
   
   createTeacher(teacher: Teacher): Observable<Teacher> {
-    return this.http.post<Teacher>(this.apiUrl, teacher);
+    const password = this.utilitiesService.createPassword();
+    const teacherWithPassword = {...teacher, password}
+    return this.http.post<Teacher>(this.apiUrl, teacherWithPassword);
   }
   getTeachers(): Observable<Teacher[]>{
     return this.http.get<Teacher[]>(this.apiUrl);

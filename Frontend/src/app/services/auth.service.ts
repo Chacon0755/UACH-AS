@@ -14,21 +14,22 @@ export class AuthService {
   constructor(private router: Router){}
 
   login(username: string, password: string) {
-    if (username === 'admin' && password === 'admin') {
+    const role = this.determineRole(username)
+    if (role === 'admin' && password === 'admin') {
       const userData = {
         name: 'Administrador',
         role: 'Administrator'
       };
       this.router.navigate(['admin-home'])
       this.user.next(userData);
-    } else if (username === 'teacher' && password === 'teacher') {
+    } else if (role === 'teacher' && password === 'teacher') {
       const UserData = {
         name: 'Maestro',
         role: "Teacher",
       };
       this.user.next(UserData)
       this.router.navigate(['teacher-home'])
-    } else if (username === 'student' && password === 'student') {
+    } else if (role === 'student' && password === 'student') {
       const UserData = {
         name: 'Estudiante',
         role: 'Student'
