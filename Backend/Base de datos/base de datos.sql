@@ -26,7 +26,14 @@ CREATE TABLE docentes (
     apellido2 VARCHAR(100),
     matricula VARCHAR(20) NOT NULL,
     materias_en_asesoramiento VARCHAR(255)not null,
-    asesorados varchar (255) 
+    asesorados varchar (255)
+);
+CREATE TABLE horario(
+	id INT auto_increment primary key,
+	dias varchar(50) not null ,
+    Hora varchar(50) not null,
+    foreign key (id_alumno) references alumnos(id),
+    foreign key (id_docente) references docentes(id)
 );
 CREATE TABLE foro (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -44,3 +51,25 @@ CREATE TABLE administrador (
     FOREIGN KEY (id_alumno) REFERENCES alumnos(id),
     FOREIGN KEY (id_docente) REFERENCES docentes(id)
 );
+
+insert into login(id,correo,contraseña) 
+values (1,'a354312@uach.mx','contraseña1234');
+
+insert into login(id,correo,contraseña) 
+values (10,'JMDom@uach.mx','contraseña1234');
+
+insert into alumnos(id,nombre,apellido1,apellido2,matricula,carrera,semestre,materias,asesorias)
+values (1,'Pedro','Ruiz','Leiva',354312,'ICC',4,'Ing.software-POO-Algebra_superior-Calculo_vectorial','No tiene asesorias programadas');
+
+insert into alumnos(id,nombre,apellido1,apellido2,matricula,carrera,semestre,materias,asesorias)
+values (2,'Julian','Martinez','Perez',334210,'ISCH',3,'Lenguajes_2-Ecuaciones-Termodinamica','Lenguajes_2-Miguel_Dominguez');
+
+insert into docentes(id,nombre,apellido1,apellido2,matricula,materias_en_asesoramiento,asesorados)
+values (10,'Jesus_Miguel','Dominguez','Dominguez',12542,'Lenguajes_1-Lenguajes_2',334210);
+
+select *from login;
+
+select *from alumnos;
+
+select *from docentes;
+
