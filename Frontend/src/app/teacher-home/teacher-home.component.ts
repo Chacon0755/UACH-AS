@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../services/auth.service';
 import { ForumService } from '../services/forum.service';
 import { Router } from '@angular/router';
 import { Post, Response } from '../models/forum.model';
@@ -106,6 +106,8 @@ export class TeacherHomeComponent implements OnInit {
       error: (error) => console.error('ya no puedo Martha ', error),
     });
   }
+
+
 }
 
 

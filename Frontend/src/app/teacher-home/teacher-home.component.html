@@ -2,7 +2,7 @@
     <div class="student-home-container">
         <aside class="sidebar">
             <div class="profile-info">
-                <img [src]="userImageUrl || '/Frontend/src/assets/images/User.jpg'" alt="User Icon">
+                <img [src]="userImageUrl || './assets/images/User.jpg'" alt="User Icon">
                 <input type="file" (change)="onFileSelectedEvent($event)" hidden #fileInput>
                 <p>{{ teacher?.name }} {{teacher?.name}}</p>
             </div>
@@ -39,9 +39,6 @@
                 <button mat-menu-item (click)="logOut()" class="mat-menu-item">Salir</button>
                 <button mat-menu-item (click)="fileInput.click()" class="mat-menu-item">Cambiar foto</button>
             </mat-menu>
-            </div>
-            <div class="options">
-                <button class="btn" routerLink="/advisory-request-student">Agendar asesoria</button>
             </div>
         </aside>
     </div>

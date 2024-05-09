@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 // import (Router)
 
@@ -10,32 +9,27 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
   private user = new BehaviorSubject<any>(null);
-  // private currentUserSubject: BehaviorSubject<any>;
-
-
-  // constructor(private http: HttpClient) {
-  //   const currentUser = localStorage.getItem('currentUser');
-  //   this.currentUserSubject = new BehaviorSubject<any>(currentUser ? JSON.parse(currentUser) : null);
-  // }
+  
 
   constructor(private router: Router){}
 
   login(username: string, password: string) {
-    if (username === 'admin' && password === 'admin') {
+    const role = this.determineRole(username)
+    if (role === 'admin' && password === 'admin') {
       const userData = {
         name: 'Administrador',
         role: 'Administrator'
       };
       this.router.navigate(['admin-home'])
       this.user.next(userData);
-    } else if (username === 'teacher' && password === 'teacher') {
+    } else if (role === 'teacher' && password === 'teacher') {
       const UserData = {
         name: 'Maestro',
         role: "Teacher",
       };
       this.user.next(UserData)
       this.router.navigate(['teacher-home'])
-    } else if (username === 'student' && password === 'student') {
+    } else if (role === 'student' && password === 'student') {
       const UserData = {
         name: 'Estudiante',
         role: 'Student'
@@ -46,6 +40,20 @@ export class AuthService {
       console.error('te pasaste mijo')
       this.user.next(null)
     }
+  }
+
+  private determineRole(username: string): 'student' | 'teacher' | 'admin' {
+    const firstchar = username.charAt(0);
+    if (username === 'admin') {
+      return 'admin'
+    }
+    else if(!isNaN(parseInt(firstchar, 10))) {
+      return 'student';
+    }
+    else if (firstchar.toLowerCase() !== firstchar.toUpperCase()) {
+      return 'teacher'
+    }
+    throw new Error('nop')
   }
 
   getUser() {

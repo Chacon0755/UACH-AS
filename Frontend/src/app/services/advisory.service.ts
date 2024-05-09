@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Teacher } from '../models/teacher.model';
 import { Major } from '../models/major.model';
 import { Course } from '../models/course.model';
+import { Advisory } from '../models/advisory.model';
 
 @Injectable({
   providedIn: 'root'
@@ -32,7 +33,7 @@ export class AdvisoryService {
     return this.http.get<any>(`${this.apiUrl}/times/byTeacher/${teacherId}`);
   }
 
-  createAdvisory(advisoryData: any, role: 'student' | 'teacher' | 'admin'): Observable<any> {
+  createAdvisory(advisoryData: Advisory, role: 'student' | 'teacher' | 'admin'): Observable<any> {
     const apiUrl = 'api/advisories';
     return this.http.post(apiUrl, { ...advisoryData, role})
   }
