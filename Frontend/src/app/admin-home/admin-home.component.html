@@ -7,7 +7,7 @@
         <h1>Bienvenido {{userName}}</h1>
     </div>
     <div>
-        <button mat-button [matMenuTriggerFor]="menu" class="mat-button">Configuracion</button>
+        <button mat-button [matMenuTriggerFor]="menu" class="btn mat-button">Configuracion</button>
         <mat-menu #menu="matMenu" class="mat-menu-panel">
             <button mat-menu-item (click)="logOut()" class="mat-menu-item">Salir</button>
             <button mat-menu-item (click)="fileInput.click()" class="mat-menu-item">Cambiar foto</button>
