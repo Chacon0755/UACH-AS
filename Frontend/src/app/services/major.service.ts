@@ -7,15 +7,19 @@ import { Major } from '../models/major.model';
   providedIn: 'root'
 })
 export class MajorService {
-  private apiUrl = '';
+  private apiUrl = 'http://localhost:3000';
 
   constructor(private http: HttpClient) { }
 
   createMajor(major: Major): Observable<Major>{
-    return this.http.post<Major>(this.apiUrl, major);
+    const payload = {
+      Id_Carreras: major.id,
+      Nombre_Carrera: major.name
+    };
+    return this.http.post<Major>(`${this.apiUrl}/carrera`, payload);
   }
   getMajors(): Observable<Major[]>{
-    return this.http.get<Major[]>('${this.apiUrl)/majors')
+    return this.http.get<Major[]>(`${this.apiUrl}/carrera`)
   }
 
 }

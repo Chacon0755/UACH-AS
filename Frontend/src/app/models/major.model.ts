@@ -1,6 +1,5 @@
 export interface Major {
-    id?: number;
+    id: number;
     name: string;
-    code: number;
-    plan: string;
+
 }

@@ -10,7 +10,7 @@ import { Advisory } from '../models/advisory.model';
   providedIn: 'root'
 })
 export class AdvisoryService {
-  private apiUrl = ''
+  private apiUrl = 'http://localhost:3000/data'
 
   constructor(private http: HttpClient) { }
 

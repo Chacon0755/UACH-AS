@@ -9,7 +9,7 @@ import { UtilitiesService } from './utilities.service';
   providedIn: 'root'
 })
 export class TeacherService {
-  private apiUrl = '';
+  private apiUrl = 'http://localhost:3000/docentes';
   constructor(private http: HttpClient, private utilitiesService: UtilitiesService) { }
   
   createTeacher(teacher: Teacher): Observable<Teacher> {

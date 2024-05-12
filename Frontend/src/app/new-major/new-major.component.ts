@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MajorService } from '../services/major.service';
 import { Major } from '../models/major.model';
@@ -8,33 +8,41 @@ import { Major } from '../models/major.model';
   templateUrl: './new-major.component.html',
   styleUrl: './new-major.component.css'
 })
-export class NewMajorComponent {
+export class NewMajorComponent implements OnInit{
   major: Major = {
+    id: 0,
     name: '',
-    code: 0,
-    plan: ''
   }
 
   constructor(private router: Router, private majorService: MajorService) { }
   
+  ngOnInit(): void {
+      console.log('Al iniciar: ', this.major)
+  }
+
   onSubmit(): void {
+    console.log('Al enviar: ', this.major);
+    if (!this.major.id || !this.major.name) {
+      console.error('ID no proporcionado', this.major.id, ' ',this.major.name);
+      return
+    }
     this.majorService.createMajor(this.major).subscribe({
-      next: (major) => {
-        console.log('yaaay', major);
+      next: (response) => {
+        console.log('Respuesta del servidor: ', response);
         this.router.navigate(['/admin-home']);
       },
       error: (error) => {
-        console.error('rayos:(', error);
+        console.error('Error al crear carrera: ', error.message);
       }
     });
   }
 
+
   onCancel() {
     console.log('bai bai')
     this.major = {
+      id: 0,
       name: '',
-      code: 0,
-      plan: ''
     }
     this.router.navigate(['/admin-home'])
   }
