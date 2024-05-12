@@ -60,7 +60,7 @@ export class NewStudentComponent implements OnInit {
         this.router.navigate(['/admin-home'])
       },
       error: (error) => {
-        console.error('no se armo oiga')
+        console.error('no se armo oiga', error)
       }
     });
   }
