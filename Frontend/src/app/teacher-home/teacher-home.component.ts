@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { ForumService } from '../services/forum.service';
 import { Router } from '@angular/router';
-import { Post, Response } from '../models/forum.model';
+import { Post } from '../models/forum.model';
 import { Course } from '../models/course.model';
 import { TeacherService } from '../services/teacher.service';
 import { Teacher } from '../models/teacher.model';
@@ -22,6 +22,9 @@ export class TeacherHomeComponent implements OnInit {
   userRole: string = 'teacher';
   userImageUrl: string | ArrayBuffer | null = null;
   courses: Course[] = [];
+    //
+  archivoSeleccionado: File | null = null;
+  
 
   constructor(private authService: AuthService, private forumService: ForumService, private router: Router, private teacherService: TeacherService) { }
   ngOnInit(): void {
@@ -38,7 +41,7 @@ export class TeacherHomeComponent implements OnInit {
     });
   }
 
-  postPublication(): void {
+  postPublication(): void{
     if (this.newPostContent.trim()) {
       const newPost: Post = {
         id: 0,
@@ -55,21 +58,75 @@ export class TeacherHomeComponent implements OnInit {
     }
   }
 
-  reply(postId: number, postIndex: number): void {
+  reply(postId: number, postIndex: number, archivoAdjunto: File | null): void {
     if (this.newResponseContent.trim()) {
-      const response: Response = {
-        id: 0,
-        author: this.userName,
-        role: this.userRole,
-        content: this.newResponseContent,
-        createdAt: new Date()
-      };
-      this.forumService.addResponse(postId, response).subscribe(res => {
+      //const response: Response = {
+      const formData = new FormData();
+      formData.append('content', this.newResponseContent);
+      if (archivoAdjunto) {
+        formData.append('archivoAdjunto', archivoAdjunto);
+      }
+      //   id: 0,
+      //   author: this.userName,
+      //   role: this.userRole,
+      //   content: this.newResponseContent,
+      //   createdAt: new Date()
+      // };
+      // this.forumService.addResponse(postId, response).subscribe(res => {
+      //   this.posts[postIndex].responses?.push(res);
+      //   this.newResponseContent = ';'
+      // });
+      this.forumService.addResponse(postId, formData).subscribe(res => {
         this.posts[postIndex].responses?.push(res);
-        this.newPostContent = '';
+        this.newResponseContent = '';
+    
       });
+  
+    }
+  //
+  
+
+
+  // loadStudentData(): void{
+  //   const studentId = 1; //cambiar
+  //   this.studentService.getStudentDataById(studentId).subscribe({
+  //     next: (studentData) => {
+  //       this.student = studentData;
+  //     },
+  //     error: (error) => console.error('Sigo sin poder Martha ', error),
+  //   });
+  // }
+
+
+  //
+
+
+  }
+//
+  onArchivoSeleccionado(event: Event) {
+
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      this.archivoSeleccionado = input.files[0];
     }
   }
+
+
+  // reply(postId: number, postIndex: number): void {
+  //   if (this.newResponseContent.trim()) {
+  //     const response: Response = {
+  //       id: 0,
+  //       author: this.userName,
+  //       role: this.userRole,
+  //       content: this.newResponseContent,
+  //       createdAt: new Date()
+  //     };
+  //     this.forumService.addResponse(postId, response).subscribe(res => {
+  //       this.posts[postIndex].responses?.push(res);
+  //       this.newPostContent = '';
+  //     });
+  //   }
+  // }
 
   onFileSelectedEvent(event: Event): void {
     const element = event.target as HTMLInputElement;

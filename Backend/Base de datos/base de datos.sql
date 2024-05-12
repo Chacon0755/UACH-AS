@@ -2,45 +2,80 @@ CREATE DATABASE UACH_AS;
 
 use UACH_AS;
 
-create table login
-(
-id int unsigned primary key not null,
-correo varchar (25) not null,
-contraseña varchar(45) not null
+create table Alumnos(
+	matricula int primary key,
+    nombre varchar (100) not null,
+    ape1 varchar (100) not null,
+    ape2 varchar (100),
+    programa int not null,
+    semestre int not null
 );
-CREATE TABLE alumnos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    apellido1 VARCHAR(100) NOT NULL,
-    apellido2 VARCHAR(100),
-    matricula VARCHAR(20) NOT NULL,
-    carrera VARCHAR(100) NOT NULL,
-    semestre INT NOT NULL,
-    materias varchar(255)not null,
-    asesorias varchar(255)
+CREATE TABLE carrera (
+    Id_Carreras INT PRIMARY KEY,
+    Nombre_Carrera VARCHAR(60) NOT NULL
+    );
+    
+create table semestre (
+id int primary key,
+sem varchar (20) not null
 );
+CREATE TABLE Materias (
+     Id_Materias INT PRIMARY KEY,
+     N_Carr   Int NOT NULL,
+     N_Sem int NOT NULL,
+     N_Mat varchar(100) not null
+    );
 CREATE TABLE docentes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    apellido1 VARCHAR(100) NOT NULL,
-    apellido2 VARCHAR(100),
-    matricula VARCHAR(20) NOT NULL,
-    materias_en_asesoramiento VARCHAR(255)not null,
-    asesorados varchar (255) 
+    Id_docente INT PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL,
+    Apellido VARCHAR(100) NOT NULL,
+    id_mat_as int not null,
+    id_carrera_mat int not null
+    );
+    
+Create Table foro (
+id_publicacion Int auto_increment primary key,
+Publicacion VARCHAR(255),
+Comentarios VARCHAR(255)
 );
-CREATE TABLE foro (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    id_alumno INT NOT NULL,
-    titulo VARCHAR(255) NOT NULL,
-    contenido TEXT NOT NULL,
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_alumno) REFERENCES alumnos(id)
-);
+Create table Administrador (
+admin_id int primary key,
+correo VARCHAR(200)NOT NULL,
+contraseña VARCHAR(200)NOT NULL,
+usuario int not null
+); 
+create table usuarios(
+id_user int primary key,
+users varchar(50) not null
+);  
 
-CREATE TABLE administrador (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    id_alumno INT NOT NULL,
-    id_docente INT NOT NULL,
-    FOREIGN KEY (id_alumno) REFERENCES alumnos(id),
-    FOREIGN KEY (id_docente) REFERENCES docentes(id)
+create table asesorias(
+id_as int primary key,
+alumn_ases int not null,
+docente_ases int not null,
+dia varchar(100) not null,
+hora varchar(50) not null
 );
+   
+drop table Administrador;
+
+
+show tables;
+
+describe alumnos;
+
+insert into semestre(id,sem)
+   Values (9,'Noveno semestre');
+   
+	insert into Carrera(Id_Carreras,Nombre_Carrera)
+   Values (1,'Ingenieria Aeroespacial');
+   alter table alumnos add semestre int not null;
+   alter table docentes change nom_mat_as id_carrera_mat int ;
+    
+    Insert into 
+    Materias(Id_Materias,N_Carr,N_Sem,N_Mat)
+    Values (1,1,1,'Algebra superior');
+   	
+
+
+

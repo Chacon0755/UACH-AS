@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { ForumService } from '../services/forum.service';
-import { Post, Response } from '../models/forum.model';
+import { Post } from '../models/forum.model';
 import { Student } from '../models/student.model';
 import { StudentService } from '../services/student.service';
 
@@ -23,6 +23,11 @@ export class StudentHomeComponent implements OnInit {
   userRole: string = 'student';
   courses: string[] = []
 
+  //
+  archivoSeleccionado: File | null = null;
+  //loadStudentData: any;
+
+
   constructor(private authService: AuthService, private router: Router, private forumService: ForumService, private studentService: StudentService) { }
   
   ngOnInit(): void {
@@ -31,7 +36,7 @@ export class StudentHomeComponent implements OnInit {
       this.userName = user.name;
       this.userRole = user.role;
     });
-    this.loadStudentData();
+    //this.loadStudentData();
   }
 
   onFileSelectedEvent(event: Event) {
@@ -73,29 +78,56 @@ export class StudentHomeComponent implements OnInit {
     }
   }
 
-  reply(postId: number, postIndex: number): void {
+  reply(postId: number, postIndex: number, archivoAdjunto: File | null): void {
     if (this.newResponseContent.trim()) {
-      const response: Response = {
-        id: 0,
-        author: this.userName,
-        role: this.userRole,
-        content: this.newResponseContent,
-        createdAt: new Date()
-      };
-      this.forumService.addResponse(postId, response).subscribe(res => {
+      //const response: Response = {
+      const formData = new FormData();
+      formData.append('content', this.newResponseContent);
+      if (archivoAdjunto) {
+        formData.append('archivoAdjunto', archivoAdjunto);
+      }
+      //   id: 0,
+      //   author: this.userName,
+      //   role: this.userRole,
+      //   content: this.newResponseContent,
+      //   createdAt: new Date()
+      // };
+      // this.forumService.addResponse(postId, response).subscribe(res => {
+      //   this.posts[postIndex].responses?.push(res);
+      //   this.newResponseContent = ';'
+      // });
+      this.forumService.addResponse(postId, formData).subscribe(res => {
         this.posts[postIndex].responses?.push(res);
-        this.newResponseContent = ';'
+        this.newResponseContent = '';
+    
       });
+  
     }
-  }
+  //
+  
 
-  loadStudentData(): void{
-    const studentId = 1; //cambiar
-    this.studentService.getStudentDataById(studentId).subscribe({
-      next: (studentData) => {
-        this.student = studentData;
-      },
-      error: (error) => console.error('Sigo sin poder Martha ', error),
-    });
+
+  // loadStudentData(): void{
+  //   const studentId = 1; //cambiar
+  //   this.studentService.getStudentDataById(studentId).subscribe({
+  //     next: (studentData) => {
+  //       this.student = studentData;
+  //     },
+  //     error: (error) => console.error('Sigo sin poder Martha ', error),
+  //   });
+  // }
+
+
+  //
+
+
+  }
+//
+  onArchivoSeleccionado(event: Event) {
+
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      this.archivoSeleccionado = input.files[0];
+    }
   }
 }

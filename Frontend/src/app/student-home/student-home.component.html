@@ -28,7 +28,12 @@
                     </div>
                     <div class="responses-input">
                         <input type="text" [(ngModel)]="newResponseContent" placeholder="Responder..." class="response-input">
-                        <button (click)="reply(post.id, i)" class="btn response">Responder</button>
+                        <input type="file" class="input-adjuntar" (change)="onArchivoSeleccionado($event)" #archivoInput>
+                        <button class="boton-adjuntar"(click)="archivoInput.click()">
+                            Adjuntar Archivo
+                        </button>
+                        <button (click)="reply(post.id, i, archivoSeleccionado)" class="btn response">Responder</button>
+
                     </div>
                 </div>
             </div>
