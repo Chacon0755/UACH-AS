@@ -69,12 +69,13 @@ insert into semestre(id,sem)
    
 	insert into Carrera(Id_Carreras,Nombre_Carrera)
    Values (1,'Ingenieria Aeroespacial');
-   alter table alumnos add semestre int not null;
-   alter table docentes change nom_mat_as id_carrera_mat int ;
+   alter table docentes add rol_doc varchar(50);
+   alter table docentes change Nombre nombre_doc varchar(100) not null ;
+    alter table docentes drop apellido;
     
     Insert into 
     Materias(Id_Materias,N_Carr,N_Sem,N_Mat)
-    Values (1,1,1,'Algebra superior');
+    Values (29,1,5,'Probabilidad y estadistica 2');
    	
 
 
