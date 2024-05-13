@@ -178,6 +178,18 @@ app.get('/materias', (req, res) => {
   });
 });
 
+// Obtener materias con cierto MajorID
+app.get('/materias/:N_Carr', (req, res) => {
+  const N_Carr = req.params.N_Carr;
+  if (!N_Carr) {
+    return res.status(400).send('El ID de la carrera es necesario');
+  }
+  connection.query('SELECT * FROM Materias WHERE N_Carr = ?', [N_Carr], (error, results) => {
+    if (error) return res.status(500).json(error);
+    res.json(results)
+  });
+});
+
 // Insertar una nueva materia
 app.post('/materias', (req, res) => {
   const { Id_Materias, N_Carr, N_Sem, N_Mat } = req.body;

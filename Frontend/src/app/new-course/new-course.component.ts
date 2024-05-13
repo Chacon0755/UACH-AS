@@ -21,7 +21,7 @@ export class NewCourseComponent implements OnInit {
   }
   allMajors: any[] = [];
   allSemesters: any[] = [];
- 
+
 
   constructor(private router: Router, private majorService: MajorService, private courseService: CourseService, private semesterService: SemesterService) { }
 

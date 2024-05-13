@@ -22,15 +22,15 @@ export class NewTeacherComponent implements OnInit {
     lastName1: '',
     lastName2: '',
     email: '',
-    majors: [],
-    courses: [],
+    majorId:0,
+    courseId: 0,
     schedule: {},
     role: 'teacher'
 
   };
 
-  allMajors: Major[] = [];
-  allCourses: Course[] = []
+  allMajors: any[] = [];
+  allCourses: any[] = []
   selectedMajorCode: number | null = null;
 
   availability: { [key in WeekDay]: string[] } = {
@@ -46,23 +46,46 @@ export class NewTeacherComponent implements OnInit {
   constructor(private router: Router, private teacherService: TeacherService, private majorService: MajorService, private courseService: CourseService) {}
 
   ngOnInit(): void{
-
+    // this.loadCourses();
+    this.loadMajors();
     this.teacher.schedule = this.initSchedule();
   }
-  loadMajors(): void{
-    this.majorService.getMajors().subscribe(allMajors => {
-      this.allMajors = allMajors;
-    })
-  }
-  // onMajorChange(): void {
-  //   if (this.selectedMajorCode) {
-  //     this.courseService.getCoursesByMajor(this.selectedMajorCode).subscribe(allCourses => {
+  // loadCourses() {
+  //   this.courseService.getCourses().subscribe({
+  //     next: (allCourses) => {
   //       this.allCourses = allCourses;
-  //     });
-  //   } else {
-  //     this.allCourses = [];
-  //   }
+  //       console.log(this.allCourses)
+  //     },
+  //     error: (error) => {
+  //       console.error('Error cargando materias ', error.message)
+  //     }
+  //   });
   // }
+  loadMajors() {
+    this.majorService.getMajors().subscribe({
+      next: (allMajors) => {
+        this.allMajors = allMajors
+        console.log(this.allMajors)
+      },
+      error: (error) => console.error('Error cargando Carreras ', error)
+    });
+  }
+  onMajorChange(): void {
+    if (this.teacher.majorId) {
+      this.courseService.getCoursesByMajor(this.teacher.majorId).subscribe({
+        next: (allCourses) => {
+          this.allCourses = allCourses;
+          console.log(this.allCourses);
+        }, 
+        error: (error) => {
+          console.error('Error al cargar materias: ', error);
+          this.allCourses = []
+        }
+      });
+    } else {
+      this.allCourses = [];
+    }
+  }
 
   initSchedule(): Schedule {
     let schedule: Schedule = {};
@@ -115,8 +138,8 @@ export class NewTeacherComponent implements OnInit {
       lastName1: '',
       lastName2: '',
       email: '',
-      majors: [],
-      courses: [],
+      majorId: 0,
+      courseId: 0,
       schedule: this.initSchedule(),
       role: 'teacher'
     };

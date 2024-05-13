@@ -4,18 +4,21 @@ import { Observable } from 'rxjs';
 import { Student } from '../models/student.model';
 import { UtilitiesService } from './utilities.service';
 
-
+//TODO: conectar con back
 @Injectable({
   providedIn: 'root'
 })
 export class StudentService {
-  private apiURL = 'http://localhost:3000/data';
+  private apiURL = 'http://localhost:3000';
 
   constructor(private http: HttpClient, private utilitiesService: UtilitiesService) { }
 
   createStudent(student: Student): Observable<Student> {
     const password = this.utilitiesService.createPassword();
-    const studentWithPassword = {...student, password}
+    const studentWithPassword = { ...student, password }
+    const payload = {
+
+    }
     return this.http.post<Student>(this.apiURL, studentWithPassword);
   }
   getStudent(): Observable<Student[]>{

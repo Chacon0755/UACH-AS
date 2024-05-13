@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { StudentService } from '../services/student.service';
 import { MajorService } from '../services/major.service';
 import { CourseService } from '../services/course.service';
+import { SemesterService } from '../services/semester.service';
 import { Student } from '../models/student.model';
 import { Major } from '../models/major.model';
 import { Course } from '../models/course.model';
@@ -18,49 +19,53 @@ export class NewStudentComponent implements OnInit {
     lastName1: '',
     lastName2: '',
     email: '',
-    major: '',
+    majorId: 1,
+    numberOfSemester: 1,
     schoolId: 3,
-    courses: [],
     role: 'student'
   }
 
-  majors: Major[] = [];
-  courses: Course[] = [];
+  allMajors: any[] = [];
+  allSemesters: any[] = [];
+
   selectedMajorCode: number | null = null;
 
-  constructor(private router: Router, private studentService: StudentService, private majorService: MajorService, private courseService: CourseService){}
+  constructor(private router: Router, private studentService: StudentService, private majorService: MajorService, private courseService: CourseService, private semesterService: SemesterService){}
 
   ngOnInit(): void {
-      
+    this.loadMajors();
+    this.loadSemesters();
   }
 
   loadMajors() {
     this.majorService.getMajors().subscribe({
-      next: (majors) => {
-        this.majors = majors;
+      next: (allMajors) => {
+        this.allMajors = allMajors
+        console.log(this.allMajors)
       },
-      error: (error) => console.error('ya estoy cansado ', error)
-    });
+      error: (error) => console.error('Error cargando Carreras ', error)
+    })
   }
 
-  // onMajorChange(): void {
-  //   if (this.selectedMajorCode) {
-  //     this.courseService.getCoursesByMajor(this.selectedMajorCode).subscribe(allCourses => {
-  //       this.courses = allCourses;
-  //     });
-  //   } else {
-  //     this.courses = [];
-  //   }
-  // }
+  loadSemesters() {
+    this.semesterService.getSemesters().subscribe({
+      next: (allSemesters) => {
+        this.allSemesters = allSemesters
+        console.log(this.allSemesters)
+      },
+      error: (error) => console.error('Error cargando Semestres ', error)
+    })
+  }
+
 
   onSubmit(): void {
     this.studentService.createStudent(this.student).subscribe({
-      next: (student) => {
-        console.log('si se pudo ayayay', student);
+      next: (response) => {
+        console.log('Estudiante creado correctamente', response);
         this.router.navigate(['/admin-home'])
       },
       error: (error) => {
-        console.error('no se armo oiga', error)
+        console.error('Error al crear estudiante', error)
       }
     });
   }
@@ -69,13 +74,13 @@ export class NewStudentComponent implements OnInit {
     console.log('Cancelao mijo')
     this.student = {
       name: '',
-    lastName1: '',
-    lastName2: '',
-    email: '',
-    major: '',
-    schoolId: 3,
-    courses: [],
-    role: 'student'
+      lastName1: '',
+      lastName2: '',
+      email: '',
+      majorId: 0,
+      schoolId: 3,
+      numberOfSemester: 1,
+      role: 'student'
     }
     this.router.navigate(['/admin-home'])
   }

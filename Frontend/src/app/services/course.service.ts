@@ -23,4 +23,8 @@ export class CourseService {
   getCourses(): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.apiUrl}/materias`)
   }
+
+  getCoursesByMajor(majorId: number): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.apiUrl}/materias/${majorId}`);
+  }
 }
