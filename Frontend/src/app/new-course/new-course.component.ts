@@ -4,6 +4,8 @@ import { CourseService } from '../services/course.service';
 import { Course } from '../models/course.model';
 import { MajorService } from '../services/major.service';
 import { Major } from '../models/major.model';
+import { FormControl, FormGroup } from '@angular/forms';
+import { SemesterService } from '../services/semester.service';
 
 @Component({
   selector: 'app-new-course',
@@ -12,43 +14,59 @@ import { Major } from '../models/major.model';
 })
 export class NewCourseComponent implements OnInit {
   course = {
+    id: 1,
+    majorId: 1,
+    NumberOfSemester: 0,
     name: '',
-    majorCode: 0,
-    code: 0
   }
-  allMajors: Major[] = [];
+  allMajors: any[] = [];
+  allSemesters: any[] = [];
+ 
 
-  constructor(private router: Router, private majorService: MajorService, private courseService: CourseService) { }
+  constructor(private router: Router, private majorService: MajorService, private courseService: CourseService, private semesterService: SemesterService) { }
 
   ngOnInit() {
     this.loadMajors();
+    this.loadSemesters();
   }
 
   loadMajors() {
     this.majorService.getMajors().subscribe({
       next: (allMajors) => {
         this.allMajors = allMajors
+        console.log(this.allMajors)
       },
-      error: (error) => console.error('sad ', error)
+      error: (error) => console.error('Error cargando Carreras ', error)
+    })
+  }
+
+  loadSemesters() {
+    this.semesterService.getSemesters().subscribe({
+      next: (allSemesters) => {
+        this.allSemesters = allSemesters
+        console.log(this.allSemesters)
+      },
+      error: (error) => console.error('Error cargando Semestres ', error)
     })
   }
   
   onSubmit() {
     this.courseService.createCourse(this.course).subscribe({
-      next: (course) => {
-        console.log('superyaaay', course);
+      next: (response) => {
+        console.log('Materia creada correctamente', response);
         this.router.navigate(['/admin-home'])
       },
-      error: (error) => console.error('chale', error)
-    })
+      error: (error) => console.error('Error al crear materia', error)
+    });
   }
 
   onCancel() {
     console.log('ay que menso deberas');
     this.course = {
+      id: 1,
+      majorId: 1,
+      NumberOfSemester: 1,
       name: '',
-      majorCode: 0,
-      code: 0
     }
     this.router.navigate(['/admin-home'])
   }

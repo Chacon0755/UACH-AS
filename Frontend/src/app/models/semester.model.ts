@@ -1,5 +1,4 @@
-export interface Major {
+export interface Semester{
     id: number;
     name: string;
-
 }

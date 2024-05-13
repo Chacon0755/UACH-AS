@@ -1,11 +1,10 @@
 export interface Student {
-    id?: number | null;
+    Schoolid: number | null;
     name: string;
     lastName1: string;
     lastName2: string;
     email: string;
-    major: string;
-    schoolId: number;
-    courses: string[];
+    majorId: string;
+
     role: string;
 }

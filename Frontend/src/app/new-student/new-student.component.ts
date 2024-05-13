@@ -43,15 +43,15 @@ export class NewStudentComponent implements OnInit {
     });
   }
 
-  onMajorChange(): void {
-    if (this.selectedMajorCode) {
-      this.courseService.getCoursesByMajor(this.selectedMajorCode).subscribe(allCourses => {
-        this.courses = allCourses;
-      });
-    } else {
-      this.courses = [];
-    }
-  }
+  // onMajorChange(): void {
+  //   if (this.selectedMajorCode) {
+  //     this.courseService.getCoursesByMajor(this.selectedMajorCode).subscribe(allCourses => {
+  //       this.courses = allCourses;
+  //     });
+  //   } else {
+  //     this.courses = [];
+  //   }
+  // }
 
   onSubmit(): void {
     this.studentService.createStudent(this.student).subscribe({
@@ -60,7 +60,7 @@ export class NewStudentComponent implements OnInit {
         this.router.navigate(['/admin-home'])
       },
       error: (error) => {
-        console.error('no se armo oiga')
+        console.error('no se armo oiga', error)
       }
     });
   }

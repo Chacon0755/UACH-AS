@@ -58,3 +58,7 @@ input[type="text"] {
     background-color: #673ab7; /* Purple color */
     color: white;
 }
+
+.alert.alert-danger{
+    color: red;
+}
