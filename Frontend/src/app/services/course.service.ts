@@ -7,17 +7,20 @@ import { Course } from '../models/course.model';
   providedIn: 'root'
 })
 export class CourseService {
-  private apiUrl = 'http://localhost:3000/data';
+  private apiUrl = 'http://localhost:3000';
 
   constructor(private http: HttpClient) { }
 
-  createCourse(course: Course): Observable<Course>{
-    return this.http.post<Course>(this.apiUrl, course);
+  createCourse(course: Course): Observable<Course> {
+    const payload = {
+      Id_Materias: course.id,
+      N_Carr: course.majorId,
+      N_Sem: course.NumberOfSemester,
+      N_Mat: course.name
+    };
+    return this.http.post<Course>(`${this.apiUrl}/materias`, payload);
   }
-  getCourses(): Observable<Course[]>{
-    return this.http.get<Course[]>(this.apiUrl)
-  }
-  getCoursesByMajor(majorCode: number): Observable<Course[]>{
-    return this.http.get<Course[]>('${this.apiUrl}/courses/byMajor/${majorCode}')
+  getCourses(): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.apiUrl}/materias`)
   }
 }

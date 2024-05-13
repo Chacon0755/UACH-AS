@@ -27,7 +27,7 @@ connection.connect(err => {
 });
 
 // Sirve archivos estáticos desde la carpeta public 
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
 
 // Ruta principal que sirve tu archivo HTML
 // app.get('/', (req, res) => {
@@ -75,12 +75,27 @@ app.delete('/alumnos/:matricula', (req, res) => {
 
 
 // Obtener todas las carreras
-app.get('/carreras', (req, res) => {
+app.get('/carrera', (req, res) => {
   connection.query('SELECT * FROM carrera', (error, results) => {
       if (error) return res.status(500).send(error);
       res.json(results);
   });
 });
+
+
+//Obtener todos los ids de las carreras
+app.get('/carreras/ids', (req, res) => {
+  const query = 'SELECT Id_Carreras FROM carrera';
+  connection.query(query, (error, results) => {
+    if (error) {
+      console.error('Error al obtener los ids de las carreras ', error);
+          return res.status(500).json({ message: 'Error al obtener los IDs de las carreras', error });
+      }
+      const ids = results.map(result => result.Id_Carreras);
+      res.json(ids);
+  });
+});
+
 
 // Insertar una nueva carrera
 app.post('/carrera', (req, res) => {
@@ -96,7 +111,7 @@ app.post('/carrera', (req, res) => {
 });
 
 // Actualizar una carrera
-app.put('/carreras/:id', (req, res) => {
+app.put('/carrera/:id', (req, res) => {
   const { Nombre_Carrera } = req.body;
   const { id } = req.params;
   const query = 'UPDATE carrera SET Nombre_Carrera = ? WHERE Id_Carreras = ?';
@@ -107,7 +122,7 @@ app.put('/carreras/:id', (req, res) => {
 });
 
 // Eliminar una carrera
-app.delete('/carreras/:id', (req, res) => {
+app.delete('/carrera/:id', (req, res) => {
   const { id } = req.params;
   const query = 'DELETE FROM carrera WHERE Id_Carreras = ?';
   connection.query(query, [id], (error, results) => {
@@ -168,8 +183,11 @@ app.post('/materias', (req, res) => {
   const { Id_Materias, N_Carr, N_Sem, N_Mat } = req.body;
   const query = 'INSERT INTO Materias (Id_Materias, N_Carr, N_Sem, N_Mat) VALUES (?, ?, ?, ?)';
   connection.query(query, [Id_Materias, N_Carr, N_Sem, N_Mat], (error, results) => {
-      if (error) return res.status(500).send(error);
-      res.status(201).send('Materia agregada correctamente');
+    if (error) {
+      console.error('Error al insertar carrera ', error)
+      return res.status(500).json({ message: 'Error al agregar carrera', error: error.sqlMessage });
+      }
+      res.status(201).json({message: 'Carrera agregada correctamente', data: results})
   });
 });
 

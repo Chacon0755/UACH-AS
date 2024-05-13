@@ -54,15 +54,15 @@ export class NewTeacherComponent implements OnInit {
       this.allMajors = allMajors;
     })
   }
-  onMajorChange(): void {
-    if (this.selectedMajorCode) {
-      this.courseService.getCoursesByMajor(this.selectedMajorCode).subscribe(allCourses => {
-        this.allCourses = allCourses;
-      });
-    } else {
-      this.allCourses = [];
-    }
-  }
+  // onMajorChange(): void {
+  //   if (this.selectedMajorCode) {
+  //     this.courseService.getCoursesByMajor(this.selectedMajorCode).subscribe(allCourses => {
+  //       this.allCourses = allCourses;
+  //     });
+  //   } else {
+  //     this.allCourses = [];
+  //   }
+  // }
 
   initSchedule(): Schedule {
     let schedule: Schedule = {};

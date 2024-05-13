@@ -22,4 +22,8 @@ export class MajorService {
     return this.http.get<Major[]>(`${this.apiUrl}/carrera`)
   }
 
+  getAllIds(): Observable<number[]>{
+    return this.http.get<number[]>(`${this.apiUrl}/carreras/ids`)
+  }
+
 }

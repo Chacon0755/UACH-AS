@@ -14,14 +14,48 @@ export class NewMajorComponent implements OnInit{
     name: '',
   }
 
-  constructor(private router: Router, private majorService: MajorService) { }
+  existingIds: number[] = [];
+  newId: number = 0;
+  newName: string = '';
+  errorMessage: string = '';
+  showError: boolean = false;
+
+
+  constructor(private router: Router, private majorService: MajorService) { 
+    this.fetchAllIds();
+  }
   
   ngOnInit(): void {
-      console.log('Al iniciar: ', this.major)
+    console.log('Al iniciar: ', this.major);  
+  }
+
+  fetchAllIds(): void {
+    this.majorService.getAllIds().subscribe({
+      next: (ids) => {
+        console.log('Ids obtenidos: ', ids);
+        this.existingIds = ids;
+        console.log('Ids existentes: ', this.existingIds)
+      },
+      error: (error) =>{
+        console.error('Error al obtener los IDs', error.message)
+      }
+    })
   }
 
   onSubmit(): void {
     console.log('Al enviar: ', this.major);
+    this.newId = this.major.id;
+    this.newId = Number(this.newId);
+    console.log('Existing IDs:', this.existingIds); 
+    console.log('New ID:', this.newId);
+    console.log(this.newId);
+    if (this.existingIds.includes(this.newId)) {
+      console.error("El id ya existe");
+      this.errorMessage = 'El ID ya existe. por favor elige otro';
+      this.showError = true;
+      return;
+    }
+    this.showError = false;
     if (!this.major.id || !this.major.name) {
       console.error('ID no proporcionado', this.major.id, ' ',this.major.name);
       return

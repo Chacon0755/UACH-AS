@@ -1,6 +1,6 @@
 export interface Course{
-    id?: number;
+    id: number;
+    majorId: number;
+    NumberOfSemester: number;
     name: string;
-    majorCode: number;
-    code: number;
 }
