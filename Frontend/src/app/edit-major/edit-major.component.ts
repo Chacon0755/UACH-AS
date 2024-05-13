@@ -1,0 +1,79 @@
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { MajorService } from '../services/major.service';
+import { Major } from '../models/major.model';
+
+@Component({
+  selector: 'app-edit-major',
+  templateUrl: './edit-major.component.html',
+  styleUrl: './edit-major.component.css'
+})
+export class EditMajorComponent {
+  major: Major = {
+    id: 0,
+    name: '',
+  }
+
+  existingIds: number[] = [];
+  newId: number = 0;
+  newName: string = '';
+  errorMessage: string = '';
+  showError: boolean = false;
+  allMajors: any[] = [];
+ 
+
+
+  constructor(private router: Router, private majorService: MajorService) { 
+    this.fetchAllIds();
+  }
+  
+  ngOnInit(): void {
+    console.log('Al iniciar: ', this.major);  
+    this.loadMajors()
+  }
+
+  loadMajors() {
+    this.majorService.getMajors().subscribe({
+      next: (allMajors) => {
+        this.allMajors = allMajors
+        console.log(this.allMajors)
+      },
+      error: (error) => console.error('Error cargando Carreras ', error)
+    })
+  }
+
+  fetchAllIds(): void {
+    this.majorService.getAllIds().subscribe({
+      next: (ids) => {
+        console.log('Ids obtenidos: ', ids);
+        this.existingIds = ids;
+        console.log('Ids existentes: ', this.existingIds)
+      },
+      error: (error) =>{
+        console.error('Error al obtener los IDs', error.message)
+      }
+    })
+  }
+
+  onSubmit(): void {
+    this.majorService.createMajor(this.major).subscribe({
+      next: (response) => {
+        console.log('Respuesta del servidor: ', response);
+        this.router.navigate(['/admin-home']);
+      },
+      error: (error) => {
+        console.error('Error al crear carrera: ', error.message);
+      }
+    });
+  }
+
+
+  onCancel() {
+    console.log('bai bai')
+    this.major = {
+      id: 0,
+      name: '',
+    }
+    this.router.navigate(['/admin-home'])
+  }
+}

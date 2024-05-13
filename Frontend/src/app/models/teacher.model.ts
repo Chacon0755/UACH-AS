@@ -8,7 +8,7 @@ export interface Teacher {
     email: string;
     majorId: number;
     courseId: number;
-    schedule: Schedule;
     role: string;
+    profilePicture: string;
 }
 

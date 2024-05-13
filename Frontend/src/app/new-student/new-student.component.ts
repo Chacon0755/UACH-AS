@@ -15,13 +15,14 @@ import { Course } from '../models/course.model';
 })
 export class NewStudentComponent implements OnInit {
   student: Student = {
+    schoolId: 0,
     name: '',
     lastName1: '',
     lastName2: '',
-    email: '',
     majorId: 1,
     numberOfSemester: 1,
-    schoolId: 3,
+    email: '',
+    profilePicture: '',
     role: 'student'
   }
 
@@ -73,14 +74,15 @@ export class NewStudentComponent implements OnInit {
   onCancel() {
     console.log('Cancelao mijo')
     this.student = {
-      name: '',
-      lastName1: '',
-      lastName2: '',
-      email: '',
-      majorId: 0,
-      schoolId: 3,
-      numberOfSemester: 1,
-      role: 'student'
+      schoolId: 0,
+    name: '',
+    lastName1: '',
+    lastName2: '',
+    majorId: 1,
+    numberOfSemester: 1,
+    email: '',
+    profilePicture: '',
+    role: 'student'
     }
     this.router.navigate(['/admin-home'])
   }

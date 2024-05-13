@@ -44,11 +44,14 @@ app.get('/alumnos', (req, res) => {
 
 // Insertar un nuevo alumno
 app.post('/alumnos', (req, res) => {
-  const { matricula, nombre, ape1, ape2, programa, semestre } = req.body;
-  const query = 'INSERT INTO Alumnos (matricula, nombre, ape1, ape2, programa, semestre) VALUES (?, ?, ?, ?, ?, ?)';
-  connection.query(query, [matricula, nombre, ape1, ape2, programa, semestre], (error, results) => {
-      if (error) return res.status(500).send(error);
-      res.status(201).send('Alumno agregado correctamente');
+  const { matricula, nombre, ape1, ape2, programa, semestre, correo, perfil, rol } = req.body;
+  const query = 'INSERT INTO Alumnos (matricula, nombre, ape1, ape2, programa, semestre, correo, perfil, rol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  connection.query(query, [matricula, nombre, ape1, ape2, programa, semestre, correo, perfil, rol], (error, results) => {
+    if (error) {
+      console.error('Error al insertar carrera ', error)
+      return res.status(500).json({ message: 'Error al crear alumno', error: error.sqlMessage });
+      }
+      res.status(201).json({message: 'Alumno creado correctamente', data: results})
   });
 });
 
@@ -234,11 +237,14 @@ app.get('/docentes', (req, res) => {
 
 // Insertar un nuevo docente
 app.post('/docentes', (req, res) => {
-  const { Id_docente, Nombre, Apellido, id_mat_as, id_carrera_mat } = req.body;
-  const query = 'INSERT INTO docentes (Id_docente, Nombre, Apellido, id_mat_as, id_carrera_mat) VALUES (?, ?, ?, ?, ?)';
-  connection.query(query, [Id_docente, Nombre, Apellido, id_mat_as, id_carrera_mat], (error, results) => {
-      if (error) return res.status(500).send(error);
-      res.status(201).send('Docente agregado correctamente');
+  const { Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc } = req.body;
+  const query = 'INSERT INTO docentes (Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  connection.query(query, [Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc], (error, results) => {
+    if (error) {
+      console.error('Error al insertar carrera ', error)
+      return res.status(500).json({ message: 'Error al crear docente', error: error.sqlMessage });
+      }
+      res.status(201).json({message: 'Docente creado correctamente', data: results})
   });
 });
 
