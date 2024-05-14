@@ -26,13 +26,6 @@ connection.connect(err => {
   console.log('Conectado a la base de datos con el ID ' + connection.threadId);
 });
 
-// Sirve archivos estáticos desde la carpeta public 
-// app.use(express.static(path.join(__dirname, 'public')));
-
-// Ruta principal que sirve tu archivo HTML
-// app.get('/', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'public/index.html'));
-// });
 
 // Obtener todos los alumnos
 app.get('/alumnos', (req, res) => {
@@ -48,21 +41,26 @@ app.post('/alumnos', (req, res) => {
   const query = 'INSERT INTO Alumnos (matricula, nombre, ape1, ape2, programa, semestre, correo, perfil, rol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
   connection.query(query, [matricula, nombre, ape1, ape2, programa, semestre, correo, perfil, rol], (error, results) => {
     if (error) {
-      console.error('Error al insertar carrera ', error)
+      console.error('Error al crear alumno ', error)
       return res.status(500).json({ message: 'Error al crear alumno', error: error.sqlMessage });
       }
-      res.status(201).json({message: 'Alumno creado correctamente', data: results})
+    res.status(201).json({ message: 'Alumno creado correctamente', data: results });
+    console.log('Alumno creado correctamente: ', results)
   });
 });
 
 // Actualizar un alumno
 app.put('/alumnos/:matricula', (req, res) => {
-  const { nombre, ape1, ape2, programa, semestre } = req.body;
+  const { nombre, ape1, ape2, programa, semestre, correo, perfil, rol } = req.body;
   const { matricula } = req.params;
-  const query = 'UPDATE Alumnos SET nombre = ?, ape1 = ?, ape2 = ?, programa = ?, semestre = ? WHERE matricula = ?';
-  connection.query(query, [nombre, ape1, ape2, programa, semestre, matricula], (error, results) => {
-      if (error) return res.status(500).send(error);
-      res.send('Alumno actualizado correctamente');
+  const query = 'UPDATE Alumnos SET nombre = ?, ape1 = ?, ape2 = ?, programa = ?, semestre = ?, correo = ?, perfil = ?, rol =?  WHERE matricula = ?';
+  connection.query(query, [nombre, ape1, ape2, programa, semestre, correo, perfil, rol, matricula], (error, results) => {
+    if (error) {
+      console.error('Error al editar alumno ', error)
+      return res.status(500).json({ message: 'Error al editar alumno', error: error.sqlMessage });
+      }
+    res.status(201).json({ message: 'Alumno editado correctamente', data: results });
+    console.log('Alumno editado correctamente: ', results)
   });
 });
 

@@ -29,8 +29,23 @@ export class StudentService {
     }
     return this.http.post<Student>(`${this.apiURL}/alumnos`, payload);
   }
-  getStudent(): Observable<Student[]>{
-    return this.http.get<Student[]>(this.apiURL);
+
+  editStudent(id: number, student: Student): Observable<Student> {
+    const payload = {
+      matricula: student.schoolId,
+      nombre: student.name,
+      ape1: student.lastName1,
+      ape2: student.lastName2,
+      programa: student.majorId,
+      semestre: student.numberOfSemester,
+      correo: student.email,
+      perfil: 'n',
+      rol: 'student'
+    }
+    return this.http.put<Student>(`${this.apiURL}/alumnos/${id}`, payload)
+  }
+  getStudents(): Observable<Student[]>{
+    return this.http.get<Student[]>(`${this.apiURL}/alumnos`);
   }
   getStudentDataById(studentId: number): Observable<Student> {
     return this.http.get<Student>('${this.apiUrl}/${studentId}')

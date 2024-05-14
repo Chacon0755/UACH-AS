@@ -12,6 +12,8 @@ import { AdvisoryRequestStudentComponent } from './advisory-request-student/advi
 import { StudentHomeComponent } from './student-home/student-home.component';
 import { EditMajorComponent } from './edit-major/edit-major.component';
 import { EditCourseComponent } from './edit-course/edit-course.component';
+import { EditStudentComponent } from './edit-student/edit-student.component';
+
 
 
 const routes: Routes = [
@@ -26,7 +28,8 @@ const routes: Routes = [
   { path: 'new-course', component: NewCourseComponent },
   { path: 'advisory-request-student', component: AdvisoryRequestStudentComponent },
   { path: 'edit-major', component: EditMajorComponent },
-  {path: 'edit-course', component: EditCourseComponent},
+  { path: 'edit-course', component: EditCourseComponent },
+  {path: 'edit-student', component: EditStudentComponent},
   
 ];
 
