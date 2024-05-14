@@ -18,6 +18,14 @@ export class MajorService {
     };
     return this.http.post<Major>(`${this.apiUrl}/carrera`, payload);
   }
+
+  editMajor(id: number, major: Major): Observable<any>{
+    const payload = {
+    
+      Nombre_Carrera: major.name
+    }
+    return this.http.put<any>(`${this.apiUrl}/carrera/${id}`, payload)
+  }
   getMajors(): Observable<Major[]>{
     return this.http.get<Major[]>(`${this.apiUrl}/carrera`)
   }

@@ -115,14 +115,19 @@ app.post('/carrera', (req, res) => {
 
 // Actualizar una carrera
 app.put('/carrera/:id', (req, res) => {
-  const { Nombre_Carrera } = req.body;
+  const { Id_Carreras, Nombre_Carrera } = req.body;
   const { id } = req.params;
   const query = 'UPDATE carrera SET Nombre_Carrera = ? WHERE Id_Carreras = ?';
   connection.query(query, [Nombre_Carrera, id], (error, results) => {
-      if (error) return res.status(500).send(error);
-      res.send('Carrera actualizada correctamente');
+    if (error) {
+      console.error('Error al editar carrera ', error)
+      return res.status(500).json({ message: 'Error al editar carrera', error: error.sqlMessage });
+    }
+    res.status(201).json({ message: 'Carrera editada correctamente', data: results });
+    console.log('Carrera editada correctamente: ', results)
   });
 });
+
 
 // Eliminar una carrera
 app.delete('/carrera/:id', (req, res) => {
@@ -200,9 +205,10 @@ app.post('/materias', (req, res) => {
   connection.query(query, [Id_Materias, N_Carr, N_Sem, N_Mat], (error, results) => {
     if (error) {
       console.error('Error al insertar carrera ', error)
-      return res.status(500).json({ message: 'Error al agregar carrera', error: error.sqlMessage });
+      return res.status(500).json({ message: 'Error al agregar materias', error: error.sqlMessage });
       }
-      res.status(201).json({message: 'Carrera agregada correctamente', data: results})
+    res.status(201).json({ message: 'materia agregada correctamente', data: results });
+    console.log('Materia agregada correctamente: ', results)
   });
 });
 
@@ -212,8 +218,12 @@ app.put('/materias/:id', (req, res) => {
   const { id } = req.params;
   const query = 'UPDATE Materias SET N_Carr = ?, N_Sem = ?, N_Mat = ? WHERE Id_Materias = ?';
   connection.query(query, [N_Carr, N_Sem, N_Mat, id], (error, results) => {
-      if (error) return res.status(500).send(error);
-      res.send('Materia actualizada correctamente');
+    if (error) {
+      console.error('Error al  carrera ', error)
+      return res.status(500).json({ message: 'Error al editar materia', error: error.sqlMessage });
+      }
+    res.status(201).json({ message: 'Materia editada correctamente', data: results });
+    console.log('Materia agregada correctamente: ', results);
   });
 });
 

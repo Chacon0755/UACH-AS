@@ -22,6 +22,7 @@ import { AdvisoryRequestStudentComponent } from './advisory-request-student/advi
 import { HttpClientModule } from '@angular/common/http';
 import { StudentHomeComponent } from './student-home/student-home.component';
 import { EditMajorComponent } from './edit-major/edit-major.component';
+import { EditCourseComponent } from './edit-course/edit-course.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { EditMajorComponent } from './edit-major/edit-major.component';
     NewMajorComponent,
     NewCourseComponent,
     AdvisoryRequestStudentComponent,
-    EditMajorComponent
+    EditMajorComponent,
+    EditCourseComponent
   ],
   imports: [
     BrowserModule,

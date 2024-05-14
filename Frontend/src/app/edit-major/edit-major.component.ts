@@ -20,12 +20,9 @@ export class EditMajorComponent {
   errorMessage: string = '';
   showError: boolean = false;
   allMajors: any[] = [];
- 
+  id: number = 0;
 
-
-  constructor(private router: Router, private majorService: MajorService) { 
-    this.fetchAllIds();
-  }
+  constructor(private router: Router, private majorService: MajorService) {}
   
   ngOnInit(): void {
     console.log('Al iniciar: ', this.major);  
@@ -42,21 +39,12 @@ export class EditMajorComponent {
     })
   }
 
-  fetchAllIds(): void {
-    this.majorService.getAllIds().subscribe({
-      next: (ids) => {
-        console.log('Ids obtenidos: ', ids);
-        this.existingIds = ids;
-        console.log('Ids existentes: ', this.existingIds)
-      },
-      error: (error) =>{
-        console.error('Error al obtener los IDs', error.message)
-      }
-    })
-  }
+
 
   onSubmit(): void {
-    this.majorService.createMajor(this.major).subscribe({
+    this.id = this.major.id;
+    console.log('Al enviar: ', this.major.name)
+    this.majorService.editMajor(this.id, this.major).subscribe({
       next: (response) => {
         console.log('Respuesta del servidor: ', response);
         this.router.navigate(['/admin-home']);
