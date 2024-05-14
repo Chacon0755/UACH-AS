@@ -252,18 +252,27 @@ app.post('/docentes', (req, res) => {
       console.error('Error al insertar carrera ', error)
       return res.status(500).json({ message: 'Error al crear docente', error: error.sqlMessage });
       }
-      res.status(201).json({message: 'Docente creado correctamente', data: results})
+    res.status(201).json({ message: 'Docente creado correctamente', data: results })
+    console.log('Docente creado correctamente: ', results);
   });
 });
 
 // Actualizar un docente
 app.put('/docentes/:id', (req, res) => {
-  const { Nombre, Apellido, id_mat_as, id_carrera_mat } = req.body;
-  const { id } = req.params;
-  const query = 'UPDATE docentes SET Nombre = ?, Apellido = ?, id_mat_as = ?, id_carrera_mat = ? WHERE Id_docente = ?';
-  connection.query(query, [Nombre, Apellido, id_mat_as, id_carrera_mat, id], (error, results) => {
-      if (error) return res.status(500).send(error);
-      res.send('Docente actualizado correctamente');
+  const { nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc} = req.body;
+  const { id }    = req.params
+  const query = 'UPDATE docentes SET nombre_doc = ?, Apellido = ?, id_mat_as = ?, id_carrera_mat = ?, correo = ?, apei2 = ?, perfil = ?, rol_doc = ?  WHERE Id_docente = ?';
+  connection.query(query, [nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc, id], (error, results) => {
+    if (error) {
+      console.error('Error al editar docente: ', error)
+      console.error('params: ',req.params)
+      return res.status(500).json({ message: 'Error al editar Docente ', error: error.sqlMessage });
+      }
+    res.status(201).json({ message: 'Docente editado correctamente', data: results });
+    console.log('Docente editado correctamente: ', results);
+    console.log('req.body', req.body);
+    console.log(req.params);
+    // console.log(Id_docente);
   });
 });
 
