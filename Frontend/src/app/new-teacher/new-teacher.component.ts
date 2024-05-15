@@ -24,8 +24,8 @@ export class NewTeacherComponent implements OnInit {
     email: '',
     majorId:0,
     courseId: 0,
-    schedule: {},
-    role: 'teacher'
+    role: 'teacher',
+    profilePicture: ''
 
   };
 
@@ -48,7 +48,7 @@ export class NewTeacherComponent implements OnInit {
   ngOnInit(): void{
     // this.loadCourses();
     this.loadMajors();
-    this.teacher.schedule = this.initSchedule();
+    // this.teacher.schedule = this.initSchedule();
   }
   // loadCourses() {
   //   this.courseService.getCourses().subscribe({
@@ -103,30 +103,30 @@ export class NewTeacherComponent implements OnInit {
     }
     return schedule;
 }
-  getScheduleValue(day: WeekDay, time: string): boolean {
-    if (!this.teacher.schedule[day]) {
-      this.teacher.schedule[day] = {};
-    }
-    if (this.teacher.schedule[day]![time] === undefined) {
-      this.teacher.schedule[day]![time] = false; 
-    }
-    return this.teacher.schedule[day]![time];
-  }
+  // getScheduleValue(day: WeekDay, time: string): boolean {
+  //   if (!this.teacher.schedule[day]) {
+  //     this.teacher.schedule[day] = {};
+  //   }
+  //   if (this.teacher.schedule[day]![time] === undefined) {
+  //     this.teacher.schedule[day]![time] = false; 
+  //   }
+  //   return this.teacher.schedule[day]![time];
+  // }
   
-  setScheduleValue(day: WeekDay, time: string, value: boolean): void {
-    if (!this.teacher.schedule[day]) {
-      this.teacher.schedule[day] = {};
-    }
-    this.teacher.schedule[day]![time] = value;
-  }
+  // setScheduleValue(day: WeekDay, time: string, value: boolean): void {
+  //   if (!this.teacher.schedule[day]) {
+  //     this.teacher.schedule[day] = {};
+  //   }
+  //   this.teacher.schedule[day]![time] = value;
+  // }
 
   onSubmit(): void {
     this.teacherService.createTeacher(this.teacher).subscribe({
-      next: (teacher) => {
-        console.log('Si se armo ', teacher);
+      next: (response) => {
+        console.log('Si se armo ', response);
         this.router.navigate(['/admin-home']);
       },
-      error: (error) => console.error('pos no se pudo ', error)
+      error: (error) => console.error('Error al crear profesor ', error)
     });
   }
 
@@ -140,8 +140,8 @@ export class NewTeacherComponent implements OnInit {
       email: '',
       majorId: 0,
       courseId: 0,
-      schedule: this.initSchedule(),
-      role: 'teacher'
+      role: 'teacher',
+      profilePicture: '',
     };
     this.router.navigate(['/admin-home'])
   }

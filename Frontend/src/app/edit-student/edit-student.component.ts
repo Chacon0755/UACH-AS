@@ -8,12 +8,13 @@ import { Student } from '../models/student.model';
 import { Major } from '../models/major.model';
 import { Course } from '../models/course.model';
 
+
 @Component({
-  selector: 'app-new-student',
-  templateUrl: './new-student.component.html',
-  styleUrl: './new-student.component.css'
+  selector: 'app-edit-student',
+  templateUrl: './edit-student.component.html',
+  styleUrl: './edit-student.component.css'
 })
-export class NewStudentComponent implements OnInit {
+export class EditStudentComponent {
   student: Student = {
     schoolId: 0,
     name: '',
@@ -28,17 +29,18 @@ export class NewStudentComponent implements OnInit {
 
   allMajors: any[] = [];
   allSemesters: any[] = [];
+  allStudents: any[] = [];
 
-  // selectedMajorCode: number | null = null;
 
   constructor(private router: Router, private studentService: StudentService, private majorService: MajorService, private courseService: CourseService, private semesterService: SemesterService){}
 
   ngOnInit(): void {
     this.loadMajors();
     this.loadSemesters();
+    this.loadStudents();
   }
 
-  loadMajors() {
+  loadMajors(): void {
     this.majorService.getMajors().subscribe({
       next: (allMajors) => {
         this.allMajors = allMajors
@@ -48,7 +50,7 @@ export class NewStudentComponent implements OnInit {
     })
   }
 
-  loadSemesters() {
+  loadSemesters(): void {
     this.semesterService.getSemesters().subscribe({
       next: (allSemesters) => {
         this.allSemesters = allSemesters
@@ -58,15 +60,25 @@ export class NewStudentComponent implements OnInit {
     })
   }
 
+  loadStudents(): void {
+    this.studentService.getStudents().subscribe({
+      next: (allStudents) => {
+        this.allStudents = allStudents;
+        console.log('Estudiantes: ', this.allStudents)
+      },
+      error: (error) => console.error('Error cargando estudiantes: ', error)
+    });
+  }
+
 
   onSubmit(): void {
-    this.studentService.createStudent(this.student).subscribe({
+    this.studentService.editStudent(this.student.schoolId, this.student).subscribe({
       next: (response) => {
-        console.log('Estudiante creado correctamente', response);
+        console.log('Estudiante editado correctamente', response);
         this.router.navigate(['/admin-home'])
       },
       error: (error) => {
-        console.error('Error al crear estudiante', error)
+        console.error('Error al editar estudiante', error)
       }
     });
   }
@@ -75,14 +87,14 @@ export class NewStudentComponent implements OnInit {
     console.log('Cancelao mijo')
     this.student = {
       schoolId: 0,
-    name: '',
-    lastName1: '',
-    lastName2: '',
-    majorId: 1,
-    numberOfSemester: 1,
-    email: '',
-    profilePicture: '',
-    role: 'student'
+      name: '',
+      lastName1: '',
+      lastName2: '',
+      majorId: 1,
+      numberOfSemester: 1,
+      email: '',
+      profilePicture: '',
+      role: 'student'
     }
     this.router.navigate(['/admin-home'])
   }

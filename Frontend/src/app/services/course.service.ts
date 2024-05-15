@@ -20,6 +20,16 @@ export class CourseService {
     };
     return this.http.post<Course>(`${this.apiUrl}/materias`, payload);
   }
+
+  editCourse(id: number, course: Course):Observable<Course> {
+    const payload = {
+      Id_Materias: course.id,
+      N_Carr: course.majorId,
+      N_Sem: course.NumberOfSemester,
+      N_Mat: course.name
+    };
+    return this.http.put<Course>(`${this.apiUrl}/materias/${id}`, payload)
+  }
   getCourses(): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.apiUrl}/materias`)
   }
@@ -27,4 +37,6 @@ export class CourseService {
   getCoursesByMajor(majorId: number): Observable<Course[]> {
     return this.http.get<Course[]>(`${this.apiUrl}/materias/${majorId}`);
   }
+
+  
 }

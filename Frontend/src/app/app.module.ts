@@ -21,6 +21,13 @@ import { NewCourseComponent } from './new-course/new-course.component';
 import { AdvisoryRequestStudentComponent } from './advisory-request-student/advisory-request-student.component' 
 import { HttpClientModule } from '@angular/common/http';
 import { StudentHomeComponent } from './student-home/student-home.component';
+import { EditMajorComponent } from './edit-major/edit-major.component';
+import { EditCourseComponent } from './edit-course/edit-course.component';
+import { EditStudentComponent } from './edit-student/edit-student.component';
+import { EditTeacherComponent } from './edit-teacher/edit-teacher.component';
+import { ViewTeacherComponent } from './view-teacher/view-teacher.component';
+import {MatTableModule} from '@angular/material/table';
+import { ViewStudentComponent } from './view-student/view-student.component'
 
 @NgModule({
   declarations: [
@@ -33,7 +40,14 @@ import { StudentHomeComponent } from './student-home/student-home.component';
     NewStudentComponent,
     NewMajorComponent,
     NewCourseComponent,
-    AdvisoryRequestStudentComponent
+    AdvisoryRequestStudentComponent,
+    EditMajorComponent,
+    EditCourseComponent,
+    EditStudentComponent,
+    EditTeacherComponent,
+    ViewTeacherComponent,
+    ViewStudentComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -46,6 +60,7 @@ import { StudentHomeComponent } from './student-home/student-home.component';
     MatMenuModule,
     ReactiveFormsModule,
     HttpClientModule,
+    MatTableModule,
   ],
   providers: [
     provideAnimationsAsync()

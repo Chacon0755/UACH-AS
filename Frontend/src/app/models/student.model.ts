@@ -3,8 +3,9 @@ export interface Student {
     name: string;
     lastName1: string;
     lastName2: string;
-    email: string;
     majorId: number;
     numberOfSemester: number;
+    email: string;
+    profilePicture: string;
     role: string;
 }
