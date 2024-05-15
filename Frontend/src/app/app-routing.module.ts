@@ -15,6 +15,7 @@ import { EditCourseComponent } from './edit-course/edit-course.component';
 import { EditStudentComponent } from './edit-student/edit-student.component';
 import { EditTeacherComponent } from './edit-teacher/edit-teacher.component';
 import { ViewTeacherComponent } from './view-teacher/view-teacher.component';
+import { ViewStudentComponent } from './view-student/view-student.component';
 
 
 const routes: Routes = [
@@ -32,7 +33,8 @@ const routes: Routes = [
   { path: 'edit-course', component: EditCourseComponent },
   { path: 'edit-student', component: EditStudentComponent },
   { path: 'edit-teacher', component: EditTeacherComponent },
-  {path: 'view-teacher', component: ViewTeacherComponent},
+  { path: 'view-teacher', component: ViewTeacherComponent},
+  { path: 'view-student', component: ViewStudentComponent },
   
 ];
 

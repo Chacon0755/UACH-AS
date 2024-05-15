@@ -29,9 +29,18 @@ connection.connect(err => {
 
 // Obtener todos los alumnos
 app.get('/alumnos', (req, res) => {
-  connection.query('SELECT * FROM Alumnos', (error, results) => {
-      if (error) return res.status(500).send(error);
+  connection.query('SELECT * FROM alumnos', (error, results) => {
+    if (error) return res.status(500).send(error);
       res.json(results);
+  });
+});
+app.get('/alumnos/carrera', (req, res) => {
+  const query = 'SELECT alumnos. *, carrera.Nombre_Carrera as nombre_carrera FROM alumnos JOIN carrera ON alumnos.programa = carrera.Id_Carreras';
+  connection.query(query, (error, results) => {
+    if (error) {
+      return res.status(500).send(error);
+    }
+    res.json(results);
   });
 });
 

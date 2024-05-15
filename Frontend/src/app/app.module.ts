@@ -26,7 +26,8 @@ import { EditCourseComponent } from './edit-course/edit-course.component';
 import { EditStudentComponent } from './edit-student/edit-student.component';
 import { EditTeacherComponent } from './edit-teacher/edit-teacher.component';
 import { ViewTeacherComponent } from './view-teacher/view-teacher.component';
-import {MatTableModule} from '@angular/material/table'
+import {MatTableModule} from '@angular/material/table';
+import { ViewStudentComponent } from './view-student/view-student.component'
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import {MatTableModule} from '@angular/material/table'
     EditStudentComponent,
     EditTeacherComponent,
     ViewTeacherComponent,
+    ViewStudentComponent,
 
   ],
   imports: [
