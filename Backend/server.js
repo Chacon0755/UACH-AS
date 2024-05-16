@@ -37,7 +37,7 @@ app.get('/alumnos', (req, res) => {
 
 //Obtener alumnos y nombre de carrera`
 app.get('/alumnos/carrera', (req, res) => {
-  const query = 'SELECT alumnos. *, carrera.Nombre_Carrera as nombre_carrera FROM alumnos JOIN carrera ON alumnos.programa = carrera.Id_Carreras';
+  const query = 'SELECT alumnos. *, carrera.Nombre_Carrera as nombre_carrera, semestre.sem as nombre_semestre FROM alumnos JOIN carrera ON alumnos.programa = carrera.Id_Carreras JOIN semestre ON alumnos.semestre = semestre.id';
   connection.query(query, (error, results) => {
     if (error) {
       return res.status(500).send(error);
