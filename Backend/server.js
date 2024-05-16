@@ -34,6 +34,8 @@ app.get('/alumnos', (req, res) => {
       res.json(results);
   });
 });
+
+//Obtener alumnos y nombre de carrera`
 app.get('/alumnos/carrera', (req, res) => {
   const query = 'SELECT alumnos. *, carrera.Nombre_Carrera as nombre_carrera FROM alumnos JOIN carrera ON alumnos.programa = carrera.Id_Carreras';
   connection.query(query, (error, results) => {
@@ -190,6 +192,15 @@ app.get('/materias', (req, res) => {
   connection.query('SELECT * FROM Materias', (error, results) => {
       if (error) return res.status(500).send(error);
       res.json(results);
+  });
+});
+
+//Obtener materias y nombre de carrera
+app.get('/materias/carreras', (req, res) => {
+  const query = 'SELECT materias.*, carrera.Nombre_Carrera as nombre_carrera, semestre.sem as nombre_semestre FROM materias JOIN carrera ON materias.N_Carr = carrera.Id_Carreras JOIN semestre ON materias.N_Sem = semestre.id';
+  connection.query(query, (error, results) => {
+    if (error) return res.status(500).send(error);
+    res.json(results)
   });
 });
 

@@ -28,6 +28,7 @@ import { ViewTeacherComponent } from './view-teacher/view-teacher.component';
 import {MatTableModule} from '@angular/material/table';
 import { ViewStudentComponent } from './view-student/view-student.component';
 import { ViewMajorComponent } from './view-major/view-major.component';
+import { ViewCourseComponent } from './view-course/view-course.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { ViewMajorComponent } from './view-major/view-major.component';
     ViewTeacherComponent,
     ViewStudentComponent,
     ViewMajorComponent,
+    ViewCourseComponent,
 
   ],
   imports: [
