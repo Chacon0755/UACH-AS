@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
@@ -27,7 +26,8 @@ import { EditStudentComponent } from './edit-student/edit-student.component';
 import { EditTeacherComponent } from './edit-teacher/edit-teacher.component';
 import { ViewTeacherComponent } from './view-teacher/view-teacher.component';
 import {MatTableModule} from '@angular/material/table';
-import { ViewStudentComponent } from './view-student/view-student.component'
+import { ViewStudentComponent } from './view-student/view-student.component';
+import { ViewMajorComponent } from './view-major/view-major.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +47,7 @@ import { ViewStudentComponent } from './view-student/view-student.component'
     EditTeacherComponent,
     ViewTeacherComponent,
     ViewStudentComponent,
+    ViewMajorComponent,
 
   ],
   imports: [

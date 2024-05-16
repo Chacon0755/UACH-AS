@@ -16,7 +16,7 @@ import { EditStudentComponent } from './edit-student/edit-student.component';
 import { EditTeacherComponent } from './edit-teacher/edit-teacher.component';
 import { ViewTeacherComponent } from './view-teacher/view-teacher.component';
 import { ViewStudentComponent } from './view-student/view-student.component';
-
+import { ViewMajorComponent } from './view-major/view-major.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -35,7 +35,8 @@ const routes: Routes = [
   { path: 'edit-teacher', component: EditTeacherComponent },
   { path: 'view-teacher', component: ViewTeacherComponent},
   { path: 'view-student', component: ViewStudentComponent },
-  
+  { path: 'view-major', component: ViewMajorComponent},
+
 ];
 
 @NgModule({
