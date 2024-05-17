@@ -48,9 +48,9 @@ app.get('/alumnos/carrera', (req, res) => {
 
 // Insertar un nuevo alumno
 app.post('/alumnos', (req, res) => {
-  const { matricula, nombre, ape1, ape2, programa, semestre, correo, perfil, rol } = req.body;
-  const query = 'INSERT INTO Alumnos (matricula, nombre, ape1, ape2, programa, semestre, correo, perfil, rol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-  connection.query(query, [matricula, nombre, ape1, ape2, programa, semestre, correo, perfil, rol], (error, results) => {
+  const { matricula, nombre, ape1, ape2, programa, semestre, correo, perfil, rol, Contra_alum } = req.body;
+  const query = 'INSERT INTO Alumnos (matricula, nombre, ape1, ape2, programa, semestre, correo, perfil, rol, Contra_alum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  connection.query(query, [matricula, nombre, ape1, ape2, programa, semestre, correo, perfil, rol, Contra_alum], (error, results) => {
     if (error) {
       console.error('Error al crear alumno ', error)
       return res.status(500).json({ message: 'Error al crear alumno', error: error.sqlMessage });
@@ -80,8 +80,12 @@ app.delete('/alumnos/:matricula', (req, res) => {
   const { matricula } = req.params;
   const query = 'DELETE FROM Alumnos WHERE matricula = ?';
   connection.query(query, [matricula], (error, results) => {
-      if (error) return res.status(500).send(error);
-      res.send('Alumno eliminado correctamente');
+    if (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Error al eliminar alumno', error: error.sqlMessage });
+    }
+      res.status(201).json({ message: 'Alumno eliminado correctamente', data: results });
+    console.log('Alumno eliminado correctamente: ', results)
   });
 });
 
@@ -237,22 +241,46 @@ app.put('/materias/:id', (req, res) => {
   const query = 'UPDATE Materias SET N_Carr = ?, N_Sem = ?, N_Mat = ? WHERE Id_Materias = ?';
   connection.query(query, [N_Carr, N_Sem, N_Mat, id], (error, results) => {
     if (error) {
-      console.error('Error al  carrera ', error)
+      console.error('Error al editar carrera ', error)
       return res.status(500).json({ message: 'Error al editar materia', error: error.sqlMessage });
       }
     res.status(201).json({ message: 'Materia editada correctamente', data: results });
-    console.log('Materia agregada correctamente: ', results);
+    console.log('Materia editada correctamente: ', results);
   });
 });
 
 // Eliminar una materia
 app.delete('/materias/:id', (req, res) => {
   const { id } = req.params;
-  const query = 'DELETE FROM Materias WHERE Id_Materias = ?';
-  connection.query(query, [id], (error, results) => {
-      if (error) return res.status(500).send(error);
-      res.send('Materia eliminada correctamente');
+  const updateDocentes = new Promise((resolve, reject) => {
+    const updateDocentesQuery = 'UPDATE docentes SET id_mat_as = 0 WHERE id_mat_as = ?';
+  connection.query(updateDocentesQuery, [id], (error, results) => {
+    if (error) {
+      console.error(error);
+      return reject({ message: 'Error al actualizar docentes relacionados', error: error.sqlMessage });
+    }
+    resolve(results);
+    console.log('Docentes relacionados actualizados correctamente: ', results)
   });
+  });
+
+  const deleteMaterias = new Promise((resolve, reject) => {
+    const query = 'DELETE FROM Materias WHERE Id_Materias = ?';
+    connection.query(query, [id], (error, results) => {
+      if (error) {
+        console.error(error);
+        return reject({ message: 'Error al eliminar materia', error: error.sqlMessage });
+      }
+      resolve(results);
+      console.log('Materia eliminada correctamente: ', results)
+    });
+  });
+  updateDocentes.then(() => deleteMaterias).then((results) => {
+      res.status(200).json({ message: 'Materia eliminada correctamente y docentes actualizados', data: results });
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
 });
 
 // Obtener todos los docentes
@@ -265,11 +293,12 @@ app.get('/docentes', (req, res) => {
 
 // Insertar un nuevo docente
 app.post('/docentes', (req, res) => {
-  const { Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc } = req.body;
-  const query = 'INSERT INTO docentes (Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-  connection.query(query, [Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc], (error, results) => {
+  const { Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc, contra_docente} = req.body;
+  const query = 'INSERT INTO docentes (Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc, contra_docente) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  connection.query(query, [Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc, contra_docente], (error, results) => {
     if (error) {
-      console.error('Error al insertar carrera ', error)
+      console.error({ Contra_docente })
+      console.error('Error al insertar docente ', error)
       return res.status(500).json({ message: 'Error al crear docente', error: error.sqlMessage });
       }
     res.status(201).json({ message: 'Docente creado correctamente', data: results })
@@ -301,8 +330,12 @@ app.delete('/docentes/:id', (req, res) => {
   const { id } = req.params;
   const query = 'DELETE FROM docentes WHERE Id_docente = ?';
   connection.query(query, [id], (error, results) => {
-      if (error) return res.status(500).send(error);
-      res.send('Docente eliminado correctamente');
+    if (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Error al eliminar alumno', error: error.sqlMessage });
+    }
+      res.status(201).json({ message: 'Alumno eliminado correctamente', data: results });
+      console.log('Alumno eliminado correctamente: ', results)
   });
 });
 

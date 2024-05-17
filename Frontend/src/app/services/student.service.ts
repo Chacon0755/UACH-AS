@@ -14,8 +14,8 @@ export class StudentService {
   constructor(private http: HttpClient, private utilitiesService: UtilitiesService) { }
 
   createStudent(student: Student): Observable<Student> {
-    // const password = this.utilitiesService.createPassword();
-    // const studentWithPassword = { ...student, password }
+    const password = this.utilitiesService.createPassword();
+    
     const payload = {
       matricula: student.schoolId,
       nombre: student.name,
@@ -25,7 +25,8 @@ export class StudentService {
       semestre: student.numberOfSemester,
       correo: student.email,
       perfil: '',
-      rol: 'student'
+      rol: 'student',
+      Contra_alum: password
     }
     return this.http.post<Student>(`${this.apiURL}/alumnos`, payload);
   }
@@ -52,6 +53,10 @@ export class StudentService {
   }
   getStudentsAndMajorName(): Observable<Student[]>{
     return this.http.get<Student[]>(`${this.apiURL}/alumnos/carrera`);
+  }
+
+  deleteStudent(studentId: number): Observable<void>{
+    return this.http.delete<void>(`${this.apiURL}/alumnos/${studentId}`)
   }
 
 }

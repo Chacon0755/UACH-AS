@@ -25,8 +25,8 @@ export class EditTeacherComponent {
     majorId:0,
     courseId: 0,
     role: 'teacher',
-    profilePicture: ''
-
+    profilePicture: '',
+    password: '',
   };
 
   allMajors: any[] = [];
@@ -100,7 +100,20 @@ export class EditTeacherComponent {
       courseId: 0,
       role: 'teacher',
       profilePicture: '',
+      password: '',
     };
     this.router.navigate(['/admin-home'])
+  }
+  
+  onDelete(): void{
+    this.teacherService.deleteTeacher(this.teacher.id).subscribe({
+      next: (response) => {
+        console.log('Docente eliminado correctamente ', response);
+        this.router.navigate(['/admin-home'])
+      },
+      error: (error) => {
+        console.error('Error al eliminar docente ', error.message)
+      }
+    });
   }
 }

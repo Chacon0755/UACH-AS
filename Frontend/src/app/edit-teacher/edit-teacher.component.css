@@ -87,6 +87,7 @@ input[type="checkbox"] {
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
+    margin: 20px;
     transition: background-color 0.3s ease;
 }
 
@@ -99,6 +100,11 @@ input[type="checkbox"] {
     background-color: #ccc;
     color: white;
     margin-right: 10px;
+}
+
+.btn.delete{
+    background-color: red;
+    color: #fff;
 }
 
 .btn:hover {

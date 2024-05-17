@@ -55,6 +55,11 @@ input[type="text"], select {
     color: white;
 }
 
+.btn.delete{
+    background-color: red;
+    color: #fff;
+}
+
 .btn.save {
     background-color: #673ab7; /* Purple color */
     color: white;

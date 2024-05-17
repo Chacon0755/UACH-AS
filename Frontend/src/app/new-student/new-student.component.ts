@@ -23,7 +23,8 @@ export class NewStudentComponent implements OnInit {
     numberOfSemester: 1,
     email: '',
     profilePicture: '',
-    role: 'student'
+    role: 'student',
+    password: ''
   }
 
   allMajors: any[] = [];
@@ -82,7 +83,8 @@ export class NewStudentComponent implements OnInit {
     numberOfSemester: 1,
     email: '',
     profilePicture: '',
-    role: 'student'
+      role: 'student',
+    password: ''
     }
     this.router.navigate(['/admin-home'])
   }

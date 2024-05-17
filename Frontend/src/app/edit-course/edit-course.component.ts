@@ -88,4 +88,16 @@ export class EditCourseComponent {
     }
     this.router.navigate(['/admin-home'])
   }
+
+  onDelete(): void {
+    this.courseService.deleteCourse(this.course.id).subscribe({
+      next: (response) => {
+        console.log('Materia eliminada correctamente', response);
+        this.router.navigate(['/admin-home'])
+      },
+      error: (error) => {
+        console.error('Error al eliminar materia', error.message)
+      }
+    })
+  }
 }

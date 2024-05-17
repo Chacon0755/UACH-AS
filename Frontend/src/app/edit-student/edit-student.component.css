@@ -57,10 +57,11 @@ mat-form-field.mat-form-field {
 
 }
 
-.button-group {
+/* .button-group {
     text-align: right;
-    margin-top: 20px;
-}
+
+    margin-right: 20px;
+} */
 
 .btn {
     padding: 10px 20px;
@@ -69,6 +70,7 @@ mat-form-field.mat-form-field {
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.3s ease;
+    margin: 20px;
 }
 
 .btn.save {
@@ -80,6 +82,11 @@ mat-form-field.mat-form-field {
     background-color: #ccc;
     color: white;
     margin-right: 10px;
+}
+
+.btn.delete{
+    background-color: red;
+    color: #fff;
 }
 
 .btn:hover {

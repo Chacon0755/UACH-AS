@@ -8,4 +8,5 @@ export interface Student {
     email: string;
     profilePicture: string;
     role: string;
+    password: string;
 }

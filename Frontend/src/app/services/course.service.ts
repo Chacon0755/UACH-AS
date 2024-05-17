@@ -42,5 +42,9 @@ export class CourseService {
     return this.http.get<Course[]>(`${this.apiUrl}/materias/carreras`)
   }
 
+  deleteCourse(courseId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/materias/${courseId}`)
+  }
+
   
 }

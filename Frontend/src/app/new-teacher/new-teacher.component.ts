@@ -25,8 +25,8 @@ export class NewTeacherComponent implements OnInit {
     majorId:0,
     courseId: 0,
     role: 'teacher',
-    profilePicture: ''
-
+    profilePicture: '',
+    password: ''
   };
 
   allMajors: any[] = [];
@@ -142,6 +142,7 @@ export class NewTeacherComponent implements OnInit {
       courseId: 0,
       role: 'teacher',
       profilePicture: '',
+      password: ''
     };
     this.router.navigate(['/admin-home'])
   }

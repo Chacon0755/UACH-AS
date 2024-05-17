@@ -10,5 +10,6 @@ export interface Teacher {
     courseId: number;
     role: string;
     profilePicture: string;
+    password: string;
 }
 

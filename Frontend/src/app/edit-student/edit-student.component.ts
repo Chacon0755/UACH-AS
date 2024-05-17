@@ -24,7 +24,8 @@ export class EditStudentComponent {
     numberOfSemester: 1,
     email: '',
     profilePicture: '',
-    role: 'student'
+    role: 'student',
+    password: ''
   }
 
   allMajors: any[] = [];
@@ -94,8 +95,21 @@ export class EditStudentComponent {
       numberOfSemester: 1,
       email: '',
       profilePicture: '',
-      role: 'student'
+      role: 'student',
+      password: ''
     }
     this.router.navigate(['/admin-home'])
   }
-}
+  onDelete(): void {
+    this.studentService.deleteStudent(this.student.schoolId).subscribe({
+      next: (response) => {
+        console.log('Estudiante eliminado correctamente', response);
+        this.router.navigate(['/admin-home'])
+      },
+      error: (error) => {
+        console.error('Error al eliminar estudiante', error.message)
+      }
+    });
+    }
+  }
+

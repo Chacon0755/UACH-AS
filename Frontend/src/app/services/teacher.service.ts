@@ -13,6 +13,7 @@ export class TeacherService {
   constructor(private http: HttpClient, private utilitiesService: UtilitiesService) { }
   
   createTeacher(teacher: Teacher): Observable<Teacher> {
+    const password = this.utilitiesService.createPassword();
     const payload = {
       Id_docente: teacher.id,
       nombre_doc: teacher.name,
@@ -22,10 +23,10 @@ export class TeacherService {
       correo: teacher.email,
       apei2: teacher.lastName2,
       perfil: 'n',
-      rol_doc: 'teacher'
+      rol_doc: 'teacher',
+      contra_docente: password
     }
-    // const password = this.utilitiesService.createPassword();
-    // const teacherWithPassword = {...teacher, password}
+    console.log(password)
     return this.http.post<Teacher>(`${this.apiUrl}/docentes`, payload);
   }
 
@@ -51,5 +52,9 @@ export class TeacherService {
   }
   getTeacherDataById(teacherId: number): Observable<Teacher>{
     return this.http.get<Teacher>('${this.apiUrl}/${teacherId}')
+  }
+
+  deleteTeacher(teacherId: number): Observable<void>{
+    return this.http.delete<void>(`${this.apiUrl}/docentes/${teacherId}`)
   }
 }
