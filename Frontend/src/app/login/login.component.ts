@@ -18,13 +18,16 @@ export class LoginComponent {
     this.authService.login(this.username, this.password).subscribe({
       next: (response) => {
         this.authService.saveToken(response.token);
-        console.log(response.token)
+        console.log('Token: ', response.token)
 
         const payload = JSON.parse(atob(response.token.split('.')[1]));
         const role = payload.role;
+        console.log('rol: ', role)
+        console.log('getToken(): ',this.authService.getToken());
 
         if (role === 'admin') {
-          this.router.navigate(['admin-home']);
+          console.log('si se logro')
+          this.router.navigate(['/admin-home']);
         } else if (role === 'student') {
           this.router.navigate(['/student-home']);
         } else if (role === 'teacher') {

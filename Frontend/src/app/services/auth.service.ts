@@ -12,7 +12,7 @@ export class AuthService {
   
   login(email: string, password: string): Observable<any> {
     console.log(email, password)
-    return this.http.post(`${this.apiUrl}/login`, { email, password });
+    return this.http.post<{token: string}>(`${this.apiUrl}/login`, { email, password });
   }
 
   saveToken(token: string): void {
@@ -21,7 +21,9 @@ export class AuthService {
 
   getToken(): string {
     const token = localStorage.getItem('token');
+    console.log('funcion: getToken(): ',token);
     if (token === null) {
+      console.log('sin token guardado')
       throw new Error('No token found in localStorage');
     }
     return token
@@ -29,5 +31,11 @@ export class AuthService {
 
   removeToken(): void {
     localStorage.removeItem('token')
+  }
+
+  isLoggedIn(): boolean {
+    const token = this.getToken()
+    console.log('is Logged in: ', !!token);
+    return !!token;
   }
 }

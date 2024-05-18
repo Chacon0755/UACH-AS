@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { AdminHomeComponent } from './admin-home/admin-home.component';
 import { TeacherHomeComponent } from './teacher-home/teacher-home.component';
-// import { authGuard } from './auth.guard';
+import { authGuard } from './auth.guard';
 import { NewTeacherComponent } from './new-teacher/new-teacher.component';
 import { NewStudentComponent } from './new-student/new-student.component';
 import { NewMajorComponent } from './new-major/new-major.component';
@@ -23,25 +23,25 @@ import { ViewCourseComponent } from './view-course/view-course.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: 'admin-home', component: AdminHomeComponent, canActivate: [authGuard]},
+  { path: 'student-home', component: StudentHomeComponent, canActivate: [authGuard]},
+  { path: 'teacher-home', component: TeacherHomeComponent, canActivate: [authGuard]},
+  { path: 'new-teacher', component: NewTeacherComponent, canActivate: [authGuard]},
+  { path: 'new-student', component: NewStudentComponent, canActivate: [authGuard]},
+  { path: 'new-major', component: NewMajorComponent, canActivate: [authGuard]},
+  { path: 'new-course', component: NewCourseComponent, canActivate: [authGuard]},
+  {path: 'new-admin', component: NewAdminComponent, canActivate: [authGuard]},
+  { path: 'advisory-request-student', component: AdvisoryRequestStudentComponent, canActivate: [authGuard]},
+  { path: 'edit-major', component: EditMajorComponent, canActivate: [authGuard]},
+  { path: 'edit-course', component: EditCourseComponent, canActivate: [authGuard]},
+  { path: 'edit-student', component: EditStudentComponent, canActivate: [authGuard]},
+  { path: 'edit-teacher', component: EditTeacherComponent, canActivate: [authGuard]},
+  { path: 'view-teacher', component: ViewTeacherComponent, canActivate: [authGuard]},
+  { path: 'view-student', component: ViewStudentComponent, canActivate: [authGuard]},
+  { path: 'view-major', component: ViewMajorComponent, canActivate: [authGuard]},
+  { path: 'view-course', component: ViewCourseComponent, canActivate: [authGuard]},
   { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: 'admin-home', component: AdminHomeComponent},
-  { path: 'student-home', component: StudentHomeComponent},
-  { path: 'teacher-home', component: TeacherHomeComponent },
-  { path: 'new-teacher', component: NewTeacherComponent },
-  { path: 'new-student', component: NewStudentComponent },
-  { path: 'new-major', component: NewMajorComponent },
-  { path: 'new-course', component: NewCourseComponent },
-  {path: 'new-admin', component: NewAdminComponent},
-  { path: 'advisory-request-student', component: AdvisoryRequestStudentComponent },
-  { path: 'edit-major', component: EditMajorComponent },
-  { path: 'edit-course', component: EditCourseComponent },
-  { path: 'edit-student', component: EditStudentComponent },
-  { path: 'edit-teacher', component: EditTeacherComponent },
-  { path: 'view-teacher', component: ViewTeacherComponent},
-  { path: 'view-student', component: ViewStudentComponent },
-  { path: 'view-major', component: ViewMajorComponent},
-  { path: 'view-course', component: ViewCourseComponent },
-  
+  {path: '**', redirectTo: '/login'},
 ];
 
 @NgModule({
