@@ -16,7 +16,8 @@ export class NewAdminComponent {
     name: '',
     lastName1: '',
     lastName2: '',
-    rol: ''
+    rol: '',
+    profilePicture: '',
   }
   constructor(private router: Router, private adminService: AdminService) { }
   
@@ -43,7 +44,8 @@ export class NewAdminComponent {
     name: '',
     lastName1: '',
     lastName2: '',
-    rol: ''
+      rol: '',
+    profilePicture: '',
     }
     this.router.navigate(['admin-home'])
   }

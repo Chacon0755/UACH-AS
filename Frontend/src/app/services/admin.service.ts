@@ -21,7 +21,8 @@ export class AdminService {
       nombre: admin.name,
       apellido1: admin.lastName1,
       apellido2: admin.lastName2,
-      rol: 'admin'
+      rol: 'admin',
+      perfil: 'n'
     }
     console.log(password);
     return this.http.post<Admin>(`${this.apiUrl}/admin`, payload)

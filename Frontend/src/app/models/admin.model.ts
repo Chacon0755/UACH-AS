@@ -6,4 +6,5 @@ export interface Admin {
     lastName1: string;
     lastName2: string;
     rol: string;
+    profilePicture: string;
 }
