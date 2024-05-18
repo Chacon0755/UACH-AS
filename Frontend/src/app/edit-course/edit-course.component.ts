@@ -98,6 +98,6 @@ export class EditCourseComponent {
       error: (error) => {
         console.error('Error al eliminar materia', error.message)
       }
-    })
+    });
   }
 }

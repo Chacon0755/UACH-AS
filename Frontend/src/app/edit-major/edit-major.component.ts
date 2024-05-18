@@ -55,7 +55,6 @@ export class EditMajorComponent {
     });
   }
 
-
   onCancel() {
     console.log('bai bai')
     this.major = {
@@ -63,5 +62,17 @@ export class EditMajorComponent {
       name: '',
     }
     this.router.navigate(['/admin-home'])
+  }
+
+  onDelete(): void{
+    this.majorService.deleteMajor(this.major.id).subscribe({
+      next: (response) => {
+        console.log('Materia eliminada correctamente', response);
+        this.router.navigate(['/admin-home'])
+      },
+      error: (error) => {
+        console.error('Error al eliminar materia', error.message)
+      }
+    })
   }
 }

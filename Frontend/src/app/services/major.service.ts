@@ -33,5 +33,8 @@ export class MajorService {
   getAllIds(): Observable<number[]>{
     return this.http.get<number[]>(`${this.apiUrl}/carreras/ids`)
   }
+  deleteMajor(majorId: number): Observable<void>{
+    return this.http.delete<void>(`${this.apiUrl}/carrera/${majorId}`)
+  }
 
 }

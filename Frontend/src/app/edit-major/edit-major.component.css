@@ -47,6 +47,12 @@ input[type="text"] {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    margin: 20px;
+}
+
+.btn.delete{
+    background-color: red;
+    color: #fff;
 }
 
 .btn.cancel {

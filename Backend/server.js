@@ -145,11 +145,48 @@ app.put('/carrera/:id', (req, res) => {
 // Eliminar una carrera
 app.delete('/carrera/:id', (req, res) => {
   const { id } = req.params;
-  const query = 'DELETE FROM carrera WHERE Id_Carreras = ?';
-  connection.query(query, [id], (error, results) => {
-      if (error) return res.status(500).send(error);
-      res.send('Carrera eliminada correctamente');
+
+  const updateDocentes = new Promise((resolve, reject) => {
+    const updateDocentesQuery = 'UPDATE docentes SET id_mat_as = 0, id_carrera_mat = 0 WHERE id_carrera_mat = ?';
+    connection.query(updateDocentesQuery, [id], (error, results) => {
+      if (error) {
+        console.error(error);
+        return reject({ message: 'Error al actualizar docentes relacionados ', error: error.sqlMessage });
+      }
+      resolve(results);
+      console.log('Docentes relacionados actualizados correctamente ', results)
+    });
   });
+
+  const deleteMaterias = new Promise((resolve, reject) => {
+    const deleteMateriasQuery = 'DELETE FROM materias WHERE N_Carr = ?';
+    connection.query(deleteMateriasQuery, [id], (error, results) => {
+      if (error) {
+        console.error(error);
+        return reject({ message: 'Error al eliminar materias relacionadas ', error: error.sqlMessage });
+      }
+      resolve(results);
+      console.log('Materias relacionados eliminadas correctamente ', results)
+    });
+  });
+
+  const deleteCarreras = new Promise((resolve, reject) => {
+    const deleteCarrerasQuery = 'DELETE FROM carrera WHERE Id_Carreras = ?';
+    connection.query(deleteCarrerasQuery, [id], (error, results) => {
+      if (error) {
+        console.error(error);
+        return reject({ message: 'Error al eliminar Carrera ', error: error.sqlMessage });
+      }
+      resolve(results);
+      console.log('Carrera eliminada correctamente ', results)
+    });
+  });
+
+  updateDocentes.then(() => deleteMaterias).then(() => deleteCarreras).then((results) => {
+    res.status(200).json({ message: 'Carrera eliminada correctamente, materias relacionada eliminadas correctamente y docentes relacionados actualizados correctamente' });
+  }).catch((error) => {
+      res.status(500).json(error)
+    });
 });
 
 // Obtener todos los semestres
