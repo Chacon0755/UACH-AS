@@ -3,12 +3,20 @@ const path = require('path');
 const mysql = require('mysql');
 const app = express();
 const cors = require('cors');
+const multer = require('multer')
+const router = express.Router()
+const jwt = require('jsonwebtoken')
+const bcrypt = require ('bcryptjs')
 app.use(cors());
 app.use(express.json());
 app.use((req, res, next) => {
   res.header("Content-Type", 'application/json');
   next();
 });
+
+//Configurar multer
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 // Configuración de la conexión a la base de datos MySQL
 const connection = mysql.createConnection({
@@ -26,7 +34,57 @@ connection.connect(err => {
   console.log('Conectado a la base de datos con el ID ' + connection.threadId);
 });
 
+// Ruta de inicio de sesion
+app.post('/login', (req, res) => {
+  console.log('req.body ', req.body);
+  const { email, password } = req.body;
+  console.log('Credenciales: ', {email, password});
+  const findUserQuery = `
+  SELECT 'admin' AS role, admin_id as id, contraseña AS password FROM administrador WHERE correo = ?
+  UNION
+  SELECT 'student' AS role, matricula as id, Contra_alum as password FROM alumnos WHERE correo = ?
+  UNION
+  SELECT 'teacher' AS role, Id_docente as id, contra_docente AS password FROM docentes WHERE correo = ?
+  `
+  connection.query(findUserQuery, [email, email, email], (error, results) => {
+    if (error) {
+      return res.status(500).json({ message: 'Error en el servidor', error: error.sqlMessage });
+    }
 
+    if (results.length === 0) {
+      console.error(error, results);
+      return res.status(401).json({ message: 'Correo  incorrecto' });
+    }
+
+    const user = results[0];
+    const validPassword = bcrypt.compareSync(password, user.password);
+
+    if (!validPassword) {
+      console.error('contrasena incorrecta')
+      return res.status(401).json({ message: 'contraseña incorrecta' });
+    }
+
+    const token = jwt.sign({ id: user.id, role: user.role }, 'tu_secreto', {
+      expiresIn: '1h'
+    });
+    res.status(200).json({ token });
+  });
+});
+
+//Crear admins
+app.post('/admin', (req, res) => {
+  const {admin_id, correo, contraseña, nombre, apellido1, apellido2, rol } = req.body
+  const query = 'INSERT INTO administrador (admin_id, correo, contraseña, nombre, apellido1, apellido2, rol) VALUES (?, ?, ?, ?, ?, ?, ?)'
+  const hashedPassword = bcrypt.hashSync(contraseña, 10)
+  connection.query(query, [admin_id, correo, hashedPassword, nombre, apellido1, apellido2, rol], (error, results) => {
+    if (error) {
+      console.error('Error al crear admin ', error)
+      return res.status(500).json({ message: 'Error al crear admin', error: error.sqlMessage });
+      }
+    res.status(201).json({ message: 'Admin creado correctamente', data: results });
+    console.log('Admin creado correctamente: ', results)
+  })
+})
 // Obtener todos los alumnos
 app.get('/alumnos', (req, res) => {
   connection.query('SELECT * FROM alumnos', (error, results) => {
@@ -49,14 +107,31 @@ app.get('/alumnos/carrera', (req, res) => {
 // Insertar un nuevo alumno
 app.post('/alumnos', (req, res) => {
   const { matricula, nombre, ape1, ape2, programa, semestre, correo, perfil, rol, Contra_alum } = req.body;
+  const hashedPassword = bcrypt.hashSync(Contra_alum, 10)
   const query = 'INSERT INTO Alumnos (matricula, nombre, ape1, ape2, programa, semestre, correo, perfil, rol, Contra_alum) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-  connection.query(query, [matricula, nombre, ape1, ape2, programa, semestre, correo, perfil, rol, Contra_alum], (error, results) => {
+  connection.query(query, [matricula, nombre, ape1, ape2, programa, semestre, correo, perfil, rol, hashedPassword], (error, results) => {
     if (error) {
       console.error('Error al crear alumno ', error)
       return res.status(500).json({ message: 'Error al crear alumno', error: error.sqlMessage });
       }
     res.status(201).json({ message: 'Alumno creado correctamente', data: results });
     console.log('Alumno creado correctamente: ', results)
+  });
+});
+
+//Cambiar foto de perfil
+app.post('/alumnos/upload-profile/:id', upload.single('perfil'), (req, res) => {
+  const { id } = req.params;
+  const perfilBuffer = req.file.buffer;
+
+  const profilePictureQuery = 'UPDATE Alumnos set perfil = ? WHERE matricula = ?';
+  connection.query(profilePictureQuery, [perfilBuffer, id], (error, results) => {
+    if (error) {
+      console.error('Error al subir foto de perfil del alumno ', error)
+      return res.status(500).json({ message: 'Error al subir foto del perfil del alumno', error: error.sqlMessage });
+      }
+    res.status(201).json({ message: 'Foto de perfil del alumno subida correctamente', data: results });
+    console.log('Foto de perfil del alumno subida correctamente: ', results)
   });
 });
 
@@ -330,9 +405,10 @@ app.get('/docentes', (req, res) => {
 
 // Insertar un nuevo docente
 app.post('/docentes', (req, res) => {
-  const { Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc, contra_docente} = req.body;
+  const { Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc, contra_docente } = req.body;
+  const hashedPassword = bcrypt.hashSync(contra_docente, 10)
   const query = 'INSERT INTO docentes (Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc, contra_docente) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-  connection.query(query, [Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc, contra_docente], (error, results) => {
+  connection.query(query, [Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc, hashedPassword], (error, results) => {
     if (error) {
       console.error({ Contra_docente })
       console.error('Error al insertar docente ', error)

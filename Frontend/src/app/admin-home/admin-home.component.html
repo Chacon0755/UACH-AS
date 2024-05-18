@@ -10,6 +10,7 @@
         <button mat-button [matMenuTriggerFor]="menu" class="btn mat-button">Configuración</button>
         <mat-menu #menu="matMenu" class="mat-menu-panel">
             <button mat-menu-item (click)="logOut()" class="mat-menu-item">Salir</button>
+            <button mat-menu-item routerLink="/new-admin" class="mat-menu-item">Crear Administrador</button>
             <button mat-menu-item (click)="fileInput.click()" class="mat-menu-item">Cambiar foto</button>
         </mat-menu>
     </div>

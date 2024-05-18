@@ -29,6 +29,7 @@ import {MatTableModule} from '@angular/material/table';
 import { ViewStudentComponent } from './view-student/view-student.component';
 import { ViewMajorComponent } from './view-major/view-major.component';
 import { ViewCourseComponent } from './view-course/view-course.component';
+import { NewAdminComponent } from './new-admin/new-admin.component';
 
 
 @NgModule({
@@ -51,6 +52,7 @@ import { ViewCourseComponent } from './view-course/view-course.component';
     ViewStudentComponent,
     ViewMajorComponent,
     ViewCourseComponent,
+    NewAdminComponent,
 
   ],
   imports: [

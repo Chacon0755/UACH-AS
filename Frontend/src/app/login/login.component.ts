@@ -15,7 +15,26 @@ export class LoginComponent {
   constructor(private router: Router, private authService: AuthService) {}
 
   onSubmit() {
-    this.authService.login(this.username, this.password);
+    this.authService.login(this.username, this.password).subscribe({
+      next: (response) => {
+        this.authService.saveToken(response.token);
+        console.log(response.token)
+
+        const payload = JSON.parse(atob(response.token.split('.')[1]));
+        const role = payload.role;
+
+        if (role === 'admin') {
+          this.router.navigate(['admin-home']);
+        } else if (role === 'student') {
+          this.router.navigate(['/student-home']);
+        } else if (role === 'teacher') {
+          this.router.navigate(['teacher-home']);
+        }
+      },
+      error: (error) => {
+        console.error('Error al iniciar sesion ', error);
+      }
+    });
   }
 
 

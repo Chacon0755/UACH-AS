@@ -11,6 +11,8 @@ import { UtilitiesService } from './utilities.service';
 export class TeacherService {
   private apiUrl = 'http://localhost:3000';
   constructor(private http: HttpClient, private utilitiesService: UtilitiesService) { }
+
+  //J4y8jeHx
   
   createTeacher(teacher: Teacher): Observable<Teacher> {
     const password = this.utilitiesService.createPassword();

@@ -14,41 +14,20 @@ import { StudentService } from '../services/student.service';
 })
 
 export class StudentHomeComponent implements OnInit {
-  student: Student | null = null;
+  // student: Student = this.loadStudentData()
   posts: Post[] = [];
   newPostContent: string = '';
   newResponseContent: string = '';
   userName: string = '';
-  userImageURL: string | ArrayBuffer | null = null;
+  userImageURL: any;
   userRole: string = 'student';
   courses: string[] = []
-
-  //
-  archivoSeleccionado: File | null = null;
-  //loadStudentData: any;
 
 
   constructor(private authService: AuthService, private router: Router, private forumService: ForumService, private studentService: StudentService) { }
   
   ngOnInit(): void {
-    this.loadPosts();
-    this.authService.getUser().subscribe(user => {
-      this.userName = user.name;
-      this.userRole = user.role;
-    });
-    //this.loadStudentData();
-  }
-
-  onFileSelectedEvent(event: Event) {
-    const element = event.target as HTMLInputElement;
-    const file = element.files ? element.files[0] : null;
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.userImageURL = reader.result;
-      };
-      reader.readAsDataURL(file)
-    }
+    
   }
 
   logOut() {
@@ -103,31 +82,42 @@ export class StudentHomeComponent implements OnInit {
       });
   
     }
-  //
+  }
   
 
 
-  // loadStudentData(): void{
+  // loadStudentData(): Student{
   //   const studentId = 1; //cambiar
   //   this.studentService.getStudentDataById(studentId).subscribe({
-  //     next: (studentData) => {
-  //       this.student = studentData;
+  //     next: (response) => {
+  //       return response
   //     },
   //     error: (error) => console.error('Sigo sin poder Martha ', error),
   //   });
   // }
 
 
-  //
-
-
-  }
-//
-  onArchivoSeleccionado(event: Event) {
-
-    const input = event.target as HTMLInputElement;
-    if (input.files) {
-      this.archivoSeleccionado = input.files[0];
+  onFileSelectedEvent(event: Event) {
+    const element = event.target as HTMLInputElement;
+    const file = element.files ? element.files[0] : null;
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.userImageURL = reader.result;
+        
+      };
+      reader.readAsDataURL(file);
     }
   }
+
+  // UploadProfileImage(file: File) {
+  //   this.studentService.uploadProfileImage(this.student.schoolId, file).subscribe({
+  //     next: (response) => {
+  //       console.log('Foto de perfil subida correctamente ', response)
+  //     },
+  //     error: (error) => {
+  //       console.error('Error al subir la foto de perfil')
+  //     }
+  //   })
+  // }
 }

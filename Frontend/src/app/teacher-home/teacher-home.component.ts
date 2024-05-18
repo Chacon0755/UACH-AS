@@ -28,10 +28,7 @@ export class TeacherHomeComponent implements OnInit {
 
   constructor(private authService: AuthService, private forumService: ForumService, private router: Router, private teacherService: TeacherService) { }
   ngOnInit(): void {
-    this.authService.getUser().subscribe(user => {
-      this.userName = user.name;
-      this.userRole = user.role;
-    });
+    
     this.loadTeacherData();
   }
   

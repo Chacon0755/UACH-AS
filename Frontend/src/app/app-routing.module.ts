@@ -8,6 +8,7 @@ import { NewTeacherComponent } from './new-teacher/new-teacher.component';
 import { NewStudentComponent } from './new-student/new-student.component';
 import { NewMajorComponent } from './new-major/new-major.component';
 import { NewCourseComponent } from './new-course/new-course.component';
+import { NewAdminComponent } from './new-admin/new-admin.component';
 import { AdvisoryRequestStudentComponent } from './advisory-request-student/advisory-request-student.component';
 import { StudentHomeComponent } from './student-home/student-home.component';
 import { EditMajorComponent } from './edit-major/edit-major.component';
@@ -19,6 +20,7 @@ import { ViewStudentComponent } from './view-student/view-student.component';
 import { ViewMajorComponent } from './view-major/view-major.component';
 import { ViewCourseComponent } from './view-course/view-course.component';
 
+
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -29,6 +31,7 @@ const routes: Routes = [
   { path: 'new-student', component: NewStudentComponent },
   { path: 'new-major', component: NewMajorComponent },
   { path: 'new-course', component: NewCourseComponent },
+  {path: 'new-admin', component: NewAdminComponent},
   { path: 'advisory-request-student', component: AdvisoryRequestStudentComponent },
   { path: 'edit-major', component: EditMajorComponent },
   { path: 'edit-course', component: EditCourseComponent },

@@ -4,7 +4,7 @@
             <div class="profile-info">
                 <img [src]="userImageURL || './assets/images/User.jpg'" alt="User Icon">
                 <input type="file" (change)="onFileSelectedEvent($event)" hidden #fileInput>
-                <p>{{ student?.name }} {{student?.lastName1}}</p>
+                <!-- <p>{{ student?.name }} {{student?.lastName1}}</p> -->
             </div>
             <div class="course-list">
                 <h3>Cursos inscritos</h3>
@@ -28,11 +28,11 @@
                     </div>
                     <div class="responses-input">
                         <input type="text" [(ngModel)]="newResponseContent" placeholder="Responder..." class="response-input">
-                        <input type="file" class="input-adjuntar" (change)="onArchivoSeleccionado($event)" #archivoInput>
+                        <input type="file" class="input-adjuntar" (change)="onFileSelectedEvent($event)" #archivoInput>
                         <button class="boton-adjuntar"(click)="archivoInput.click()">
                             Adjuntar Archivo
                         </button>
-                        <button (click)="reply(post.id, i, archivoSeleccionado)" class="btn response">Responder</button>
+                        <!-- <button (click)="reply(post.id, i, archivoSeleccionado)" class="btn response">Responder</button> -->
 
                     </div>
                 </div>

@@ -32,13 +32,6 @@ export class AdminHomeComponent {
   }
 
   ngOnInit() {
-    this.authService.getUser().subscribe(user => {
-
-      if (user) {
-        this.userName = user.name;
-      } else {
-        this.userName = 'Invitado'
-      }
-    })
+    
   }
 }

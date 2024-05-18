@@ -28,6 +28,7 @@ export class StudentService {
       rol: 'student',
       Contra_alum: password
     }
+    console.log(password);
     return this.http.post<Student>(`${this.apiURL}/alumnos`, payload);
   }
 
@@ -49,7 +50,7 @@ export class StudentService {
     return this.http.get<Student[]>(`${this.apiURL}/alumnos`);
   }
   getStudentDataById(studentId: number): Observable<Student> {
-    return this.http.get<Student>('${this.apiUrl}/${studentId}')
+    return this.http.get<Student>(`${this.apiURL}/alumnos/${studentId}`)
   }
   getStudentsAndMajorName(): Observable<Student[]>{
     return this.http.get<Student[]>(`${this.apiURL}/alumnos/carrera`);
@@ -57,6 +58,11 @@ export class StudentService {
 
   deleteStudent(studentId: number): Observable<void>{
     return this.http.delete<void>(`${this.apiURL}/alumnos/${studentId}`)
+  }
+  uploadProfileImage(studentId: number, file: File): Observable<any>{
+    const formData = new FormData();
+    formData.append('perfil', file);
+    return this.http.post(`${this.apiURL}/alumnos/upload-profile/${studentId}`, formData);
   }
 
 }
