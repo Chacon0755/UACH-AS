@@ -55,6 +55,9 @@ export class StudentService {
   getStudentsAndMajorName(): Observable<Student[]>{
     return this.http.get<Student[]>(`${this.apiURL}/alumnos/carrera`);
   }
+  getStudentMajorNameById(studentId: number): Observable<any>{
+    return this.http.get<any>(`${this.apiURL}/alumnos/carrera/${studentId}`);
+  }
 
   deleteStudent(studentId: number): Observable<void>{
     return this.http.delete<void>(`${this.apiURL}/alumnos/${studentId}`)

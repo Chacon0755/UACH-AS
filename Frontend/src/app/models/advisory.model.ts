@@ -1,7 +1,7 @@
 export interface Advisory {
-    major: string;
-    course: string;
-    teacher: string;
+    majorId: number;
+    courseId: number;
+    teacherId: number;
     mode: string;
     days: string[];
     time: string;

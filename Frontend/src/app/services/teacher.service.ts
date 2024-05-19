@@ -65,6 +65,10 @@ export class TeacherService {
   getTeacherDataById(teacherId: number): Observable<any>{
     return this.http.get<any>(`${this.apiUrl}/docentes/${teacherId}`)
   }
+  
+  getTeachersByCourseId(courseId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/docentes/materia/${courseId}`);
+  }
 
   deleteTeacher(teacherId: number): Observable<void>{
     return this.http.delete<void>(`${this.apiUrl}/docentes/${teacherId}`)

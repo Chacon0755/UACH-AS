@@ -30,7 +30,7 @@ import { ViewStudentComponent } from './view-student/view-student.component';
 import { ViewMajorComponent } from './view-major/view-major.component';
 import { ViewCourseComponent } from './view-course/view-course.component';
 import { NewAdminComponent } from './new-admin/new-admin.component';
-
+import { MatInputModule } from '@angular/material/input'
 
 @NgModule({
   declarations: [
@@ -67,6 +67,7 @@ import { NewAdminComponent } from './new-admin/new-admin.component';
     ReactiveFormsModule,
     HttpClientModule,
     MatTableModule,
+    MatInputModule,
   ],
   providers: [
     provideAnimationsAsync()

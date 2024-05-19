@@ -1,45 +1,55 @@
-<div class="advisory-container">
-  <h2>Solicita una asesoría</h2>
-  <form [formGroup]="advisoryForm" (ngSubmit)="submitForm()">
-    <div class="form-row">
-      <div class="form-group">
-        <label>Carrera que está cursando</label>
-        <select formControlName="major" class="form-control">
-          <option *ngFor="let major of majors" [value]="major.id">{{ major.name }}</option>
-        </select>
+<main class="container">
+  <div class="advisory-container">
+    <h2>Solicita una asesoría</h2>
+    <form (ngSubmit)="submitForm()">
+      <div class="form-row">
+        <div class="form-group">
+          <mat-form-field appearance="fill" class="mat-form-field">
+            <mat-label>Carrera que está cursando</mat-label>
+            <input matInput [value]="majorName" disabled>
+          </mat-form-field>
+        </div>
+        <div class="form-group">
+          <mat-form-field appearance="fill" class="mat-form-field">
+            <mat-label>Materia en la que necesita ayuda</mat-label>
+            <mat-select [(ngModel)]="advisory.courseId" name="course" (ngModelChange)="onCourseChange($event)">
+              <mat-option *ngFor="let course of allCourses" [value]="course.Id_Materias">{{ course.N_Mat }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
       </div>
-      <div class="form-group">
-        <label>Materia en la que necesita ayuda</label>
-        <select formControlName="course" class="form-control">
-          <option *ngFor="let course of courses" [value]="course.id">{{ course.name }}</option>
-        </select>
+      <div class="form-row">
+        <div class="form-group">
+          <mat-form-field appearance="fill" class="mat-form-field">
+            <mat-label>Docente que le gustaría que impartiera la asesoría</mat-label>
+            <mat-select [(ngModel)]="advisory.teacherId" name="teacher">
+              <mat-option *ngFor="let teacher of teachers" [value]="teacher.Id_docente">{{ teacher.nombre_doc }} {{teacher.Apellido}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="form-group">
+          <mat-form-field appearance="fill" class="mat-form-field">
+            <mat-label>Modalidad</mat-label>
+            <mat-select [(ngModel)]="advisory.mode" name="mode">
+              <mat-option *ngFor="let mode of modes" [value]="mode.id">{{ mode.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
       </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Docente que le gustaría que impartiera la asesoría</label>
-        <select formControlName="teacher" class="form-control">
-          <option *ngFor="let teacher of teachers" [value]="teacher.id">{{ teacher.name }}</option>
-        </select>
+      <div class="form-row">
+        <div class="form-group">
+          <mat-form-field appearance="fill" class="mat-form-field">
+            <mat-label>¿Cuándo te gustaría recibir la asesoría?</mat-label>
+            <mat-select [(ngModel)]="advisory.days" name="days" multiple>
+              <mat-option *ngFor="let time of times" [value]="time">{{ time }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
       </div>
-      <div class="form-group">
-        <label>Modalidad</label>
-        <select formControlName="mode" class="form-control">
-          <option *ngFor="let mode of modes" [value]="mode.id">{{ mode.name }}</option>
-        </select>
+      <div class="form-actions">
+        <button type="button" (click)="onCancel()" class="btn cancel">Cancelar</button>
+        <button type="submit" class="btn save">Solicitar</button>
       </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>¿Cuando te gustaria recibir la asesoria?</label>
-        <select formControlName="days" id="days" multiple>
-          <option *ngFor="let time of times" [value]="time">{{ time }}</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-actions">
-      <button type="button" (click)="onCancel()" class="btn-cancel">Cancelar</button>
-      <button type="submit" class="btn-submit">Solicitar</button>
-    </div>
-  </form>
-</div>
+    </form>
+  </div>  
+</main>

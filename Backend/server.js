@@ -160,6 +160,29 @@ app.get('/alumnos/:id', (req, res) => {
   });
 });
 
+// Obtener programa, ID de carrera y nombre de carrera de un alumno específico por matrícula
+app.get('/alumnos/carrera/:id', (req, res) => {
+  const { id } = req.params;
+  const query = `
+    SELECT alumnos.programa, carrera.Id_Carreras AS id_carrera, carrera.Nombre_Carrera AS nombre_carrera
+    FROM alumnos
+    JOIN carrera ON alumnos.programa = carrera.Id_Carreras
+    WHERE alumnos.matricula = ?`;
+
+  connection.query(query, [id], (error, results) => {
+    if (error) {
+      return res.status(500).send(error);
+    }
+    if (results.length > 0) {
+      res.json(results[0]); // Asegurarse de devolver un solo objeto
+    } else {
+      res.status(404).json({ message: 'Alumno no encontrado' });
+    }
+  });
+});
+
+
+
 //Obtener alumnos y nombre de carrera`
 app.get('/alumnos/carrera', (req, res) => {
   const query = 'SELECT alumnos. *, carrera.Nombre_Carrera as nombre_carrera, semestre.sem as nombre_semestre FROM alumnos JOIN carrera ON alumnos.programa = carrera.Id_Carreras JOIN semestre ON alumnos.semestre = semestre.id';
@@ -380,52 +403,6 @@ app.delete('/carrera/:id', (req, res) => {
   });
 });
 
-// app.delete('/carrera/:id', (req, res) => {
-//   const { id } = req.params;
-
-//   const updateDocentes = new Promise((resolve, reject) => {
-//     const updateDocentesQuery = 'UPDATE docentes SET id_mat_as = 0, id_carrera_mat = 0 WHERE id_carrera_mat = ?';
-//     connection.query(updateDocentesQuery, [id], (error, results) => {
-//       if (error) {
-//         console.error(error);
-//         return reject({ message: 'Error al actualizar docentes relacionados ', error: error.sqlMessage });
-//       }
-//       resolve(results);
-//       console.log('Docentes relacionados actualizados correctamente ', results)
-//     });
-//   });
-
-//   const deleteMaterias = new Promise((resolve, reject) => {
-//     const deleteMateriasQuery = 'DELETE FROM materias WHERE N_Carr = ?';
-//     connection.query(deleteMateriasQuery, [id], (error, results) => {
-//       if (error) {
-//         console.error(error);
-//         return reject({ message: 'Error al eliminar materias relacionadas ', error: error.sqlMessage });
-//       }
-//       resolve(results);
-//       console.log('Materias relacionados eliminadas correctamente ', results)
-//     });
-//   });
-
-//   const deleteCarreras = new Promise((resolve, reject) => {
-//     const deleteCarrerasQuery = 'DELETE FROM carrera WHERE Id_Carreras = ?';
-//     connection.query(deleteCarrerasQuery, [id], (error, results) => {
-//       if (error) {
-//         console.error(error);
-//         return reject({ message: 'Error al eliminar Carrera ', error: error.sqlMessage });
-//       }
-//       resolve(results);
-//       console.log('Carrera eliminada correctamente ', results)
-//     });
-//   });
-
-//   updateDocentes.then(() => deleteMaterias).then(() => deleteCarreras).then((results) => {
-//     res.status(200).json({ message: 'Carrera eliminada correctamente, materias relacionada eliminadas correctamente y docentes relacionados actualizados correctamente' });
-//   }).catch((error) => {
-//       res.status(500).json(error)
-//     });
-// });
-
 // Obtener todos los semestres
 app.get('/semestres', (req, res) => {
   connection.query('SELECT * FROM semestre', (error, results) => {
@@ -607,6 +584,25 @@ app.get('/docentes/:id', (req, res) => {
     console.log('Datos del docente obtenidos correctamente ', results)
   });
 });
+
+//Obtener docentes por id de materia
+app.get('/docentes/materia/:id', (req, res) => {
+  const { id } = req.params;
+  const query = `
+    SELECT docentes.Id_docente, docentes.nombre_doc, docentes.Apellido, docentes.id_mat_as, docentes.id_carrera_mat, docentes.correo, docentes.apei2, docentes.perfil, docentes.rol_doc
+    FROM docentes
+    JOIN Docente_Materia ON docentes.Id_docente = Docente_Materia.id_docente
+    WHERE Docente_Materia.id_materia = ?`;
+
+  connection.query(query, [id], (error, results) => {
+    if (error) {
+      console.error('Error al recuperar docentes: ', error);
+      return res.status(500).json({ message: 'Error al recuperar docentes', error: error.sqlMessage });
+    }
+    res.json(results);
+  });
+});
+
 
 //obtener foto de perfil de docente
 app.get('/docentes/profile-image/:id', (req, res) => {
@@ -941,7 +937,7 @@ app.listen(PORT, () => {
     console.log('Servidor corriendo en localhost:' + PORT);
 });
 
-// No olvides cerrar la conexión cuando tu servidor se cierre
+//cerrar la conexion
 process.on('SIGINT', () => {
     connection.end(() => {
         console.log('Conexión a la base de datos cerrada');
