@@ -2,9 +2,10 @@
     <div class="student-home-container">
         <aside class="sidebar">
             <div class="profile-info">
-                <img [src]="userImageURL || './assets/images/User.jpg'" alt="User Icon">
+                <img [src]="student.profilePicture || './assets/images/User.jpg'" alt="User Icon">
                 <input type="file" (change)="onFileSelectedEvent($event)" hidden #fileInput>
-                <!-- <p>{{ student?.name }} {{student?.lastName1}}</p> -->
+                <p>Bienvenido </p>
+                <p>{{ student.name }} {{student.lastName1}}</p>
             </div>
             <div class="course-list">
                 <h3>Cursos inscritos</h3>

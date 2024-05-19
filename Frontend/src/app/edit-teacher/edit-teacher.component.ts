@@ -22,13 +22,14 @@ export class EditTeacherComponent {
     lastName1: '',
     lastName2: '',
     email: '',
-    majorId:0,
+    majorId: 0,
     courseId: 0,
+    courseIds: [],
     role: 'teacher',
     profilePicture: '',
     password: '',
   };
-
+  selectedCoursesByMajor: {[majorId: number]: number[]} = {}
   allMajors: any[] = [];
   allCourses: any[] = [];
   allTeachers: any[] = [];
@@ -60,12 +61,21 @@ export class EditTeacherComponent {
     })
   }
 
-  loadCoursesOnMajorChange(): void {
+  onMajorChange(): void {
+    if (this.teacher.majorId) {
+      this.selectedCoursesByMajor[this.teacher.majorId] = [...this.teacher.courseIds]
+    }
+
+    const selectedCourses = this.selectedCoursesByMajor[this.teacher.majorId] || [];
+    this.teacher.courseIds = selectedCourses;
+
     if (this.teacher.majorId) {
       this.courseService.getCoursesByMajor(this.teacher.majorId).subscribe({
         next: (allCourses) => {
           this.allCourses = allCourses;
-          console.log('Carrera elegida: ', this.teacher.majorId, 'Materias correspondientes: ', this.allCourses);
+          console.log(this.allCourses);
+          this.teacher.courseIds = this.teacher.courseIds.filter(courseId => 
+          this.allCourses.some(course => course.Id_Materias === courseId));
         }, 
         error: (error) => {
           console.error('Error al cargar materias: ', error);
@@ -76,8 +86,22 @@ export class EditTeacherComponent {
       this.allCourses = [];
     }
   }
+  onCourseSelectionChange(event: any): void {
+    if (this.teacher.majorId) {
+      this.selectedCoursesByMajor[this.teacher.majorId] = [...event.value]
+    }
+    this.teacher.courseIds = [...event.value]
+    console.log('CourseIDS: ', this.teacher.courseIds)
+    console.log('SelectedCourseByMajor: ', this.selectedCoursesByMajor)
+  }
 
   onSubmit(): void {
+    this.teacher.courseIds = [];
+    for (const majorId in this.selectedCoursesByMajor) {
+      if (this.selectedCoursesByMajor.hasOwnProperty(majorId)) {
+        this.teacher.courseIds = this.teacher.courseIds.concat(this.selectedCoursesByMajor[majorId]);
+      }
+    }
     console.log(this.teacher);
     this.teacherService.editTeacher(this.teacher.id, this.teacher).subscribe({
       next: (response) => {
@@ -86,6 +110,8 @@ export class EditTeacherComponent {
       },
       error: (error) => console.error('Error al editar profesor ', error)
     });
+    console.log(this.teacher.courseIds)
+    console.log(this.selectedCoursesByMajor)
   }
 
   onCancel(): void {
@@ -98,6 +124,7 @@ export class EditTeacherComponent {
       email: '',
       majorId: 0,
       courseId: 0,
+      courseIds: [],
       role: 'teacher',
       profilePicture: '',
       password: '',

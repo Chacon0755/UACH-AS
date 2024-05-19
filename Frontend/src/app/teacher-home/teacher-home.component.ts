@@ -14,24 +14,78 @@ import { Teacher } from '../models/teacher.model';
   styleUrl: './teacher-home.component.css'
 })
 export class TeacherHomeComponent implements OnInit {
-  teacher: Teacher | null = null;
+  teacher: Teacher = {
+    id: 0,
+    name: '',
+    lastName1: '',
+    lastName2: '',
+    email: '',
+    majorId: 0,
+    courseId: 0,
+    courseIds: [],
+    role: 'teacher',
+    profilePicture: '',
+    password: ''
+  };
+  selectedFile: File | null = null;
   posts: Post[] = [];
   newPostContent: string = '';
   newResponseContent: string = '';
-  userName: string = '';
-  userRole: string = 'teacher';
-  userImageUrl: string | ArrayBuffer | null = null;
   courses: Course[] = [];
-    //
-  archivoSeleccionado: File | null = null;
-  
+    
+
+
 
   constructor(private authService: AuthService, private forumService: ForumService, private router: Router, private teacherService: TeacherService) { }
   ngOnInit(): void {
-    
-    this.loadTeacherData();
+    const userDetails = this.authService.getUserDetails();
+    if (userDetails) {
+      this.loadTeacherData(userDetails.id);
+      this.loadProfileImage(userDetails.id);
+      this.loadCurses()
+    }
   }
   
+  loadProfileImage(teacherId: number): void{
+    this.teacherService.getProfilePicture(teacherId).subscribe(blob => {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.teacher.profilePicture = e.target.result;
+        console.log(this.teacher.profilePicture)
+      };
+      reader.readAsDataURL(blob);
+      
+    })
+  }
+
+  loadTeacherData(teacherId: number): void{
+    this.teacherService.getTeacherDataById(teacherId).subscribe({
+      next: (teacher) => {
+        if (teacher) {
+          const teacherData = teacher[0];
+          this.teacher = {
+            id: teacherData.Id_docente,
+            name: teacherData.nombre_doc,
+            lastName1: teacherData.Apellido,
+            lastName2: teacherData.apei2,
+            email: teacherData.correo,
+            majorId: teacherData.id_carrera_mat,
+            courseId: 0,
+            courseIds: teacherData.id_mat_as,
+            role: teacherData.rol_doc,
+            profilePicture: '',
+            password: ''
+          }
+          console.log('Teacher de DB: ', teacher);
+          console.log('Teacher Front: ', this.teacher);
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar datos del docente: ', error)
+      }
+    });
+  }
+
   loadPosts(): void{
     this.forumService.getPosts().subscribe(posts => {
       this.posts = posts;
@@ -42,8 +96,8 @@ export class TeacherHomeComponent implements OnInit {
     if (this.newPostContent.trim()) {
       const newPost: Post = {
         id: 0,
-        author: this.userName,
-        role: this.userRole,
+        author: this.teacher.name,
+        role: this.teacher.role,
         content: this.newPostContent,
         createdAt: new Date(),
         responses: []
@@ -78,35 +132,9 @@ export class TeacherHomeComponent implements OnInit {
         this.newResponseContent = '';
     
       });
-  
-    }
-  //
-  
-
-
-  // loadStudentData(): void{
-  //   const studentId = 1; //cambiar
-  //   this.studentService.getStudentDataById(studentId).subscribe({
-  //     next: (studentData) => {
-  //       this.student = studentData;
-  //     },
-  //     error: (error) => console.error('Sigo sin poder Martha ', error),
-  //   });
-  // }
-
-
-  //
-
-
-  }
-//
-  onArchivoSeleccionado(event: Event) {
-
-    const input = event.target as HTMLInputElement;
-    if (input.files) {
-      this.archivoSeleccionado = input.files[0];
     }
   }
+
 
 
   // reply(postId: number, postIndex: number): void {
@@ -125,15 +153,30 @@ export class TeacherHomeComponent implements OnInit {
   //   }
   // }
 
-  onFileSelectedEvent(event: Event): void {
-    const element = event.target as HTMLInputElement;
-    const file = element.files ? element.files[0] : null;
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.userImageUrl = reader.result;
-      };
-      reader.readAsDataURL(file);
+  onFileSelectedEvent(event: any) {
+    const file: File = event.target.files[0];
+    this.selectedFile = file;
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.teacher.profilePicture = e.target.result;
+    };
+    reader.readAsDataURL(file);
+
+    this.onUpload();
+  }
+
+  onUpload(): void{
+    if (this.selectedFile) {
+      const teacherId = this.teacher.id;
+      console.log(teacherId)
+      this.teacherService.uploadProfileImage(teacherId, this.selectedFile).subscribe({
+        next: (response) => {
+          console.log('Foto subida correctamente ', response)
+        },
+        error: (error) => {
+          console.error('Error al subir la foto de perfil ', error);
+        }
+      });
     }
   }
   
@@ -142,25 +185,15 @@ export class TeacherHomeComponent implements OnInit {
   }
 
   loadCurses(): void {
-    const teacherId = 1; //cambiar por el del profesor
+    const teacherId = this.teacher.id; //cambiar por el del profesor
     this.teacherService.getCourses(teacherId).subscribe({
       next: (courses) => {
         this.courses = courses;
+        console.log(courses)
       },
       error: (error) => console.error('nel nel ', error)
     });
   }
-
-  loadTeacherData(): void{
-    const teacherId = 1; //cambiarla con el servicio de autentificacion
-    this.teacherService.getTeacherDataById(teacherId).subscribe({
-      next: (teacherData) => {
-        this.teacher = teacherData;
-      },
-      error: (error) => console.error('ya no puedo Martha ', error),
-    });
-  }
-
 
 }
 

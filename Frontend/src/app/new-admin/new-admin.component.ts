@@ -33,7 +33,6 @@ export class NewAdminComponent {
     });
   }
 
-  //5PoOJ51T
 
   onCancel(): void {
     console.log("Cancelao")

@@ -12,7 +12,6 @@ export class TeacherService {
   private apiUrl = 'http://localhost:3000';
   constructor(private http: HttpClient, private utilitiesService: UtilitiesService) { }
 
-  //J4y8jeHx
   
   createTeacher(teacher: Teacher): Observable<Teacher> {
     const password = this.utilitiesService.createPassword();
@@ -26,7 +25,8 @@ export class TeacherService {
       apei2: teacher.lastName2,
       perfil: 'n',
       rol_doc: 'teacher',
-      contra_docente: password
+      contra_docente: password,
+      courseIds: teacher.courseIds
     }
     console.log(password)
     return this.http.post<Teacher>(`${this.apiUrl}/docentes`, payload);
@@ -42,7 +42,8 @@ export class TeacherService {
       correo: teacher.email,
       apei2: teacher.lastName2,
       perfil: 'n',
-      rol_doc: 'teacher'
+      rol_doc: 'teacher',
+      courseIds: teacher.courseIds
     };
     return this.http.put<Teacher>(`${this.apiUrl}/docentes/${id}`, payload);
   }
@@ -52,8 +53,17 @@ export class TeacherService {
   getCourses(teacherId: number): Observable<Course[]>{
     return this.http.get<Course[]>('${this.apiUrl}/${teacherId}/courses')
   }
-  getTeacherDataById(teacherId: number): Observable<Teacher>{
-    return this.http.get<Teacher>('${this.apiUrl}/${teacherId}')
+  uploadProfileImage(teacherId: number, file: File): Observable<any>{
+    const formData = new FormData();
+    formData.append('perfil', file);
+    return this.http.post(`${this.apiUrl}/docentes/upload-profile/${teacherId}`, formData);
+  }
+
+  getProfilePicture(teacherId: number): Observable<Blob>{
+    return this.http.get(`${this.apiUrl}/docentes/profile-image/${teacherId}`, {responseType: 'blob'})
+  }
+  getTeacherDataById(teacherId: number): Observable<any>{
+    return this.http.get<any>(`${this.apiUrl}/docentes/${teacherId}`)
   }
 
   deleteTeacher(teacherId: number): Observable<void>{

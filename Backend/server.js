@@ -40,11 +40,11 @@ app.post('/login', (req, res) => {
   const { email, password } = req.body;
   console.log('Credenciales: ', {email, password});
   const findUserQuery = `
-  SELECT 'admin' AS role, admin_id as id, contraseña AS password FROM administrador WHERE correo = ?
+  SELECT 'admin' AS role, admin_id as id, contraseña AS password, nombre AS name, perfil AS profilePicture   FROM administrador WHERE correo = ?
   UNION
-  SELECT 'student' AS role, matricula as id, Contra_alum as password FROM alumnos WHERE correo = ?
+  SELECT 'student' AS role, matricula as id, Contra_alum as password, nombre As name, perfil AS profilePicture FROM alumnos WHERE correo = ?
   UNION
-  SELECT 'teacher' AS role, Id_docente as id, contra_docente AS password FROM docentes WHERE correo = ?
+  SELECT 'teacher' AS role, Id_docente as id, contra_docente AS password, nombre_doc As name, perfil AS profilePicture FROM docentes WHERE correo = ?
   `
   connection.query(findUserQuery, [email, email, email], (error, results) => {
     if (error) {
@@ -64,7 +64,9 @@ app.post('/login', (req, res) => {
       return res.status(401).json({ message: 'contraseña incorrecta' });
     }
 
-    const token = jwt.sign({ id: user.id, role: user.role }, 'tu_secreto', {
+    const token = jwt.sign({
+      id: user.id, role: user.role, name: user.name, 
+    }, 'tu_secreto', {
       expiresIn: '1h'
     });
     res.status(200).json({ token });
@@ -86,11 +88,75 @@ app.post('/admin', (req, res) => {
     console.log('Admin creado correctamente: ', results)
   })
 })
+
+// Obtener admin por Id
+app.get('/admin/:id', (req, res) => {
+  const { id } = req.params
+  const query = 'SELECT * FROM administrador WHERE admin_id = ?'
+  connection.query(query, [id], (error, results) => {
+    if (error) {
+      console.error('Error al obtener datos del  admin ', error)
+      return res.status(500).json({ message: 'Error al obtener datos del  admin ', error: error.sqlMessage });
+    }
+    res.status(200).json(results)
+    console.log('Datos del admin obtenidos correctamente ', results)
+  });
+});
+
+//obtener foto de perfil de admin
+app.get('/admin/profile-image/:id', (req, res) => {
+  const { id } = req.params;
+  const query = 'SELECT perfil from administrador WHERE admin_id = ?'
+  connection.query(query, [id], (error, results) => {
+    if (error) {
+      return res.status(500).json({ message: 'Error en el servidor', error: error.sqlMessage });
+    }
+    if (results.lenght === 0) {
+      return res.status(404).json({ message: 'Imagen no encontrada' });
+    }
+
+    const profilePicture = results[0].perfil;
+    res.setHeader('Content-Type', 'image/jpeg')
+    res.send(profilePicture);
+    console.log(profilePicture)
+  });
+});
+
+//Cambiar foto de perfil del admin
+app.post('/admin/upload-profile/:id', upload.single('perfil'), (req, res) => {
+  const { id } = req.params;
+  const perfilBuffer = req.file.buffer;
+
+  const profilePictureQuery = 'UPDATE administrador set perfil = ? WHERE admin_id = ?';
+  connection.query(profilePictureQuery, [perfilBuffer, id], (error, results) => {
+    if (error) {
+      console.error('Error al subir foto de perfil del admin ', error)
+      return res.status(500).json({ message: 'Error al subir foto del perfil del admin', error: error.sqlMessage });
+      }
+    res.status(201).json({ message: 'Foto de perfil del admin subida correctamente', data: results });
+    console.log('Foto de perfil del admin subida correctamente: ', results)
+  });
+});
+
 // Obtener todos los alumnos
 app.get('/alumnos', (req, res) => {
   connection.query('SELECT * FROM alumnos', (error, results) => {
     if (error) return res.status(500).send(error);
       res.json(results);
+  });
+});
+
+// Obtener alumno por Id
+app.get('/alumnos/:id', (req, res) => {
+  const { id } = req.params
+  const query = 'SELECT * FROM alumnos WHERE matricula = ?'
+  connection.query(query, [id], (error, results) => {
+    if (error) {
+      console.error('Error al obtener datos del  alumno ', error)
+      return res.status(500).json({ message: 'Error al obtener datos del  alumno ', error: error.sqlMessage });
+    }
+    res.status(200).json(results);
+    console.log('Datos del  alumno obtenidos con exito', results)
   });
 });
 
@@ -102,6 +168,25 @@ app.get('/alumnos/carrera', (req, res) => {
       return res.status(500).send(error);
     }
     res.json(results);
+  });
+});
+
+//obtener foto de perfil de estudiante
+app.get('/alumnos/profile-image/:id', (req, res) => {
+  const { id } = req.params;
+  const query = 'SELECT perfil from alumnos WHERE matricula = ?'
+  connection.query(query, [id], (error, results) => {
+    if (error) {
+      return res.status(500).json({ message: 'Error en el servidor', error: error.sqlMessage });
+    }
+    if (results.lenght === 0) {
+      return res.status(404).json({ message: 'Imagen no encontrada' });
+    }
+
+    const profilePicture = results[0].perfil;
+    res.setHeader('Content-Type', 'image/jpeg')
+    res.send(profilePicture);
+    console.log(profilePicture)
   });
 });
 
@@ -222,48 +307,124 @@ app.put('/carrera/:id', (req, res) => {
 app.delete('/carrera/:id', (req, res) => {
   const { id } = req.params;
 
-  const updateDocentes = new Promise((resolve, reject) => {
-    const updateDocentesQuery = 'UPDATE docentes SET id_mat_as = 0, id_carrera_mat = 0 WHERE id_carrera_mat = ?';
+  const updateDocentesQuery = 'UPDATE docentes SET id_mat_as = 0, id_carrera_mat = 0 WHERE id_carrera_mat = ?';
+  const deleteMateriasQuery = 'DELETE FROM materias WHERE N_Carr = ?';
+  const deleteCarrerasQuery = 'DELETE FROM carrera WHERE Id_Carreras = ?';
+  const deleteCourseTeacherQuery = 'DELETE FROM Docente_Materia WHERE id_materia IN (SELECT Id_Materias FROM materias WHERE N_Carr = ?)';
+
+  // Inicia una transacción
+  connection.beginTransaction(error => {
+    if (error) {
+      console.error('Error al iniciar la transacción: ', error);
+      return res.status(500).json({ message: 'Error al eliminar carrera', error: error.sqlMessage });
+    }
+
+    // Actualiza los docentes relacionados
     connection.query(updateDocentesQuery, [id], (error, results) => {
       if (error) {
-        console.error(error);
-        return reject({ message: 'Error al actualizar docentes relacionados ', error: error.sqlMessage });
+        return connection.rollback(() => {
+          console.error('Error al actualizar docentes relacionados: ', error);
+          res.status(500).json({ message: 'Error al eliminar carrera', error: error.sqlMessage });
+        });
       }
-      resolve(results);
-      console.log('Docentes relacionados actualizados correctamente ', results)
+
+      console.log('Docentes relacionados actualizados correctamente: ', results);
+
+      // Elimina las relaciones en la tabla intermedia para las materias de la carrera
+      connection.query(deleteCourseTeacherQuery, [id], (error, results) => {
+        if (error) {
+          return connection.rollback(() => {
+            console.error('Error al eliminar relaciones de materias del docente: ', error);
+            res.status(500).json({ message: 'Error al eliminar carrera', error: error.sqlMessage });
+          });
+        }
+
+        console.log('Relaciones de materias eliminadas correctamente: ', results);
+
+        // Elimina las materias relacionadas
+        connection.query(deleteMateriasQuery, [id], (error, results) => {
+          if (error) {
+            return connection.rollback(() => {
+              console.error('Error al eliminar materias relacionadas: ', error);
+              res.status(500).json({ message: 'Error al eliminar carrera', error: error.sqlMessage });
+            });
+          }
+
+          console.log('Materias relacionadas eliminadas correctamente: ', results);
+
+          // Elimina la carrera
+          connection.query(deleteCarrerasQuery, [id], (error, results) => {
+            if (error) {
+              return connection.rollback(() => {
+                console.error('Error al eliminar carrera: ', error);
+                res.status(500).json({ message: 'Error al eliminar carrera', error: error.sqlMessage });
+              });
+            }
+
+            // Si todo ha ido bien, confirma la transacción
+            connection.commit(error => {
+              if (error) {
+                return connection.rollback(() => {
+                  console.error('Error al confirmar la transacción: ', error);
+                  res.status(500).json({ message: 'Error al eliminar carrera', error: error.sqlMessage });
+                });
+              }
+
+              res.status(200).json({ message: 'Carrera eliminada correctamente, materias relacionadas eliminadas correctamente y docentes relacionados actualizados correctamente' });
+              console.log('Carrera eliminada correctamente: ', results);
+            });
+          });
+        });
+      });
     });
   });
-
-  const deleteMaterias = new Promise((resolve, reject) => {
-    const deleteMateriasQuery = 'DELETE FROM materias WHERE N_Carr = ?';
-    connection.query(deleteMateriasQuery, [id], (error, results) => {
-      if (error) {
-        console.error(error);
-        return reject({ message: 'Error al eliminar materias relacionadas ', error: error.sqlMessage });
-      }
-      resolve(results);
-      console.log('Materias relacionados eliminadas correctamente ', results)
-    });
-  });
-
-  const deleteCarreras = new Promise((resolve, reject) => {
-    const deleteCarrerasQuery = 'DELETE FROM carrera WHERE Id_Carreras = ?';
-    connection.query(deleteCarrerasQuery, [id], (error, results) => {
-      if (error) {
-        console.error(error);
-        return reject({ message: 'Error al eliminar Carrera ', error: error.sqlMessage });
-      }
-      resolve(results);
-      console.log('Carrera eliminada correctamente ', results)
-    });
-  });
-
-  updateDocentes.then(() => deleteMaterias).then(() => deleteCarreras).then((results) => {
-    res.status(200).json({ message: 'Carrera eliminada correctamente, materias relacionada eliminadas correctamente y docentes relacionados actualizados correctamente' });
-  }).catch((error) => {
-      res.status(500).json(error)
-    });
 });
+
+// app.delete('/carrera/:id', (req, res) => {
+//   const { id } = req.params;
+
+//   const updateDocentes = new Promise((resolve, reject) => {
+//     const updateDocentesQuery = 'UPDATE docentes SET id_mat_as = 0, id_carrera_mat = 0 WHERE id_carrera_mat = ?';
+//     connection.query(updateDocentesQuery, [id], (error, results) => {
+//       if (error) {
+//         console.error(error);
+//         return reject({ message: 'Error al actualizar docentes relacionados ', error: error.sqlMessage });
+//       }
+//       resolve(results);
+//       console.log('Docentes relacionados actualizados correctamente ', results)
+//     });
+//   });
+
+//   const deleteMaterias = new Promise((resolve, reject) => {
+//     const deleteMateriasQuery = 'DELETE FROM materias WHERE N_Carr = ?';
+//     connection.query(deleteMateriasQuery, [id], (error, results) => {
+//       if (error) {
+//         console.error(error);
+//         return reject({ message: 'Error al eliminar materias relacionadas ', error: error.sqlMessage });
+//       }
+//       resolve(results);
+//       console.log('Materias relacionados eliminadas correctamente ', results)
+//     });
+//   });
+
+//   const deleteCarreras = new Promise((resolve, reject) => {
+//     const deleteCarrerasQuery = 'DELETE FROM carrera WHERE Id_Carreras = ?';
+//     connection.query(deleteCarrerasQuery, [id], (error, results) => {
+//       if (error) {
+//         console.error(error);
+//         return reject({ message: 'Error al eliminar Carrera ', error: error.sqlMessage });
+//       }
+//       resolve(results);
+//       console.log('Carrera eliminada correctamente ', results)
+//     });
+//   });
+
+//   updateDocentes.then(() => deleteMaterias).then(() => deleteCarreras).then((results) => {
+//     res.status(200).json({ message: 'Carrera eliminada correctamente, materias relacionada eliminadas correctamente y docentes relacionados actualizados correctamente' });
+//   }).catch((error) => {
+//       res.status(500).json(error)
+//     });
+// });
 
 // Obtener todos los semestres
 app.get('/semestres', (req, res) => {
@@ -365,35 +526,64 @@ app.put('/materias/:id', (req, res) => {
 // Eliminar una materia
 app.delete('/materias/:id', (req, res) => {
   const { id } = req.params;
-  const updateDocentes = new Promise((resolve, reject) => {
-    const updateDocentesQuery = 'UPDATE docentes SET id_mat_as = 0 WHERE id_mat_as = ?';
-  connection.query(updateDocentesQuery, [id], (error, results) => {
-    if (error) {
-      console.error(error);
-      return reject({ message: 'Error al actualizar docentes relacionados', error: error.sqlMessage });
-    }
-    resolve(results);
-    console.log('Docentes relacionados actualizados correctamente: ', results)
-  });
-  });
+  const updateDocentesQuery = 'UPDATE docentes SET id_mat_as = 0 WHERE id_mat_as = ?';
+  const deleteCourseTeacherQuery = 'DELETE FROM Docente_Materia WHERE id_materia = ?';
+  const deleteMateriasQuery = 'DELETE FROM Materias WHERE Id_Materias = ?';
 
-  const deleteMaterias = new Promise((resolve, reject) => {
-    const query = 'DELETE FROM Materias WHERE Id_Materias = ?';
-    connection.query(query, [id], (error, results) => {
+  // Inicia una transacción
+  connection.beginTransaction(error => {
+    if (error) {
+      console.error('Error al iniciar la transacción: ', error);
+      return res.status(500).json({ message: 'Error al eliminar materia', error: error.sqlMessage });
+    }
+
+    // Actualiza los docentes relacionados
+    connection.query(updateDocentesQuery, [id], (error, results) => {
       if (error) {
-        console.error(error);
-        return reject({ message: 'Error al eliminar materia', error: error.sqlMessage });
+        return connection.rollback(() => {
+          console.error('Error al actualizar docentes relacionados: ', error);
+          res.status(500).json({ message: 'Error al eliminar materia', error: error.sqlMessage });
+        });
       }
-      resolve(results);
-      console.log('Materia eliminada correctamente: ', results)
+
+      console.log('Docentes relacionados actualizados correctamente: ', results);
+
+      // Elimina las relaciones en la tabla intermedia
+      connection.query(deleteCourseTeacherQuery, [id], (error, results) => {
+        if (error) {
+          return connection.rollback(() => {
+            console.error('Error al eliminar relaciones de la materia: ', error);
+            res.status(500).json({ message: 'Error al eliminar materia', error: error.sqlMessage });
+          });
+        }
+
+        console.log('Relaciones de la materia eliminadas correctamente: ', results);
+
+        // Elimina la materia
+        connection.query(deleteMateriasQuery, [id], (error, results) => {
+          if (error) {
+            return connection.rollback(() => {
+              console.error('Error al eliminar materia: ', error);
+              res.status(500).json({ message: 'Error al eliminar materia', error: error.sqlMessage });
+            });
+          }
+
+          // Si todo ha ido bien, confirma la transacción
+          connection.commit(error => {
+            if (error) {
+              return connection.rollback(() => {
+                console.error('Error al confirmar la transacción: ', error);
+                res.status(500).json({ message: 'Error al eliminar materia', error: error.sqlMessage });
+              });
+            }
+
+            res.status(200).json({ message: 'Materia eliminada correctamente y docentes actualizados' });
+            console.log('Materia eliminada correctamente: ', results);
+          });
+        });
+      });
     });
   });
-  updateDocentes.then(() => deleteMaterias).then((results) => {
-      res.status(200).json({ message: 'Materia eliminada correctamente y docentes actualizados', data: results });
-    })
-    .catch((error) => {
-      res.status(500).json(error);
-    });
 });
 
 // Obtener todos los docentes
@@ -404,54 +594,228 @@ app.get('/docentes', (req, res) => {
   });
 });
 
-// Insertar un nuevo docente
-app.post('/docentes', (req, res) => {
-  const { Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc, contra_docente } = req.body;
-  const hashedPassword = bcrypt.hashSync(contra_docente, 10)
-  const query = 'INSERT INTO docentes (Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc, contra_docente) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-  connection.query(query, [Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc, hashedPassword], (error, results) => {
+// Obtener docente por Id
+app.get('/docentes/:id', (req, res) => {
+  const { id } = req.params
+  const query = 'SELECT * FROM docentes WHERE Id_docente = ?'
+  connection.query(query, [id], (error, results) => {
     if (error) {
-      console.error({ Contra_docente })
-      console.error('Error al insertar docente ', error)
-      return res.status(500).json({ message: 'Error al crear docente', error: error.sqlMessage });
-      }
-    res.status(201).json({ message: 'Docente creado correctamente', data: results })
-    console.log('Docente creado correctamente: ', results);
+      console.error('Error al obtener datos del  docente ', error)
+      return res.status(500).json({ message: 'Error al obtener datos del  docente ', error: error.sqlMessage });
+    }
+    res.status(200).json(results);
+    console.log('Datos del docente obtenidos correctamente ', results)
   });
 });
 
-// Actualizar un docente
-app.put('/docentes/:id', (req, res) => {
-  const { nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc} = req.body;
-  const { id }    = req.params
-  const query = 'UPDATE docentes SET nombre_doc = ?, Apellido = ?, id_mat_as = ?, id_carrera_mat = ?, correo = ?, apei2 = ?, perfil = ?, rol_doc = ?  WHERE Id_docente = ?';
-  connection.query(query, [nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc, id], (error, results) => {
+//obtener foto de perfil de docente
+app.get('/docentes/profile-image/:id', (req, res) => {
+  const { id } = req.params;
+  const query = 'SELECT perfil from docentes WHERE Id_docente = ?'
+  connection.query(query, [id], (error, results) => {
     if (error) {
-      console.error('Error al editar docente: ', error)
-      console.error('params: ',req.params)
-      return res.status(500).json({ message: 'Error al editar Docente ', error: error.sqlMessage });
-      }
-    res.status(201).json({ message: 'Docente editado correctamente', data: results });
-    console.log('Docente editado correctamente: ', results);
-    console.log('req.body', req.body);
-    console.log(req.params);
-    // console.log(Id_docente);
+      return res.status(500).json({ message: 'Error en el servidor', error: error.sqlMessage });
+    }
+    if (results.lenght === 0) {
+      return res.status(404).json({ message: 'Imagen no encontrada' });
+    }
+
+    const profilePicture = results[0].perfil;
+    res.setHeader('Content-Type', 'image/jpeg')
+    res.send(profilePicture);
+    console.log(profilePicture)
   });
 });
+
+//Cambiar foto de perfil del docente
+app.post('/docentes/upload-profile/:id', upload.single('perfil'), (req, res) => {
+  const { id } = req.params;
+  const perfilBuffer = req.file.buffer;
+
+  const profilePictureQuery = 'UPDATE docentes set perfil = ? WHERE Id_docente = ?';
+  connection.query(profilePictureQuery, [perfilBuffer, id], (error, results) => {
+    if (error) {
+      console.error('Error al subir foto de perfil del docente ', error)
+      return res.status(500).json({ message: 'Error al subir foto del perfil del docente', error: error.sqlMessage });
+      }
+    res.status(201).json({ message: 'Foto de perfil del docente subida correctamente', data: results });
+    console.log('Foto de perfil del docente subida correctamente: ', results)
+  });
+});
+app.post('/docentes', (req, res) => {
+  const { Id_docente, nombre_doc, Apellido, id_carrera_mat, id_mat_as, courseIds, correo, apei2, perfil, rol_doc, contra_docente } = req.body;
+  const hashedPassword = bcrypt.hashSync(contra_docente, 10);
+  
+  const insertTeacherQuery = 'INSERT INTO docentes (Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc, contra_docente) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  const insertCourseTeacherQuery = 'INSERT INTO Docente_Materia (id_docente, id_materia) VALUES ?';
+
+  // Inicia una transacción
+  connection.beginTransaction(error => {
+    if (error) {
+      console.error('Error al iniciar la transacción: ', error);
+      return res.status(500).json({ message: 'Error al crear docente', error: error.sqlMessage });
+    }
+    //BH7YVBJl
+    //auN3MJpo
+    // Inserta el docente
+    connection.query(insertTeacherQuery, [Id_docente, nombre_doc, Apellido, id_carrera_mat, id_mat_as, correo, apei2, perfil, rol_doc, hashedPassword], (error, results) => {
+      if (error) {
+        return connection.rollback(() => {
+          console.error('Error al insertar docente: ', error);
+          res.status(500).json({ message: 'Error al crear docente', error: error.sqlMessage });
+        });
+      }
+
+      console.log('Docente creado correctamente: ', results);
+
+      // Prepara los datos para la tabla intermedia
+      const courseTeacherValues = courseIds.map(courseId => [Id_docente, courseId]);
+
+      // Inserta las materias en la tabla intermedia
+      connection.query(insertCourseTeacherQuery, [courseTeacherValues], (error, results) => {
+        if (error) {
+          return connection.rollback(() => {
+            console.error('Error al insertar materias del docente: ', error);
+            res.status(500).json({ message: 'Error al crear docente', error: error.sqlMessage });
+          });
+        }
+
+        // Si todo ha ido bien, confirma la transacción
+        connection.commit(error => {
+          if (error) {
+            return connection.rollback(() => {
+              console.error('Error al confirmar la transacción: ', error);
+              res.status(500).json({ message: 'Error al crear docente', error: error.sqlMessage });
+            });
+          }
+
+          res.status(201).json({ message: 'Docente creado correctamente' });
+          console.log('Materias del docente insertadas correctamente: ', results);
+        });
+      });
+    });
+  });
+});
+
+//Actualiza el docente
+app.put('/docentes/:id', (req, res) => {
+  const { nombre_doc, Apellido, id_carrera_mat, id_mat_as, courseIds, correo, apei2, perfil, rol_doc } = req.body;
+  const { id } = req.params;
+  
+  const updateTeacherQuery = 'UPDATE docentes SET nombre_doc = ?, Apellido = ?, id_carrera_mat = ?, correo = ?, apei2 = ?, perfil = ?, rol_doc = ? WHERE Id_docente = ?';
+  const deleteCourseTeacherQuery = 'DELETE FROM Docente_Materia WHERE id_docente = ?';
+  const insertCourseTeacherQuery = 'INSERT INTO Docente_Materia (id_docente, id_materia) VALUES ?';
+
+  // Inicia una transacción
+  connection.beginTransaction(error => {
+    if (error) {
+      console.error('Error al iniciar la transacción: ', error);
+      return res.status(500).json({ message: 'Error al editar docente', error: error.sqlMessage });
+    }
+
+    // Actualiza el docente
+    connection.query(updateTeacherQuery, [nombre_doc, Apellido, id_carrera_mat, correo, apei2, perfil, rol_doc, id], (error, results) => {
+      if (error) {
+        return connection.rollback(() => {
+          console.error('Error al editar docente: ', error);
+          res.status(500).json({ message: 'Error al editar docente', error: error.sqlMessage });
+        });
+      }
+
+      console.log('Docente editado correctamente: ', results);
+
+      // Elimina las relaciones actuales en la tabla intermedia
+      connection.query(deleteCourseTeacherQuery, [id], (error, results) => {
+        if (error) {
+          return connection.rollback(() => {
+            console.error('Error al eliminar relaciones de materias del docente: ', error);
+            res.status(500).json({ message: 'Error al editar docente', error: error.sqlMessage });
+          });
+        }
+
+        console.log('Relaciones de materias eliminadas correctamente: ', results);
+
+        // Prepara los datos para la tabla intermedia
+        const courseTeacherValues = courseIds.map(courseId => [id, courseId]);
+
+        // Inserta las nuevas relaciones en la tabla intermedia
+        connection.query(insertCourseTeacherQuery, [courseTeacherValues], (error, results) => {
+          if (error) {
+            return connection.rollback(() => {
+              console.error('Error al insertar nuevas relaciones de materias del docente: ', error);
+              res.status(500).json({ message: 'Error al editar docente', error: error.sqlMessage });
+            });
+          }
+
+          // Si todo ha ido bien, confirma la transacción
+          connection.commit(error => {
+            if (error) {
+              return connection.rollback(() => {
+                console.error('Error al confirmar la transacción: ', error);
+                res.status(500).json({ message: 'Error al editar docente', error: error.sqlMessage });
+              });
+            }
+
+            res.status(201).json({ message: 'Docente editado correctamente' });
+            console.log('Nuevas relaciones de materias insertadas correctamente: ', results);
+          });
+        });
+      });
+    });
+  });
+});
+
 
 // Eliminar un docente
 app.delete('/docentes/:id', (req, res) => {
   const { id } = req.params;
-  const query = 'DELETE FROM docentes WHERE Id_docente = ?';
-  connection.query(query, [id], (error, results) => {
+  const deleteTeacherQuery = 'DELETE FROM docentes WHERE Id_docente = ?';
+  const deleteCourseTeacherQuery = 'DELETE FROM Docente_Materia WHERE id_docente = ?';
+
+  // Inicia una transacción
+  connection.beginTransaction(error => {
     if (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Error al eliminar alumno', error: error.sqlMessage });
+      console.error('Error al iniciar la transacción: ', error);
+      return res.status(500).json({ message: 'Error al eliminar docente', error: error.sqlMessage });
     }
-      res.status(201).json({ message: 'Alumno eliminado correctamente', data: results });
-      console.log('Alumno eliminado correctamente: ', results)
+
+    // Elimina las relaciones en la tabla intermedia
+    connection.query(deleteCourseTeacherQuery, [id], (error, results) => {
+      if (error) {
+        return connection.rollback(() => {
+          console.error('Error al eliminar relaciones de materias del docente: ', error);
+          res.status(500).json({ message: 'Error al eliminar docente', error: error.sqlMessage });
+        });
+      }
+
+      console.log('Relaciones de materias eliminadas correctamente: ', results);
+
+      // Elimina el docente
+      connection.query(deleteTeacherQuery, [id], (error, results) => {
+        if (error) {
+          return connection.rollback(() => {
+            console.error('Error al eliminar docente: ', error);
+            res.status(500).json({ message: 'Error al eliminar docente', error: error.sqlMessage });
+          });
+        }
+
+        // Si todo ha ido bien, confirma la transacción
+        connection.commit(error => {
+          if (error) {
+            return connection.rollback(() => {
+              console.error('Error al confirmar la transacción: ', error);
+              res.status(500).json({ message: 'Error al eliminar docente', error: error.sqlMessage });
+            });
+          }
+
+          res.status(201).json({ message: 'Docente eliminado correctamente' });
+          console.log('Docente eliminado correctamente: ', results);
+        });
+      });
+    });
   });
 });
+
 
 // Obtener todas las publicaciones del foro
 app.get('/foro', (req, res) => {

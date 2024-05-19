@@ -22,13 +22,15 @@ export class NewTeacherComponent implements OnInit {
     lastName1: '',
     lastName2: '',
     email: '',
-    majorId:0,
+    majorId: 0,
     courseId: 0,
+    courseIds: [] = [],
     role: 'teacher',
     profilePicture: '',
-    password: ''
+    password: '',
+    
   };
-
+  selectedCoursesByMajor: {[majorId: number]: number[]} = {}
   allMajors: any[] = [];
   allCourses: any[] = []
   selectedMajorCode: number | null = null;
@@ -46,21 +48,11 @@ export class NewTeacherComponent implements OnInit {
   constructor(private router: Router, private teacherService: TeacherService, private majorService: MajorService, private courseService: CourseService) {}
 
   ngOnInit(): void{
-    // this.loadCourses();
+    
     this.loadMajors();
     // this.teacher.schedule = this.initSchedule();
   }
-  // loadCourses() {
-  //   this.courseService.getCourses().subscribe({
-  //     next: (allCourses) => {
-  //       this.allCourses = allCourses;
-  //       console.log(this.allCourses)
-  //     },
-  //     error: (error) => {
-  //       console.error('Error cargando materias ', error.message)
-  //     }
-  //   });
-  // }
+  
   loadMajors() {
     this.majorService.getMajors().subscribe({
       next: (allMajors) => {
@@ -72,10 +64,19 @@ export class NewTeacherComponent implements OnInit {
   }
   onMajorChange(): void {
     if (this.teacher.majorId) {
+      this.selectedCoursesByMajor[this.teacher.majorId] = [...this.teacher.courseIds]
+    }
+
+    const selectedCourses = this.selectedCoursesByMajor[this.teacher.majorId] || [];
+    this.teacher.courseIds = selectedCourses;
+
+    if (this.teacher.majorId) {
       this.courseService.getCoursesByMajor(this.teacher.majorId).subscribe({
         next: (allCourses) => {
           this.allCourses = allCourses;
           console.log(this.allCourses);
+          this.teacher.courseIds = this.teacher.courseIds.filter(courseId => 
+          this.allCourses.some(course => course.Id_Materias === courseId));
         }, 
         error: (error) => {
           console.error('Error al cargar materias: ', error);
@@ -85,6 +86,15 @@ export class NewTeacherComponent implements OnInit {
     } else {
       this.allCourses = [];
     }
+  }
+
+  onCourseSelectionChange(event: any): void {
+    if (this.teacher.majorId) {
+      this.selectedCoursesByMajor[this.teacher.majorId] = [...event.value]
+    }
+    this.teacher.courseIds = [...event.value]
+    console.log('CourseIDS: ', this.teacher.courseIds)
+    console.log('SelectedCourseByMajor: ', this.selectedCoursesByMajor)
   }
 
   initSchedule(): Schedule {
@@ -121,6 +131,12 @@ export class NewTeacherComponent implements OnInit {
   // }
 
   onSubmit(): void {
+    this.teacher.courseIds = [];
+    for (const majorId in this.selectedCoursesByMajor) {
+      if (this.selectedCoursesByMajor.hasOwnProperty(majorId)) {
+        this.teacher.courseIds = this.teacher.courseIds.concat(this.selectedCoursesByMajor[majorId]);
+      }
+    }
     this.teacherService.createTeacher(this.teacher).subscribe({
       next: (response) => {
         console.log('Si se armo ', response);
@@ -128,6 +144,8 @@ export class NewTeacherComponent implements OnInit {
       },
       error: (error) => console.error('Error al crear profesor ', error)
     });
+    console.log(this.teacher.courseIds)
+    console.log(this.selectedCoursesByMajor)
   }
 
   onCancel(): void {
@@ -140,6 +158,7 @@ export class NewTeacherComponent implements OnInit {
       email: '',
       majorId: 0,
       courseId: 0,
+      courseIds: [],
       role: 'teacher',
       profilePicture: '',
       password: ''

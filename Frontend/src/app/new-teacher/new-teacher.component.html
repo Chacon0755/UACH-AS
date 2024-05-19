@@ -29,11 +29,11 @@
         </mat-form-field>
         <mat-form-field appearance="fill">
             <mat-label>Materias que imparte</mat-label>
-            <mat-select [(ngModel)]="teacher.courseId" name="courses">
+            <mat-select [(ngModel)]="teacher.courseIds" name="courses" multiple (selectionChange)="onCourseSelectionChange($event)">
                 <mat-option *ngFor="let course of allCourses" [value]="course.Id_Materias">{{course.N_Mat}}</mat-option>
             </mat-select>
         </mat-form-field>
-        <div>Selecciones actuales: {{ teacher.courseId | json }}</div>
+        <div>Selecciones actuales: {{ teacher.courseIds | json }}</div>
         <!-- <div class="table-responsive">
             <table class="table">
                 <thead>

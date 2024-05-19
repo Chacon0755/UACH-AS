@@ -2,9 +2,10 @@
     <div class="student-home-container">
         <aside class="sidebar">
             <div class="profile-info">
-                <img [src]="userImageUrl || './assets/images/User.jpg'" alt="User Icon">
+                <img [src]="teacher.profilePicture || './assets/images/User.jpg'" alt="User Icon">
                 <input type="file" (change)="onFileSelectedEvent($event)" hidden #fileInput>
-                <p>{{ teacher?.name }} {{teacher?.name}}</p>
+                <p>Bienvenido</p>
+                <p>{{ teacher.name }} {{teacher.lastName1}}</p>
             </div>
             <div class="course-list">
                 <!-- <h3>Materias impartidas</h3>
@@ -27,11 +28,11 @@
                     </div>
                     <div class="responses-input">
                         <input type="text" [(ngModel)]="newResponseContent" placeholder="Responder..." class="response-input">
-                        <input type="file" class="input-adjuntar" (change)="onArchivoSeleccionado($event)" #archivoInput>
-                        <button class="boton-adjuntar"(click)="archivoInput.click()">
+                        <!-- <input type="file" class="input-adjuntar" (change)="onArchivoSeleccionado($event)" #archivoInput> -->
+                        <!-- <button class="boton-adjuntar"(click)="archivoInput.click()">
                             Adjuntar Archivo
-                        </button>
-                        <button (click)="reply(post.id, i, archivoSeleccionado)" class="btn response">Responder</button>
+                        </button> -->
+                        <!-- <button (click)="reply(post.id, i, archivoSeleccionado)" class="btn response">Responder</button> -->
 
                     </div>
                 </div>

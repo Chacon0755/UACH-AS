@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {  Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -38,4 +38,18 @@ export class AuthService {
     console.log('is Logged in: ', !!token);
     return !!token;
   }
+
+  getUserDetails(): { name: string, profilePicture: string, id: number } | null{
+    const token = this.getToken();
+    if (token) {
+      const decoded: any = jwtDecode(token);
+      return {
+        name: decoded.name,
+        profilePicture: decoded.profilePicture,
+        id: decoded.id 
+      }
+    }
+    return null
+  }
+
 }
