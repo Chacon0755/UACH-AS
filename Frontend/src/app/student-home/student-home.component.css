@@ -9,6 +9,9 @@
   background-color: #FFEAB2; 
   padding: 20px;
 }
+.sidebar.left{
+  width: 15%
+}
   
 .profile-info {
   text-align: center;

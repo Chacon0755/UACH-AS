@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `uach_as` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `uach_as`;
 -- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: uach_as
@@ -16,27 +18,27 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `semestre`
+-- Table structure for table `usuarios`
 --
 
-DROP TABLE IF EXISTS `semestre`;
+DROP TABLE IF EXISTS `usuarios`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `semestre` (
-  `id` int NOT NULL,
-  `sem` varchar(20) NOT NULL,
-  PRIMARY KEY (`id`)
+CREATE TABLE `usuarios` (
+  `id_user` int NOT NULL,
+  `users` varchar(50) NOT NULL,
+  PRIMARY KEY (`id_user`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `semestre`
+-- Dumping data for table `usuarios`
 --
 
-LOCK TABLES `semestre` WRITE;
-/*!40000 ALTER TABLE `semestre` DISABLE KEYS */;
-INSERT INTO `semestre` VALUES (1,'Primer semestre'),(2,'Segundo semestre'),(3,'Tercer semestre'),(4,'Cuarto semestre'),(5,'Quinto semestre'),(6,'Sexto semestre'),(7,'Septimo semestre'),(8,'Octavo semestre'),(9,'Noveno semestre');
-/*!40000 ALTER TABLE `semestre` ENABLE KEYS */;
+LOCK TABLES `usuarios` WRITE;
+/*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
+INSERT INTO `usuarios` VALUES (1,'Docente'),(2,'Alumno');
+/*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -48,4 +50,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-18 21:20:09
+-- Dump completed on 2024-05-19 19:42:12

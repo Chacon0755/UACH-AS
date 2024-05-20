@@ -18,8 +18,11 @@ export class AdvisoryService {
       id_materia: advisory.courseId,
       modalidad: advisory.mode,
       id_horario: advisory.scheduleId
-    }
-    return this.http.post<Advisory>(`${this.apiUrl}/asesorias`, payload)
+    };
+    return this.http.post<Advisory>(`${this.apiUrl}/asesorias`, payload);
   }
-  
+
+  getAdvisorysByStudentId(studentId: number): Observable<any>{
+    return this.http.get<any>(`${this.apiUrl}/asesorias/alumno/${studentId}`);
+  } 
 }

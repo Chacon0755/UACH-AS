@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `uach_as` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `uach_as`;
 -- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: uach_as
@@ -16,27 +18,30 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `carrera`
+-- Table structure for table `docente_materia`
 --
 
-DROP TABLE IF EXISTS `carrera`;
+DROP TABLE IF EXISTS `docente_materia`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `carrera` (
-  `Id_Carreras` int NOT NULL,
-  `Nombre_Carrera` varchar(60) NOT NULL,
-  PRIMARY KEY (`Id_Carreras`)
+CREATE TABLE `docente_materia` (
+  `id_docente` int NOT NULL,
+  `id_materia` int NOT NULL,
+  PRIMARY KEY (`id_docente`,`id_materia`),
+  KEY `id_materia` (`id_materia`),
+  CONSTRAINT `docente_materia_ibfk_1` FOREIGN KEY (`id_docente`) REFERENCES `docentes` (`Id_docente`),
+  CONSTRAINT `docente_materia_ibfk_2` FOREIGN KEY (`id_materia`) REFERENCES `materias` (`Id_Materias`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `carrera`
+-- Dumping data for table `docente_materia`
 --
 
-LOCK TABLES `carrera` WRITE;
-/*!40000 ALTER TABLE `carrera` DISABLE KEYS */;
-INSERT INTO `carrera` VALUES (0,'Opciones '),(1,'Ingenieria Aeroespacial'),(2,'Ingenieria Civil'),(3,'Ingenieria en ciencias de la computacion'),(5,'Ingenieria en sistemas computacionales en hardware'),(6,'Ingenieria en sistemas topograficos'),(7,'Ingenieria en tecnologias de procesos '),(8,'Ingeniero Fisico'),(9,'Ingeniero Geologo');
-/*!40000 ALTER TABLE `carrera` ENABLE KEYS */;
+LOCK TABLES `docente_materia` WRITE;
+/*!40000 ALTER TABLE `docente_materia` DISABLE KEYS */;
+INSERT INTO `docente_materia` VALUES (2345,1),(2345,2),(2345,4),(9876,59),(9876,61),(9876,62),(2345,72),(2345,73),(2345,74);
+/*!40000 ALTER TABLE `docente_materia` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -48,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-18 21:20:10
+-- Dump completed on 2024-05-19 19:42:12

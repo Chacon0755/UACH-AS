@@ -5,6 +5,7 @@ import { ForumService } from '../services/forum.service';
 import { Post } from '../models/forum.model';
 import { Student } from '../models/student.model';
 import { StudentService } from '../services/student.service';
+import { AdvisoryService } from '../services/advisory.service';
 
 
 @Component({
@@ -32,16 +33,18 @@ export class StudentHomeComponent implements OnInit {
   newPostContent: string = '';
   newResponseContent: string = '';
   userRole: string = 'student';
-  courses: string[] = []
+  courses: string[] = [];
+  advisorys: any[] = [];
 
 
-  constructor(private authService: AuthService, private router: Router, private forumService: ForumService, private studentService: StudentService) { }
+  constructor(private authService: AuthService, private router: Router, private forumService: ForumService, private studentService: StudentService, private advisoryService: AdvisoryService) { }
   
   ngOnInit(): void {
     const userDetails = this.authService.getUserDetails();
     if (userDetails) {
       this.loadStudentData(userDetails.id);
       this.loadProfileImage(userDetails.id);
+      this.loadStudentAdvisorys(userDetails.id);
     }
   }
 
@@ -75,6 +78,18 @@ export class StudentHomeComponent implements OnInit {
           console.log('estudiante de DB: ', student);
           console.log('estudiante con datos: ', this.student)
         }
+      }
+    });
+  }
+
+  loadStudentAdvisorys(studentId: number): void{
+    this.advisoryService.getAdvisorysByStudentId(studentId).subscribe({
+      next: (advisorys) => {
+        this.advisorys = advisorys;
+        console.log('Asesorias: ', this.advisorys);
+      },
+      error: (error) => {
+        console.error('Error al obtener asesorias: ', error);
       }
     });
   }

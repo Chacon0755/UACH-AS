@@ -1,6 +1,6 @@
 <div class="container">
     <div class="student-home-container">
-        <aside class="sidebar">
+        <aside class="sidebar left">
             <div class="profile-info">
                 <img [src]="student.profilePicture || './assets/images/User.jpg'" alt="User Icon">
                 <input type="file" (change)="onFileSelectedEvent($event)" hidden #fileInput>
@@ -8,9 +8,9 @@
                 <p>{{ student.name }} {{student.lastName1}}</p>
             </div>
             <div class="course-list">
-                <h3>Cursos inscritos</h3>
+                <h3>Asesorias</h3>
                 <ul>
-                    <li *ngFor="let course of courses">{{course}}</li>
+                    <li *ngFor="let advisory of advisorys">{{advisory.dia}}: {{advisory.hora_inicio}}. Docente: {{advisory.nombre_docente}}</li>
 
                 </ul>
             </div>

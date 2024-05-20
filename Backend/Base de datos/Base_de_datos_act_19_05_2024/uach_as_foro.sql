@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `uach_as` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `uach_as`;
 -- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: uach_as
@@ -16,30 +18,28 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `docente_materia`
+-- Table structure for table `foro`
 --
 
-DROP TABLE IF EXISTS `docente_materia`;
+DROP TABLE IF EXISTS `foro`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `docente_materia` (
-  `id_docente` int NOT NULL,
-  `id_materia` int NOT NULL,
-  PRIMARY KEY (`id_docente`,`id_materia`),
-  KEY `id_materia` (`id_materia`),
-  CONSTRAINT `docente_materia_ibfk_1` FOREIGN KEY (`id_docente`) REFERENCES `docentes` (`Id_docente`),
-  CONSTRAINT `docente_materia_ibfk_2` FOREIGN KEY (`id_materia`) REFERENCES `materias` (`Id_Materias`)
+CREATE TABLE `foro` (
+  `id_publicacion` int NOT NULL AUTO_INCREMENT,
+  `Publicacion` varchar(255) DEFAULT NULL,
+  `Comentarios` varchar(255) DEFAULT NULL,
+  `imagen` blob,
+  PRIMARY KEY (`id_publicacion`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `docente_materia`
+-- Dumping data for table `foro`
 --
 
-LOCK TABLES `docente_materia` WRITE;
-/*!40000 ALTER TABLE `docente_materia` DISABLE KEYS */;
-INSERT INTO `docente_materia` VALUES (2345,58),(2345,59),(9876,59),(2345,60),(9876,61),(9876,62);
-/*!40000 ALTER TABLE `docente_materia` ENABLE KEYS */;
+LOCK TABLES `foro` WRITE;
+/*!40000 ALTER TABLE `foro` DISABLE KEYS */;
+/*!40000 ALTER TABLE `foro` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -51,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-18 21:20:09
+-- Dump completed on 2024-05-19 19:42:12

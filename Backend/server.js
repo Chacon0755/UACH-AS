@@ -74,6 +74,40 @@ app.post('/login', (req, res) => {
   });
 });
 
+app.get('/asesorias/alumno/:id', (req, res) => {
+  const { id } = req.params;
+
+  const query = `
+    SELECT 
+      a.id_as,
+      h.dia,
+      h.hora_inicio,
+      d.nombre_doc AS nombre_docente,
+      d.Apellido AS apellido_docente,
+      m.N_Mat AS nombre_materia,
+      CASE 
+        WHEN a.modalidad = TRUE THEN 'Presencial'
+        ELSE 'Virtual'
+      END AS modalidad
+    FROM asesorias a
+    JOIN horarios h ON a.id_docente_horario = h.id_horario
+    JOIN docentes d ON a.id_docente = d.Id_docente
+    JOIN materias m ON a.id_materia = m.Id_Materias
+    WHERE a.id_alumno = ?
+  `;
+
+  connection.query(query, [id], (error, results) => {
+    if (error) {
+      console.error('Error al obtener asesorías del alumno: ', error);
+      return res.status(500).json({ message: 'Error al obtener asesorías del alumno', error: error.sqlMessage });
+    }
+    console.log('studentId:', id)
+    console.log('Asesorias del alumno obtenidas correctamente: ', results)
+    res.status(200).json(results);
+  });
+});
+
+
 // Ruta para crear una asesoría
 app.post('/asesorias', (req, res) => {
   const { id_alumno, id_docente, id_horario, id_materia, modalidad } = req.body;

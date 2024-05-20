@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `uach_as` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `uach_as`;
 -- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: uach_as
@@ -23,17 +25,22 @@ DROP TABLE IF EXISTS `asesorias`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `asesorias` (
-  `id_as` int NOT NULL,
-  `alumn_ases` int NOT NULL,
-  `docente_ases` int NOT NULL,
-  `dia` varchar(100) NOT NULL,
-  `hora` varchar(50) NOT NULL,
+  `id_as` int NOT NULL AUTO_INCREMENT,
+  `id_alumno` int DEFAULT NULL,
+  `id_docente` int DEFAULT NULL,
+  `id_docente_horario` int DEFAULT NULL,
+  `id_materia` int DEFAULT NULL,
+  `modalidad` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id_as`),
-  KEY `num_alum_as_idx` (`alumn_ases`),
-  KEY `num_doc_as_idx` (`docente_ases`),
-  CONSTRAINT `num_alum_as` FOREIGN KEY (`alumn_ases`) REFERENCES `alumnos` (`matricula`) ON UPDATE CASCADE,
-  CONSTRAINT `num_doc_as` FOREIGN KEY (`docente_ases`) REFERENCES `docentes` (`Id_docente`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `fk_alumno` (`id_alumno`),
+  KEY `fk_docente` (`id_docente`),
+  KEY `fk_docente_horario` (`id_docente_horario`),
+  KEY `fk_materia` (`id_materia`),
+  CONSTRAINT `fk_alumno` FOREIGN KEY (`id_alumno`) REFERENCES `alumnos` (`matricula`),
+  CONSTRAINT `fk_docente` FOREIGN KEY (`id_docente`) REFERENCES `docentes` (`Id_docente`),
+  CONSTRAINT `fk_docente_horario` FOREIGN KEY (`id_docente_horario`) REFERENCES `docente_horario` (`id_horario`),
+  CONSTRAINT `fk_materia` FOREIGN KEY (`id_materia`) REFERENCES `materias` (`Id_Materias`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,6 +49,7 @@ CREATE TABLE `asesorias` (
 
 LOCK TABLES `asesorias` WRITE;
 /*!40000 ALTER TABLE `asesorias` DISABLE KEYS */;
+INSERT INTO `asesorias` VALUES (3,348760,9876,NULL,59,1),(4,348760,9876,13,59,1),(5,348760,9876,4,62,1);
 /*!40000 ALTER TABLE `asesorias` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,4 +62,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-18 21:20:09
+-- Dump completed on 2024-05-19 19:42:11
