@@ -74,6 +74,7 @@ app.post('/login', (req, res) => {
   });
 });
 
+// obtener asesorias del alumno
 app.get('/asesorias/alumno/:id', (req, res) => {
   const { id } = req.params;
 
@@ -103,6 +104,40 @@ app.get('/asesorias/alumno/:id', (req, res) => {
     }
     console.log('studentId:', id)
     console.log('Asesorias del alumno obtenidas correctamente: ', results)
+    res.status(200).json(results);
+  });
+});
+
+// obtener asesorias del docente
+app.get('/asesorias/docente/:id', (req, res) => {
+  const { id } = req.params;
+
+  const query = `
+    SELECT 
+      a.id_as,
+      h.dia,
+      h.hora_inicio,
+      al.nombre AS nombre_alumno,
+      al.ape1 AS apellido_alumno,
+      m.N_Mat AS nombre_materia,
+      CASE 
+        WHEN a.modalidad = TRUE THEN 'Presencial'
+        ELSE 'Virtual'
+      END AS modalidad
+    FROM asesorias a
+    JOIN horarios h ON a.id_docente_horario = h.id_horario
+    JOIN alumnos al ON a.id_alumno = al.matricula
+    JOIN materias m ON a.id_materia = m.Id_Materias
+    WHERE a.id_docente = ?
+  `;
+
+  connection.query(query, [id], (error, results) => {
+    if (error) {
+      console.error('Error al obtener asesorías del docente: ', error);
+      return res.status(500).json({ message: 'Error al obtener asesorías del docente', error: error.sqlMessage });
+    }
+    console.log('teacherId:', id)
+    console.log('Asesorias del docente obtenidas correctamente: ', results)
     res.status(200).json(results);
   });
 });
@@ -790,7 +825,7 @@ app.post('/docentes', (req, res) => {
         }
 
         console.log('Materias del docente insertadas correctamente: ', results);
-        //u8KDsgJH
+
         // Prepara los datos para la tabla intermedia Docente_Horario
         const horarioTeacherValues = scheduleIds.map(horarioId => [Id_docente, horarioId]);
 

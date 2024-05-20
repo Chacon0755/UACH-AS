@@ -26,6 +26,6 @@ export class AdvisoryService {
     return this.http.get<any>(`${this.apiUrl}/asesorias/alumno/${studentId}`);
   } 
   getAdvisorysByTeacherId(teacherId: number): Observable<any>{
-    return this.http.get<any>(`${this.apiUrl}/asesorias/alumno/${teacherId}`);
+    return this.http.get<any>(`${this.apiUrl}/asesorias/docente/${teacherId}`);
   } 
 }

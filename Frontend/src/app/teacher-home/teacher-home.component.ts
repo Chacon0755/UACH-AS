@@ -3,9 +3,10 @@ import { AuthService } from '../services/auth.service';
 import { ForumService } from '../services/forum.service';
 import { Router } from '@angular/router';
 import { Post } from '../models/forum.model';
-import { Course } from '../models/course.model';
 import { TeacherService } from '../services/teacher.service';
 import { Teacher } from '../models/teacher.model';
+import { AdvisoryService } from '../services/advisory.service';
+
 
 
 @Component({
@@ -32,18 +33,19 @@ export class TeacherHomeComponent implements OnInit {
   posts: Post[] = [];
   newPostContent: string = '';
   newResponseContent: string = '';
-  courses: Course[] = [];
+  courses: any[] = [];
+  advisorys: any[] = []
     
 
 
 
-  constructor(private authService: AuthService, private forumService: ForumService, private router: Router, private teacherService: TeacherService) { }
+  constructor(private authService: AuthService, private forumService: ForumService, private router: Router, private teacherService: TeacherService, private advisoryService: AdvisoryService) { }
   ngOnInit(): void {
     const userDetails = this.authService.getUserDetails();
     if (userDetails) {
       this.loadTeacherData(userDetails.id);
       this.loadProfileImage(userDetails.id);
-      this.loadCurses()
+      this.loadTeacherAdvisorys(userDetails.id);
     }
   }
   
@@ -84,6 +86,18 @@ export class TeacherHomeComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error al cargar datos del docente: ', error)
+      }
+    });
+  }
+
+  loadTeacherAdvisorys(teacherId: number): void {
+    this.advisoryService.getAdvisorysByTeacherId(teacherId).subscribe({
+      next: (advisorys) => {
+        this.advisorys = advisorys;
+        console.log('Asesorias: ', this.advisorys);
+      },
+      error: (error) => {
+        console.error('Error al obtener asesorias: ', error);
       }
     });
   }
@@ -186,16 +200,7 @@ export class TeacherHomeComponent implements OnInit {
     this.router.navigate(['/login'])
   }
 
-  loadCurses(): void {
-    const teacherId = this.teacher.id; //cambiar por el del profesor
-    this.teacherService.getCourses(teacherId).subscribe({
-      next: (courses) => {
-        this.courses = courses;
-        console.log(courses)
-      },
-      error: (error) => console.error('nel nel ', error)
-    });
-  }
+
 
 }
 

@@ -9,6 +9,10 @@
     background-color: #FFEAB2; 
     padding: 20px;
 }
+
+.sidebar.left{
+    width: 15%
+}
     
 .profile-info {
     text-align: center;
@@ -83,4 +87,7 @@ button.btn.mat-button{
 
 .options {
     margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
