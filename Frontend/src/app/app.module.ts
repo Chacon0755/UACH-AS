@@ -31,6 +31,7 @@ import { ViewMajorComponent } from './view-major/view-major.component';
 import { ViewCourseComponent } from './view-course/view-course.component';
 import { NewAdminComponent } from './new-admin/new-admin.component';
 import { MatInputModule } from '@angular/material/input'
+import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
   declarations: [
@@ -68,6 +69,7 @@ import { MatInputModule } from '@angular/material/input'
     HttpClientModule,
     MatTableModule,
     MatInputModule,
+    MatIconModule,
   ],
   providers: [
     provideAnimationsAsync()
