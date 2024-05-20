@@ -8,12 +8,10 @@ p {
     text-align: center;
 }
 
-
 .container {
     margin-top: 100px;
     display: flex;
     padding: 10px;
-
 }
 
 .text-container {
@@ -33,20 +31,21 @@ p {
 
 .form-group {
     margin-bottom: 20px;
-    width: 100%;;
+    width: 100%;
+}
+
+input, button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    box-sizing: border-box;
 }
 
 input {
-    width: 95%;
-    padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 5px;
 }
 
-button{
-    width: 70%;
-    padding: 10px;
-    border-radius: 5px;
+button {
     cursor: pointer;
     transition: background-color 0.3s ease-in;
 }
@@ -57,10 +56,12 @@ button{
     border: none;
     margin-bottom: 20px;
 }
+
 .forgot-button {
     border: none;
     background-color: #fff;
     color: #371e49;
+    margin-bottom: 20px;
 }
 
 .login-button:hover {
@@ -71,4 +72,3 @@ button{
     background-color: #371e49;
     color: #fff;
 }
-
