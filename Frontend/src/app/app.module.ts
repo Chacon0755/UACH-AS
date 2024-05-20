@@ -31,7 +31,9 @@ import { ViewMajorComponent } from './view-major/view-major.component';
 import { ViewCourseComponent } from './view-course/view-course.component';
 import { NewAdminComponent } from './new-admin/new-admin.component';
 import { MatInputModule } from '@angular/material/input'
-import { MatIconModule } from '@angular/material/icon'
+import { MatIconModule } from '@angular/material/icon';
+import { ViewTeacherAdvisorysComponent } from './view-teacher-advisorys/view-teacher-advisorys.component'
+import { MatRadioModule } from '@angular/material/radio'
 
 @NgModule({
   declarations: [
@@ -54,6 +56,7 @@ import { MatIconModule } from '@angular/material/icon'
     ViewMajorComponent,
     ViewCourseComponent,
     NewAdminComponent,
+    ViewTeacherAdvisorysComponent,
 
   ],
   imports: [
@@ -70,6 +73,7 @@ import { MatIconModule } from '@angular/material/icon'
     MatTableModule,
     MatInputModule,
     MatIconModule,
+    MatRadioModule,
   ],
   providers: [
     provideAnimationsAsync()

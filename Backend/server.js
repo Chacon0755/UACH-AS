@@ -115,6 +115,7 @@ app.get('/asesorias/docente/:id', (req, res) => {
   const query = `
     SELECT 
       a.id_as,
+      a.id_docente_horario,
       h.dia,
       h.hora_inicio,
       al.nombre AS nombre_alumno,
@@ -197,6 +198,65 @@ app.post('/asesorias', (req, res) => {
           }
 
           res.status(201).json({ message: 'Asesoría creada correctamente' });
+        });
+      });
+    });
+  });
+});
+
+//  Eliminar una asesoría
+app.delete('/asesorias/docente/:id', (req, res) => {
+  const asesoriaId = req.params.id;
+  const { id_docente, id_horario } = req.body; // Suponiendo que estos IDs se envían en el cuerpo de la solicitud
+
+  // Consulta para eliminar la asesoría
+  const deleteAsesoriaQuery = `
+    DELETE FROM asesorias
+    WHERE id_as = ?
+  `;
+
+  // Consulta para actualizar el horario del docente
+  const updateScheduleQuery = `
+    UPDATE docente_horario
+    SET ocupado = FALSE
+    WHERE id_docente = ? AND id_horario = ?
+  `;
+
+  // Inicia una transacción
+  connection.beginTransaction((error) => {
+    if (error) {
+      console.error('Error al iniciar la transacción: ', error);
+      return res.status(500).json({ message: 'Error al eliminar asesoría', error: error.sqlMessage });
+    }
+
+    // Elimina la asesoría
+    connection.query(deleteAsesoriaQuery, [asesoriaId], (error, results) => {
+      if (error) {
+        return connection.rollback(() => {
+          console.error('Error al eliminar asesoría: ', error);
+          res.status(500).json({ message: 'Error al eliminar asesoría', error: error.sqlMessage });
+        });
+      }
+
+      // Actualiza el horario del docente
+      connection.query(updateScheduleQuery, [id_docente, id_horario], (error, results) => {
+        if (error) {
+          return connection.rollback(() => {
+            console.error('Error al actualizar horario del docente: ', error);
+            res.status(500).json({ message: 'Error al eliminar asesoría', error: error.sqlMessage });
+          });
+        }
+
+        // Confirma la transacción
+        connection.commit((error) => {
+          if (error) {
+            return connection.rollback(() => {
+              console.error('Error al confirmar la transacción: ', error);
+              res.status(500).json({ message: 'Error al eliminar asesoría', error: error.sqlMessage });
+            });
+          }
+
+          res.status(200).json({ message: 'Asesoría eliminada correctamente' });
         });
       });
     });
