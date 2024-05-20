@@ -752,7 +752,7 @@ app.post('/docentes/upload-profile/:id', upload.single('perfil'), (req, res) => 
 
 //crear docentes
 app.post('/docentes', (req, res) => {
-  const { Id_docente, nombre_doc, Apellido, id_carrera_mat, id_mat_as, courseIds, horarioIds, correo, apei2, perfil, rol_doc, contra_docente } = req.body;
+  const { Id_docente, nombre_doc, Apellido, id_carrera_mat, id_mat_as, courseIds, scheduleIds, correo, apei2, perfil, rol_doc, contra_docente } = req.body;
   const hashedPassword = bcrypt.hashSync(contra_docente, 10);
   
   const insertTeacherQuery = 'INSERT INTO docentes (Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc, contra_docente) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
@@ -790,9 +790,9 @@ app.post('/docentes', (req, res) => {
         }
 
         console.log('Materias del docente insertadas correctamente: ', results);
-
+        //u8KDsgJH
         // Prepara los datos para la tabla intermedia Docente_Horario
-        const horarioTeacherValues = horarioIds.map(horarioId => [Id_docente, horarioId]);
+        const horarioTeacherValues = scheduleIds.map(horarioId => [Id_docente, horarioId]);
 
         // Inserta los horarios en la tabla intermedia
         connection.query(insertHorarioTeacherQuery, [horarioTeacherValues], (error, results) => {

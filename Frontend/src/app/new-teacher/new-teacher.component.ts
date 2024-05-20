@@ -111,6 +111,7 @@ export class NewTeacherComponent implements OnInit {
     }
     this.teacher.courseIds = Array.from(uniqueCourseIds);
     
+    
     this.teacherService.createTeacher(this.teacher).subscribe({
       next: (response) => {
         console.log('Si se armo ', response);
