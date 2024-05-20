@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Advisory } from '../models/advisory.model';
 
@@ -28,4 +28,12 @@ export class AdvisoryService {
   getAdvisorysByTeacherId(teacherId: number): Observable<any>{
     return this.http.get<any>(`${this.apiUrl}/asesorias/docente/${teacherId}`);
   } 
+  deleteAdvisoryByTeacher(advisoryId: number, teacherId: number, scheduleId: number): Observable<any>{
+    const body = {
+      teacherId,
+      scheduleId,
+    }
+    const headers = new HttpHeaders({'content-Type': 'application/json'})
+    return this.http.delete<any>(`${this.apiUrl}/asesorias/docente/${advisoryId}`, {headers, body})
+  }
 }

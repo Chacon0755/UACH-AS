@@ -19,7 +19,7 @@ import { ViewTeacherComponent } from './view-teacher/view-teacher.component';
 import { ViewStudentComponent } from './view-student/view-student.component';
 import { ViewMajorComponent } from './view-major/view-major.component';
 import { ViewCourseComponent } from './view-course/view-course.component';
-
+import { ViewTeacherAdvisorysComponent } from './view-teacher-advisorys/view-teacher-advisorys.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -39,7 +39,9 @@ const routes: Routes = [
   { path: 'view-teacher', component: ViewTeacherComponent, canActivate: [authGuard]},
   { path: 'view-student', component: ViewStudentComponent, canActivate: [authGuard]},
   { path: 'view-major', component: ViewMajorComponent, canActivate: [authGuard]},
-  { path: 'view-course', component: ViewCourseComponent, canActivate: [authGuard]},
+  { path: 'view-course', component: ViewCourseComponent, canActivate: [authGuard] },
+  { path: 'view-teacher-advisorys', component: ViewTeacherAdvisorysComponent, canActivate: [authGuard] },
+  
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   {path: '**', redirectTo: '/login'},
 ];
