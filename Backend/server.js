@@ -74,6 +74,66 @@ app.post('/login', (req, res) => {
   });
 });
 
+// Ruta para crear una asesoría
+app.post('/asesorias', (req, res) => {
+  const { id_alumno, id_docente, id_horario, id_materia, modalidad } = req.body;
+
+  const insertAdvisoryQuery = `
+    INSERT INTO asesorias (id_alumno, id_docente, id_docente_horario, id_materia, modalidad)
+    VALUES (?, ?, ?, ?, ?)
+  `;
+
+  const updateScheduleQuery = `
+    UPDATE docente_horario
+    SET ocupado = TRUE
+    WHERE id_docente = ? AND id_horario = ?
+  `;
+
+  // Inicia una transacción
+  connection.beginTransaction(error => {
+    if (error) {
+      console.error('Error al iniciar la transacción: ', error);
+      return res.status(500).json({ message: 'Error al crear asesoría', error: error.sqlMessage });
+    }
+
+    // Inserta la nueva asesoría
+    connection.query(insertAdvisoryQuery, [id_alumno, id_docente, id_horario, id_materia, modalidad], (error, results) => {
+      if (error) {
+        return connection.rollback(() => {
+          console.error('Error al insertar asesoría: ', error);
+          res.status(500).json({ message: 'Error al crear asesoría', error: error.sqlMessage });
+        });
+      }
+
+      console.log('Asesoría creada correctamente: ', results);
+
+      // Actualiza el horario del docente
+      connection.query(updateScheduleQuery, [id_docente, id_horario], (error, results) => {
+        if (error) {
+          return connection.rollback(() => {
+            console.error('Error al actualizar horario del docente: ', error);
+            res.status(500).json({ message: 'Error al crear asesoría', error: error.sqlMessage });
+          });
+        }
+
+        console.log('Horario del docente actualizado correctamente: ', results);
+
+        // Confirma la transacción
+        connection.commit(error => {
+          if (error) {
+            return connection.rollback(() => {
+              console.error('Error al confirmar la transacción: ', error);
+              res.status(500).json({ message: 'Error al crear asesoría', error: error.sqlMessage });
+            });
+          }
+
+          res.status(201).json({ message: 'Asesoría creada correctamente' });
+        });
+      });
+    });
+  });
+});
+
 //Crear admins
 app.post('/admin', (req, res) => {
   const {admin_id, correo, contraseña, nombre, apellido1, apellido2, rol } = req.body
@@ -603,6 +663,23 @@ app.get('/docentes/materia/:id', (req, res) => {
   });
 });
 
+// Obtener horarios disponibles de un docente
+app.get('/docentes/:id/horarios-disponibles', (req, res) => {
+  const { id } = req.params;
+  const query = `
+    SELECT h.id_horario, h.hora_inicio, h.dia
+    FROM docente_horario dh
+    JOIN horarios h ON dh.id_horario = h.id_horario
+    WHERE dh.id_docente = ? AND dh.ocupado = FALSE
+  `;
+  connection.query(query, [id], (error, results) => {
+    if (error) {
+      console.error('Error al obtener horarios disponibles: ', error);
+      return res.status(500).json({ message: 'Error al obtener horarios disponibles', error: error.sqlMessage });
+    }
+    res.json(results);
+  });
+});
 
 //obtener foto de perfil de docente
 app.get('/docentes/profile-image/:id', (req, res) => {
@@ -638,12 +715,15 @@ app.post('/docentes/upload-profile/:id', upload.single('perfil'), (req, res) => 
     console.log('Foto de perfil del docente subida correctamente: ', results)
   });
 });
+
+//crear docentes
 app.post('/docentes', (req, res) => {
-  const { Id_docente, nombre_doc, Apellido, id_carrera_mat, id_mat_as, courseIds, correo, apei2, perfil, rol_doc, contra_docente } = req.body;
+  const { Id_docente, nombre_doc, Apellido, id_carrera_mat, id_mat_as, courseIds, horarioIds, correo, apei2, perfil, rol_doc, contra_docente } = req.body;
   const hashedPassword = bcrypt.hashSync(contra_docente, 10);
   
   const insertTeacherQuery = 'INSERT INTO docentes (Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc, contra_docente) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
   const insertCourseTeacherQuery = 'INSERT INTO Docente_Materia (id_docente, id_materia) VALUES ?';
+  const insertHorarioTeacherQuery = 'INSERT INTO Docente_Horario (id_docente, id_horario) VALUES ?';
 
   // Inicia una transacción
   connection.beginTransaction(error => {
@@ -651,8 +731,7 @@ app.post('/docentes', (req, res) => {
       console.error('Error al iniciar la transacción: ', error);
       return res.status(500).json({ message: 'Error al crear docente', error: error.sqlMessage });
     }
-    //BH7YVBJl
-    //auN3MJpo
+
     // Inserta el docente
     connection.query(insertTeacherQuery, [Id_docente, nombre_doc, Apellido, id_carrera_mat, id_mat_as, correo, apei2, perfil, rol_doc, hashedPassword], (error, results) => {
       if (error) {
@@ -664,7 +743,7 @@ app.post('/docentes', (req, res) => {
 
       console.log('Docente creado correctamente: ', results);
 
-      // Prepara los datos para la tabla intermedia
+      // Prepara los datos para la tabla intermedia Docente_Materia
       const courseTeacherValues = courseIds.map(courseId => [Id_docente, courseId]);
 
       // Inserta las materias en la tabla intermedia
@@ -676,31 +755,50 @@ app.post('/docentes', (req, res) => {
           });
         }
 
-        // Si todo ha ido bien, confirma la transacción
-        connection.commit(error => {
+        console.log('Materias del docente insertadas correctamente: ', results);
+
+        // Prepara los datos para la tabla intermedia Docente_Horario
+        const horarioTeacherValues = horarioIds.map(horarioId => [Id_docente, horarioId]);
+
+        // Inserta los horarios en la tabla intermedia
+        connection.query(insertHorarioTeacherQuery, [horarioTeacherValues], (error, results) => {
           if (error) {
             return connection.rollback(() => {
-              console.error('Error al confirmar la transacción: ', error);
+              console.error('Error al insertar horarios del docente: ', error);
               res.status(500).json({ message: 'Error al crear docente', error: error.sqlMessage });
             });
           }
 
-          res.status(201).json({ message: 'Docente creado correctamente' });
-          console.log('Materias del docente insertadas correctamente: ', results);
+          console.log('Horarios del docente insertados correctamente: ', results);
+
+          // Si todo ha ido bien, confirma la transacción
+          connection.commit(error => {
+            if (error) {
+              return connection.rollback(() => {
+                console.error('Error al confirmar la transacción: ', error);
+                res.status(500).json({ message: 'Error al crear docente', error: error.sqlMessage });
+              });
+            }
+
+            res.status(201).json({ message: 'Docente creado correctamente' });
+            console.log('Docente y sus relaciones insertados correctamente.');
+          });
         });
       });
     });
   });
 });
 
-//Actualiza el docente
+// Actualiza el docente
 app.put('/docentes/:id', (req, res) => {
-  const { nombre_doc, Apellido, id_carrera_mat, id_mat_as, courseIds, correo, apei2, perfil, rol_doc } = req.body;
+  const { nombre_doc, Apellido, id_carrera_mat, id_mat_as, courseIds, scheduleIds, correo, apei2, perfil, rol_doc } = req.body;
   const { id } = req.params;
-  
+
   const updateTeacherQuery = 'UPDATE docentes SET nombre_doc = ?, Apellido = ?, id_carrera_mat = ?, correo = ?, apei2 = ?, perfil = ?, rol_doc = ? WHERE Id_docente = ?';
   const deleteCourseTeacherQuery = 'DELETE FROM Docente_Materia WHERE id_docente = ?';
   const insertCourseTeacherQuery = 'INSERT INTO Docente_Materia (id_docente, id_materia) VALUES ?';
+  const deleteScheduleTeacherQuery = 'DELETE FROM Docente_Horario WHERE id_docente = ?';
+  const insertScheduleTeacherQuery = 'INSERT INTO Docente_Horario (id_docente, id_horario, ocupado) VALUES ?';
 
   // Inicia una transacción
   connection.beginTransaction(error => {
@@ -720,7 +818,7 @@ app.put('/docentes/:id', (req, res) => {
 
       console.log('Docente editado correctamente: ', results);
 
-      // Elimina las relaciones actuales en la tabla intermedia
+      // Elimina las relaciones actuales en la tabla intermedia Docente_Materia
       connection.query(deleteCourseTeacherQuery, [id], (error, results) => {
         if (error) {
           return connection.rollback(() => {
@@ -731,10 +829,10 @@ app.put('/docentes/:id', (req, res) => {
 
         console.log('Relaciones de materias eliminadas correctamente: ', results);
 
-        // Prepara los datos para la tabla intermedia
+        // Prepara los datos para la tabla intermedia Docente_Materia
         const courseTeacherValues = courseIds.map(courseId => [id, courseId]);
 
-        // Inserta las nuevas relaciones en la tabla intermedia
+        // Inserta las nuevas relaciones en la tabla intermedia Docente_Materia
         connection.query(insertCourseTeacherQuery, [courseTeacherValues], (error, results) => {
           if (error) {
             return connection.rollback(() => {
@@ -743,17 +841,45 @@ app.put('/docentes/:id', (req, res) => {
             });
           }
 
-          // Si todo ha ido bien, confirma la transacción
-          connection.commit(error => {
+          console.log('Nuevas relaciones de materias insertadas correctamente: ', results);
+
+          // Elimina las relaciones actuales en la tabla intermedia Docente_Horario
+          connection.query(deleteScheduleTeacherQuery, [id], (error, results) => {
             if (error) {
               return connection.rollback(() => {
-                console.error('Error al confirmar la transacción: ', error);
+                console.error('Error al eliminar relaciones de horarios del docente: ', error);
                 res.status(500).json({ message: 'Error al editar docente', error: error.sqlMessage });
               });
             }
 
-            res.status(201).json({ message: 'Docente editado correctamente' });
-            console.log('Nuevas relaciones de materias insertadas correctamente: ', results);
+            console.log('Relaciones de horarios eliminadas correctamente: ', results);
+
+            // Prepara los datos para la tabla intermedia Docente_Horario
+            const scheduleTeacherValues = scheduleIds.map(scheduleId => [id, scheduleId, false]); // `false` para `ocupado`
+            console.log(scheduleTeacherValues);
+
+            // Inserta las nuevas relaciones en la tabla intermedia Docente_Horario
+            connection.query(insertScheduleTeacherQuery, [scheduleTeacherValues], (error, results) => {
+              if (error) {
+                return connection.rollback(() => {
+                  console.error('Error al insertar nuevas relaciones de horarios del docente: ', error);
+                  res.status(500).json({ message: 'Error al editar docente', error: error.sqlMessage });
+                });
+              }
+
+              // Si todo ha ido bien, confirma la transacción
+              connection.commit(error => {
+                if (error) {
+                  return connection.rollback(() => {
+                    console.error('Error al confirmar la transacción: ', error);
+                    res.status(500).json({ message: 'Error al editar docente', error: error.sqlMessage });
+                  });
+                }
+
+                res.status(201).json({ message: 'Docente editado correctamente' });
+                console.log('Nuevas relaciones de horarios insertadas correctamente: ', results);
+              });
+            });
           });
         });
       });
@@ -812,6 +938,17 @@ app.delete('/docentes/:id', (req, res) => {
   });
 });
 
+//Obtener todos los horarios
+app.get('/horarios', (req, res) => {
+  const query = 'SELECT * FROM horarios';
+  connection.query(query, (error, results) => {
+    if (error) {
+      console.error('Error al obtener horarios ', error);
+      return res.status(500).json({ message: 'Error al obtener horarios', error: error.sqlMessage });
+    }
+    res.json(results);
+  });
+});
 
 // Obtener todas las publicaciones del foro
 app.get('/foro', (req, res) => {

@@ -1,5 +1,3 @@
-import { Schedule } from "./schedule.model";
-
 export interface Teacher {
     id: number;
     name: string;
@@ -9,6 +7,7 @@ export interface Teacher {
     majorId: number;
     courseId: number;
     courseIds: number[];
+    scheduleIds: [];
     role: string;
     profilePicture: string;
     password: string;

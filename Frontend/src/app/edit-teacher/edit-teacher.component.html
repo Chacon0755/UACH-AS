@@ -1,5 +1,5 @@
 <main class="container">
-    <h2>Registro de Docentes</h2>
+    <h2>Edicion de Docentes</h2>
     <form (ngSubmit)="onSubmit()" #docenteForm="ngForm">
         <div class="form-row">
             <div class="form-group">
@@ -47,7 +47,17 @@
                         <mat-option *ngFor="let course of allCourses" [value]="course.Id_Materias">{{course.N_Mat}}</mat-option>
                     </mat-select>
                 </mat-form-field>
-            </div>
+            </div>  
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <mat-form-field appearance="fill" class="mat-form-field">
+                    <mat-label>Horarios de asesoria</mat-label>
+                    <mat-select [(ngModel)]="teacher.scheduleIds" name="courses" multiple >
+                        <mat-option *ngFor="let schedule of allSchedules" [value]="schedule.id_horario">{{ schedule.dia }}: {{ schedule.hora_inicio }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>  
         </div>
         <div class="button-group">
             <button type="button" class="btn cancel" (click)="onCancel()">Cancelar</button>

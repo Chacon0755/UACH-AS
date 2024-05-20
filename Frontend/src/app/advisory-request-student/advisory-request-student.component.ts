@@ -1,18 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { AdvisoryService } from '../services/advisory.service';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Major } from '../models/major.model';
-import { Course } from '../models/course.model';
-import { Teacher } from '../models/teacher.model';
-import { Student } from '../models/student.model';
 import { MajorService } from '../services/major.service';
 import { TeacherService } from '../services/teacher.service';
 import { CourseService } from '../services/course.service';
 import { AuthService } from '../services/auth.service';
 import { StudentService } from '../services/student.service';
-import { tap, switchMap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { ScheduleService } from '../services/schedule.service';
 import { Advisory } from '../models/advisory.model';
 
 
@@ -24,30 +19,30 @@ import { Advisory } from '../models/advisory.model';
 })
 export class AdvisoryRequestStudentComponent implements OnInit {
   advisory: Advisory = {
-    majorId: 0,
+    
+    studentId: 0,
+    teacherId: 0,
+    scheduleId: 0,
     courseId: 0,
-    teacherId:  0,
-    mode: '',
-    days: [],
-    time: ''
+    mode: false,
   }
-  majors: Major[] = [];
+  majors: any[] = [];
   allCourses: any[] = [];
   teachers: any[] = [];
-  modes = [{id: 'Presencial', name: 'Presencial'}, {id: 'Virtual', name: 'Virtual'}]
-  times = [];
+  modes = [{id: true, name: 'Presencial'}, {id: false, name: 'Virtual'}]
+  allAvailableSchedules: any[] = [];
   
 
   majorId: number= 0;
   majorName: string= '';
 
-  constructor(private advisoryService: AdvisoryService, private fb: FormBuilder, private router: Router, private majorService: MajorService, private teacherService: TeacherService, private courseService: CourseService, private authService: AuthService, private studentService: StudentService) {
-    
-  }
+  constructor(private advisoryService: AdvisoryService, private fb: FormBuilder, private router: Router, private majorService: MajorService, private teacherService: TeacherService, private courseService: CourseService, private authService: AuthService, private studentService: StudentService, private scheduleService: ScheduleService) {}
+  
   ngOnInit(): void {
     const userDetails = this.authService.getUserDetails();
     if (userDetails) {
-      this.loadStudentMajorName(userDetails.id)
+      this.loadStudentMajorName(userDetails.id);
+      this.advisory.studentId = userDetails.id;
 
     }
     
@@ -91,27 +86,39 @@ export class AdvisoryRequestStudentComponent implements OnInit {
       }
     });
   }
+
+  loadSchedulesByTeacherId(teacherId: number): void {
+    this.scheduleService.getAvailableSchedulesByTeacherId(teacherId).subscribe({
+      next: (schedules) => {
+        this.allAvailableSchedules = schedules;
+        console.log('Horarios disponibles:', this.allAvailableSchedules);
+      },
+      error: (error) => {
+        console.error('Error al cargar horarios disponibles: ', error);
+      }
+    });
+  }
   onCourseChange(courseId: number): void {
     this.loadTeachersByCourseId(courseId);
     console.log('id: ',courseId)
   }
   
-  loadTimes(teacherId: number) {
-    this.advisoryService.getTimesByTeacherId(teacherId).subscribe(data => this.times = data)
+  onTeacherChange(teacherId: number): void { 
+    this.loadSchedulesByTeacherId(teacherId);
+    console.log('Teacher ID:', teacherId);
   }
 
   submitForm() {
-    if (this.advisory) {
-      this.advisoryService.createAdvisory(this.advisory, 'student').subscribe({
-        next: response => {
-          console.log('Asesoria creada con exito', response);
-          this.router.navigate(['/student-home'])
-        },
-        error: err => {
-          console.error('Error solicitando asesoria', err)
-        }
-      });
-    }
+    console.log(this.advisory)
+    this.advisoryService.createAdvisory(this.advisory).subscribe({
+      next: (response) => {
+        console.log('Asesoria creada correctamente: ', response);
+        this.router.navigate(['/student-home'])
+      },
+      error: (error) => {
+        console.error('Error al crear asesoria: ', error);
+      }
+    })
   }
 
   onCancel(){

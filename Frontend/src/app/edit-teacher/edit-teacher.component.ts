@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Teacher } from '../models/teacher.model';
-import { Schedule } from '../models/schedule.model';
 import { Major } from '../models/major.model';
 import { Course } from '../models/course.model';
 import { TeacherService } from '../services/teacher.service';
 import { MajorService } from '../services/major.service';
 import { CourseService } from '../services/course.service';
+import { ScheduleService } from '../services/schedule.service';
 
 
 @Component({
@@ -25,6 +25,7 @@ export class EditTeacherComponent {
     majorId: 0,
     courseId: 0,
     courseIds: [],
+    scheduleIds: [],
     role: 'teacher',
     profilePicture: '',
     password: '',
@@ -33,12 +34,15 @@ export class EditTeacherComponent {
   allMajors: any[] = [];
   allCourses: any[] = [];
   allTeachers: any[] = [];
+  allSchedules: any[] = [];
+  
 
-  constructor(private router: Router, private teacherService: TeacherService, private majorService: MajorService, private courseService: CourseService) {}
+  constructor(private router: Router, private teacherService: TeacherService, private majorService: MajorService, private courseService: CourseService, private scheduleService: ScheduleService) {}
 
   ngOnInit(): void{
     this.loadMajors();
     this.loadTeachers();
+    this.loadSchedules();
   }
   
   loadMajors(): void {
@@ -95,13 +99,32 @@ export class EditTeacherComponent {
     console.log('SelectedCourseByMajor: ', this.selectedCoursesByMajor)
   }
 
+  loadSchedules(): void {
+    this.scheduleService.getSchedule().subscribe({
+      next: (schedules) => {
+        this.allSchedules = schedules;
+        console.log('Schesules: ', this.allSchedules);
+      },
+      error: (error) => {
+        console.error('Error al cargar horarios ', error);
+      }
+    });
+  }
+
   onSubmit(): void {
-    this.teacher.courseIds = [];
+    console.log('Schedule: ',this.teacher.scheduleIds)
+    this.teacher.courseIds = []
+    const uniqueCourseIds = new Set<number>();
+
     for (const majorId in this.selectedCoursesByMajor) {
       if (this.selectedCoursesByMajor.hasOwnProperty(majorId)) {
-        this.teacher.courseIds = this.teacher.courseIds.concat(this.selectedCoursesByMajor[majorId]);
+          this.selectedCoursesByMajor[majorId].forEach(courseId => {
+          uniqueCourseIds.add(courseId);
+        });
       }
     }
+    this.teacher.courseIds = Array.from(uniqueCourseIds);
+    
     console.log(this.teacher);
     this.teacherService.editTeacher(this.teacher.id, this.teacher).subscribe({
       next: (response) => {
@@ -125,6 +148,7 @@ export class EditTeacherComponent {
       majorId: 0,
       courseId: 0,
       courseIds: [],
+      scheduleIds: [],
       role: 'teacher',
       profilePicture: '',
       password: '',

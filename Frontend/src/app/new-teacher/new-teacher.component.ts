@@ -1,14 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Teacher } from '../models/teacher.model';
-import { Schedule } from '../models/schedule.model';
-import { Major } from '../models/major.model';
-import { Course } from '../models/course.model';
 import { TeacherService } from '../services/teacher.service';
 import { MajorService } from '../services/major.service';
 import { CourseService } from '../services/course.service';
+import { ScheduleService } from '../services/schedule.service';
 
-type WeekDay = 'lunes' | 'martes' | 'miercoles' | 'jueves' | 'viernes';
 
 @Component({
   selector: 'app-new-teacher',
@@ -24,7 +21,8 @@ export class NewTeacherComponent implements OnInit {
     email: '',
     majorId: 0,
     courseId: 0,
-    courseIds: [] = [],
+    courseIds: [],
+    scheduleIds: [] ,
     role: 'teacher',
     profilePicture: '',
     password: '',
@@ -34,23 +32,13 @@ export class NewTeacherComponent implements OnInit {
   allMajors: any[] = [];
   allCourses: any[] = []
   selectedMajorCode: number | null = null;
+  allSchedules: any[] = [];
 
-  availability: { [key in WeekDay]: string[] } = {
-      lunes: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
-      martes: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
-      miercoles: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
-      jueves: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
-      viernes: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00']
-  }
-
-  days = Object.keys(this.availability) as WeekDay[];
-
-  constructor(private router: Router, private teacherService: TeacherService, private majorService: MajorService, private courseService: CourseService) {}
+  constructor(private router: Router, private teacherService: TeacherService, private majorService: MajorService, private courseService: CourseService, private scheduleService: ScheduleService) {}
 
   ngOnInit(): void{
-    
     this.loadMajors();
-    // this.teacher.schedule = this.initSchedule();
+    this.loadSchedules();
   }
   
   loadMajors() {
@@ -97,46 +85,32 @@ export class NewTeacherComponent implements OnInit {
     console.log('SelectedCourseByMajor: ', this.selectedCoursesByMajor)
   }
 
-  initSchedule(): Schedule {
-    let schedule: Schedule = {};
-    if (this.days && this.days.length > 0) {
-        this.days.forEach(day => {
-            if (!schedule[day]) {
-                schedule[day] = {};
-            }
-            if (this.availability[day]) {
-                this.availability[day].forEach(time => {
-                    schedule[day]![time] = false;  
-                });
-            }
-        });
-    }
-    return schedule;
-}
-  // getScheduleValue(day: WeekDay, time: string): boolean {
-  //   if (!this.teacher.schedule[day]) {
-  //     this.teacher.schedule[day] = {};
-  //   }
-  //   if (this.teacher.schedule[day]![time] === undefined) {
-  //     this.teacher.schedule[day]![time] = false; 
-  //   }
-  //   return this.teacher.schedule[day]![time];
-  // }
-  
-  // setScheduleValue(day: WeekDay, time: string, value: boolean): void {
-  //   if (!this.teacher.schedule[day]) {
-  //     this.teacher.schedule[day] = {};
-  //   }
-  //   this.teacher.schedule[day]![time] = value;
-  // }
+  loadSchedules(): void {
+    this.scheduleService.getSchedule().subscribe({
+      next: (schedules) => {
+        this.allSchedules = schedules;
+        console.log('Schesules: ', this.allSchedules);
+      },
+      error: (error) => {
+        console.error('Error al cargar horarios ', error);
+      }
+    });
+  }
 
   onSubmit(): void {
-    this.teacher.courseIds = [];
+    console.log('Schedule: ',this.teacher.scheduleIds)
+    this.teacher.courseIds = []
+    const uniqueCourseIds = new Set<number>();
+
     for (const majorId in this.selectedCoursesByMajor) {
       if (this.selectedCoursesByMajor.hasOwnProperty(majorId)) {
-        this.teacher.courseIds = this.teacher.courseIds.concat(this.selectedCoursesByMajor[majorId]);
+          this.selectedCoursesByMajor[majorId].forEach(courseId => {
+          uniqueCourseIds.add(courseId);
+        });
       }
     }
+    this.teacher.courseIds = Array.from(uniqueCourseIds);
+    
     this.teacherService.createTeacher(this.teacher).subscribe({
       next: (response) => {
         console.log('Si se armo ', response);
@@ -159,6 +133,7 @@ export class NewTeacherComponent implements OnInit {
       majorId: 0,
       courseId: 0,
       courseIds: [],
+      scheduleIds: [],
       role: 'teacher',
       profilePicture: '',
       password: ''

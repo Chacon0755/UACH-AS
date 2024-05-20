@@ -23,6 +23,7 @@ export class TeacherHomeComponent implements OnInit {
     majorId: 0,
     courseId: 0,
     courseIds: [],
+    scheduleIds: [],
     role: 'teacher',
     profilePicture: '',
     password: ''
@@ -72,6 +73,7 @@ export class TeacherHomeComponent implements OnInit {
             majorId: teacherData.id_carrera_mat,
             courseId: 0,
             courseIds: teacherData.id_mat_as,
+            scheduleIds: [],
             role: teacherData.rol_doc,
             profilePicture: '',
             password: ''

@@ -12,7 +12,7 @@
         <div class="form-group">
           <mat-form-field appearance="fill" class="mat-form-field">
             <mat-label>Materia en la que necesita ayuda</mat-label>
-            <mat-select [(ngModel)]="advisory.courseId" name="course" (ngModelChange)="onCourseChange($event)">
+            <mat-select [(ngModel)]="advisory.courseId" name="course" (selectionChange)="onCourseChange($event.value)">
               <mat-option *ngFor="let course of allCourses" [value]="course.Id_Materias">{{ course.N_Mat }}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -22,7 +22,7 @@
         <div class="form-group">
           <mat-form-field appearance="fill" class="mat-form-field">
             <mat-label>Docente que le gustaría que impartiera la asesoría</mat-label>
-            <mat-select [(ngModel)]="advisory.teacherId" name="teacher">
+            <mat-select [(ngModel)]="advisory.teacherId" name="teacher" (selectionChange)="onTeacherChange($event.value)">
               <mat-option *ngFor="let teacher of teachers" [value]="teacher.Id_docente">{{ teacher.nombre_doc }} {{teacher.Apellido}}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -40,8 +40,8 @@
         <div class="form-group">
           <mat-form-field appearance="fill" class="mat-form-field">
             <mat-label>¿Cuándo te gustaría recibir la asesoría?</mat-label>
-            <mat-select [(ngModel)]="advisory.days" name="days" multiple>
-              <mat-option *ngFor="let time of times" [value]="time">{{ time }}</mat-option>
+            <mat-select [(ngModel)]="advisory.scheduleId" name="days">
+              <mat-option *ngFor="let schedule of allAvailableSchedules" [value]="schedule.id_horario">{{ schedule.dia }}: {{schedule.hora_inicio}} </mat-option>
             </mat-select>
           </mat-form-field>
         </div>

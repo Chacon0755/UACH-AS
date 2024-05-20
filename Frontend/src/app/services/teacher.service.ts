@@ -26,7 +26,9 @@ export class TeacherService {
       perfil: 'n',
       rol_doc: 'teacher',
       contra_docente: password,
-      courseIds: teacher.courseIds
+      courseIds: teacher.courseIds,
+      scheduleIds: teacher.scheduleIds,
+
     }
     console.log(password)
     return this.http.post<Teacher>(`${this.apiUrl}/docentes`, payload);
@@ -43,8 +45,10 @@ export class TeacherService {
       apei2: teacher.lastName2,
       perfil: 'n',
       rol_doc: 'teacher',
-      courseIds: teacher.courseIds
+      courseIds: teacher.courseIds,
+      scheduleIds: teacher.scheduleIds
     };
+    console.log(payload)
     return this.http.put<Teacher>(`${this.apiUrl}/docentes/${id}`, payload);
   }
   getTeachers(): Observable<Teacher[]>{

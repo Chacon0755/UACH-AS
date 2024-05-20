@@ -30,8 +30,6 @@ export class NewStudentComponent implements OnInit {
   allMajors: any[] = [];
   allSemesters: any[] = [];
 
-  // selectedMajorCode: number | null = null;
-
   constructor(private router: Router, private studentService: StudentService, private majorService: MajorService, private courseService: CourseService, private semesterService: SemesterService){}
 
   ngOnInit(): void {
