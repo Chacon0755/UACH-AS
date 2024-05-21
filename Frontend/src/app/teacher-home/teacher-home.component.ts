@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
-import { ForumService } from '../services/forum.service';
 import { Router } from '@angular/router';
-import { Post } from '../models/forum.model';
 import { TeacherService } from '../services/teacher.service';
 import { Teacher } from '../models/teacher.model';
 import { AdvisoryService } from '../services/advisory.service';
-
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 
 @Component({
@@ -30,16 +28,14 @@ export class TeacherHomeComponent implements OnInit {
     password: ''
   };
   selectedFile: File | null = null;
-  posts: Post[] = [];
-  newPostContent: string = '';
-  newResponseContent: string = '';
   courses: any[] = [];
   advisorys: any[] = []
-    
+  showNewPostForm = false;
+  safeProfilePictureUrl: SafeUrl = '';
 
 
 
-  constructor(private authService: AuthService, private forumService: ForumService, private router: Router, private teacherService: TeacherService, private advisoryService: AdvisoryService) { }
+  constructor(private authService: AuthService,  private router: Router, private teacherService: TeacherService, private advisoryService: AdvisoryService, private sanitizer: DomSanitizer) { }
   ngOnInit(): void {
     const userDetails = this.authService.getUserDetails();
     if (userDetails) {
@@ -50,15 +46,12 @@ export class TeacherHomeComponent implements OnInit {
   }
   
   loadProfileImage(teacherId: number): void{
-    this.teacherService.getProfilePicture(teacherId).subscribe(blob => {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.teacher.profilePicture = e.target.result;
-        console.log(this.teacher.profilePicture)
-      };
-      reader.readAsDataURL(blob);
-      
-    })
+    this.teacherService.getProfilePicture(teacherId).subscribe(response => {
+      this.safeProfilePictureUrl = this.sanitizer.bypassSecurityTrustUrl(`http://localhost:3000${response}`);
+      console.log(this.safeProfilePictureUrl)
+    }, error => {
+      console.error('Error loading profile picture', error);
+    });
   }
 
   loadTeacherData(teacherId: number): void{
@@ -102,73 +95,6 @@ export class TeacherHomeComponent implements OnInit {
     });
   }
 
-  loadPosts(): void{
-    this.forumService.getPosts().subscribe(posts => {
-      this.posts = posts;
-    });
-  }
-
-  postPublication(): void{
-    if (this.newPostContent.trim()) {
-      const newPost: Post = {
-        id: 0,
-        author: this.teacher.name,
-        role: this.teacher.role,
-        content: this.newPostContent,
-        createdAt: new Date(),
-        responses: []
-      };
-      this.forumService.addPost(newPost).subscribe(post => {
-        this.posts.push(post);
-        this.newPostContent = '';
-      });
-    }
-  }
-
-  reply(postId: number, postIndex: number, archivoAdjunto: File | null): void {
-    if (this.newResponseContent.trim()) {
-      //const response: Response = {
-      const formData = new FormData();
-      formData.append('content', this.newResponseContent);
-      if (archivoAdjunto) {
-        formData.append('archivoAdjunto', archivoAdjunto);
-      }
-      //   id: 0,
-      //   author: this.userName,
-      //   role: this.userRole,
-      //   content: this.newResponseContent,
-      //   createdAt: new Date()
-      // };
-      // this.forumService.addResponse(postId, response).subscribe(res => {
-      //   this.posts[postIndex].responses?.push(res);
-      //   this.newResponseContent = ';'
-      // });
-      this.forumService.addResponse(postId, formData).subscribe(res => {
-        this.posts[postIndex].responses?.push(res);
-        this.newResponseContent = '';
-    
-      });
-    }
-  }
-
-
-
-  // reply(postId: number, postIndex: number): void {
-  //   if (this.newResponseContent.trim()) {
-  //     const response: Response = {
-  //       id: 0,
-  //       author: this.userName,
-  //       role: this.userRole,
-  //       content: this.newResponseContent,
-  //       createdAt: new Date()
-  //     };
-  //     this.forumService.addResponse(postId, response).subscribe(res => {
-  //       this.posts[postIndex].responses?.push(res);
-  //       this.newPostContent = '';
-  //     });
-  //   }
-  // }
-
   onFileSelectedEvent(event: any) {
     const file: File = event.target.files[0];
     this.selectedFile = file;
@@ -200,8 +126,14 @@ export class TeacherHomeComponent implements OnInit {
     this.router.navigate(['/login'])
   }
 
+  toggleNewPostForm() {
+    this.showNewPostForm = !this.showNewPostForm;
+  }
 
-
+  onPostCreated() {
+    this.showNewPostForm = false;
+    window.location.reload();
+  }
 }
 
 

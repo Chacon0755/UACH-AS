@@ -59,12 +59,14 @@ export class TeacherService {
   }
   uploadProfileImage(teacherId: number, file: File): Observable<any>{
     const formData = new FormData();
+    formData.append('matricula', teacherId.toString());
     formData.append('perfil', file);
-    return this.http.post(`${this.apiUrl}/docentes/upload-profile/${teacherId}`, formData);
+
+    return this.http.post(`${this.apiUrl}/docente/upload-profile/${teacherId}`, formData);
   }
 
-  getProfilePicture(teacherId: number): Observable<Blob>{
-    return this.http.get(`${this.apiUrl}/docentes/profile-image/${teacherId}`, {responseType: 'blob'})
+  getProfilePicture(teacherId: number): Observable<string>{
+    return this.http.get<string>(`${this.apiUrl}/docente/profile-image/${teacherId}`)
   }
   getTeacherDataById(teacherId: number): Observable<any>{
     return this.http.get<any>(`${this.apiUrl}/docentes/${teacherId}`)

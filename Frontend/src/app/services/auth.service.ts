@@ -39,15 +39,18 @@ export class AuthService {
     return !!token;
   }
 
-  getUserDetails(): { name: string, profilePicture: string, id: number } | null{
+  getUserDetails(): { name: string, profilePicture: string, id: number, lastName: string, rol: string } | null{
     const token = this.getToken();
     if (token) {
       const decoded: any = jwtDecode(token);
       return {
         name: decoded.name,
         profilePicture: decoded.profilePicture,
-        id: decoded.id 
+        id: decoded.id,
+        lastName: decoded.lastName,
+        rol: decoded.rol
       }
+      console.log(decoded)
     }
     return null
   }

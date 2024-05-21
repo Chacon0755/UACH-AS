@@ -25,7 +25,7 @@ import { EditCourseComponent } from './edit-course/edit-course.component';
 import { EditStudentComponent } from './edit-student/edit-student.component';
 import { EditTeacherComponent } from './edit-teacher/edit-teacher.component';
 import { ViewTeacherComponent } from './view-teacher/view-teacher.component';
-import {MatTableModule} from '@angular/material/table';
+import { MatTableModule } from '@angular/material/table';
 import { ViewStudentComponent } from './view-student/view-student.component';
 import { ViewMajorComponent } from './view-major/view-major.component';
 import { ViewCourseComponent } from './view-course/view-course.component';
@@ -33,7 +33,15 @@ import { NewAdminComponent } from './new-admin/new-admin.component';
 import { MatInputModule } from '@angular/material/input'
 import { MatIconModule } from '@angular/material/icon';
 import { ViewTeacherAdvisorysComponent } from './view-teacher-advisorys/view-teacher-advisorys.component'
-import { MatRadioModule } from '@angular/material/radio'
+import { MatRadioModule } from '@angular/material/radio';
+import { ForumPostsComponent } from './forum-posts/forum-posts.component';
+import { ForumPostFormComponent } from './forum-post-form/forum-post-form.component'
+import { MatCardModule } from '@angular/material/card';
+import { MatListModule } from '@angular/material/list';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { ForumResponseFormComponent } from './forum-response-form/forum-response-form.component';
+
+
 
 @NgModule({
   declarations: [
@@ -57,6 +65,9 @@ import { MatRadioModule } from '@angular/material/radio'
     ViewCourseComponent,
     NewAdminComponent,
     ViewTeacherAdvisorysComponent,
+    ForumPostsComponent,
+    ForumPostFormComponent,
+    ForumResponseFormComponent,
 
   ],
   imports: [
@@ -74,6 +85,10 @@ import { MatRadioModule } from '@angular/material/radio'
     MatInputModule,
     MatIconModule,
     MatRadioModule,
+    MatCardModule,
+    MatListModule,
+    MatToolbarModule,
+  
   ],
   providers: [
     provideAnimationsAsync()

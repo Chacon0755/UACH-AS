@@ -1,7 +1,7 @@
 <main>
     <div class="welcome-container">
         <div class="user-icon">
-            <img [src]="admin.profilePicture || './assets/images/User.jpg'" alt="User Icon">
+            <img [src]="safeProfilePictureUrl || './assets/images/User.jpg'" alt="User Icon">
             <input type="file" (change)="onFileSelectedEvent($event)" hidden #fileInput>
         </div>
         <h1>Bienvenido {{admin.name}} {{admin.lastName1}}</h1>

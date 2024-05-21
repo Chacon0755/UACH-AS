@@ -8,6 +8,10 @@
   width: 10%;
   background-color: #FFEAB2; 
   padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow-y: auto;
+  
 }
 .sidebar.left{
   width: 15%

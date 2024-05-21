@@ -1,8 +1,8 @@
-<div class="container">
+<div class="main-container">
     <div class="student-home-container">
         <aside class="sidebar left">
             <div class="profile-info">
-                <img [src]="teacher.profilePicture || './assets/images/User.jpg'" alt="User Icon">
+                <img [src]="safeProfilePictureUrl || './assets/images/User.jpg'" alt="User Icon">
                 <input type="file" (change)="onFileSelectedEvent($event)" hidden #fileInput>
                 <p>Bienvenido</p>
                 <p>{{ teacher.name }} {{teacher.lastName1}}</p>
@@ -21,28 +21,14 @@
             </div>
         </aside>
         <main class="content">
-            <div class="publication-section">
-                <input type="text" [(ngModel)]="newPostContent" placeholder="Nueva publicación..." class="new-publication-input">
-                <button (click)="postPublication()" class="btn publication">Publicar</button>
+            <button mat-raised-button color="primary" (click)="toggleNewPostForm()">
+                Nueva Publicación
+            </button>
+            <div *ngIf="showNewPostForm" class="new-post-form">
+                <app-forum-post-form (postCreated)="onPostCreated()"></app-forum-post-form>
             </div>
-            <div class="publications">
-                <h2>Publicaciones</h2>
-                <div *ngFor="let post of posts; let i = index" class="publication">
-                    <p><strong>{{ post.author }}</strong> ({{ post.role }}): {{ post.content }}</p>
-                    <div *ngFor="let response of post.responses" class="response">
-                        <p><strong>{{ response.author }}</strong> ({{ response.role }}): {{ response.content }}</p>
-                    </div>
-                    <div class="responses-input">
-                        <input type="text" [(ngModel)]="newResponseContent" placeholder="Responder..." class="response-input">
-                        <!-- <input type="file" class="input-adjuntar" (change)="onArchivoSeleccionado($event)" #archivoInput> -->
-                        <!-- <button class="boton-adjuntar"(click)="archivoInput.click()">
-                            Adjuntar Archivo
-                        </button> -->
-                        <!-- <button (click)="reply(post.id, i, archivoSeleccionado)" class="btn response">Responder</button> -->
-
-                    </div>
-                </div>
-            </div>
+            <app-forum-posts>
+            </app-forum-posts>
         </main>
         <aside class="sidebar options">
             <div class="course-list">

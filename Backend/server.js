@@ -4,19 +4,15 @@ const mysql = require('mysql');
 const app = express();
 const cors = require('cors');
 const multer = require('multer')
-const router = express.Router()
 const jwt = require('jsonwebtoken')
-const bcrypt = require ('bcryptjs')
+const bcrypt = require('bcryptjs')
+const sequelize = require('./config/database');
+
+
 app.use(cors());
 app.use(express.json());
-app.use((req, res, next) => {
-  res.header("Content-Type", 'application/json');
-  next();
-});
 
-//Configurar multer
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+
 
 // Configuración de la conexión a la base de datos MySQL
 const connection = mysql.createConnection({
@@ -34,17 +30,57 @@ connection.connect(err => {
   console.log('Conectado a la base de datos con el ID ' + connection.threadId);
 });
 
+//Configurar multer
+// const storage = multer.memoryStorage(); CHECAR
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + path.extname(file.originalname));
+  }
+});
+const upload = multer({ storage: storage });
+
+//rutas del foro
+const forumRoutes = require('./routes/forum.routes')
+
+//usar rutas del foro
+app.use('/api/forum', forumRoutes);
+//Archivos estaticos
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Iniciar tu servidor en el puerto 3000
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+    console.log('Servidor corriendo en localhost:' + PORT);
+});
+
+//Middleware para establecer el tipo de conexion de las respuestas
+app.use((req, res, next) => {
+  res.header("Content-Type", 'application/json');
+  next();
+});
+
+// Configurar Sequelize y sincronizar modelos
+sequelize.sync({ force: false }).then(() => {
+  app.listen(3000, () => {
+    console.log('Servidor corriendo en el puerto 3000');
+  });
+}).catch(error => {
+  console.error('Error al sincronizar la base de datos', error);
+});
 // Ruta de inicio de sesion
 app.post('/login', (req, res) => {
   console.log('req.body ', req.body);
   const { email, password } = req.body;
   console.log('Credenciales: ', {email, password});
   const findUserQuery = `
-  SELECT 'admin' AS role, admin_id as id, contraseña AS password, nombre AS name, perfil AS profilePicture   FROM administrador WHERE correo = ?
+  SELECT 'admin' AS role, admin_id as id, contraseña AS password, nombre AS name, perfil AS profilePicture, apellido1 AS lastName, rol AS rol   FROM administrador WHERE correo = ?
   UNION
-  SELECT 'student' AS role, matricula as id, Contra_alum as password, nombre As name, perfil AS profilePicture FROM alumnos WHERE correo = ?
+  SELECT 'student' AS role, matricula as id, Contra_alum as password, nombre As name, perfil AS profilePicture, ape1 AS lastName, rol AS rol FROM alumnos WHERE correo = ?
   UNION
-  SELECT 'teacher' AS role, Id_docente as id, contra_docente AS password, nombre_doc As name, perfil AS profilePicture FROM docentes WHERE correo = ?
+  SELECT 'teacher' AS role, Id_docente as id, contra_docente AS password, nombre_doc As name, perfil AS profilePicture, Apellido As lastName, rol_doc AS rol FROM docentes WHERE correo = ?
   `
   connection.query(findUserQuery, [email, email, email], (error, results) => {
     if (error) {
@@ -65,12 +101,13 @@ app.post('/login', (req, res) => {
     }
 
     const token = jwt.sign({
-      id: user.id, role: user.role, name: user.name, 
+      id: user.id, role: user.role, name: user.name, lastName: user.lastName, rol: user.rol
     }, 'tu_secreto', {
       expiresIn: '1h'
     });
+    console.log('login: ',user.lastName, user.rol);
     res.status(200).json({ token });
-    console.log({ token });
+    console.log('login: ',{ token });
   });
 });
 
@@ -295,35 +332,39 @@ app.get('/admin/:id', (req, res) => {
 //obtener foto de perfil de admin
 app.get('/admin/profile-image/:id', (req, res) => {
   const { id } = req.params;
-  const query = 'SELECT perfil from administrador WHERE admin_id = ?'
+  const query = 'SELECT perfil FROM administrador WHERE admin_id = ?';
+
   connection.query(query, [id], (error, results) => {
     if (error) {
       return res.status(500).json({ message: 'Error en el servidor', error: error.sqlMessage });
     }
-    if (results.lenght === 0) {
+    if (results.length === 0) {
       return res.status(404).json({ message: 'Imagen no encontrada' });
     }
 
     const profilePicture = results[0].perfil;
-    res.setHeader('Content-Type', 'image/jpeg')
-    res.send(profilePicture);
-    console.log(profilePicture)
+    if (profilePicture) {
+
+      res.json(profilePicture)
+    } else {
+      res.status(404).json({ message: 'Imagen no encontrada' });
+    }
   });
 });
 
 //Cambiar foto de perfil del admin
 app.post('/admin/upload-profile/:id', upload.single('perfil'), (req, res) => {
   const { id } = req.params;
-  const perfilBuffer = req.file.buffer;
+  const perfilPath = `/uploads/${req.file.filename}`;
 
-  const profilePictureQuery = 'UPDATE administrador set perfil = ? WHERE admin_id = ?';
-  connection.query(profilePictureQuery, [perfilBuffer, id], (error, results) => {
+  const profilePictureQuery = 'UPDATE administrador SET perfil = ? WHERE admin_id = ?';
+  connection.query(profilePictureQuery, [perfilPath, id], (error, results) => {
     if (error) {
-      console.error('Error al subir foto de perfil del admin ', error)
-      return res.status(500).json({ message: 'Error al subir foto del perfil del admin', error: error.sqlMessage });
-      }
-    res.status(201).json({ message: 'Foto de perfil del admin subida correctamente', data: results });
-    console.log('Foto de perfil del admin subida correctamente: ', results)
+      console.error('Error al subir foto de perfil del administrador', error);
+      return res.status(500).json({ message: 'Error al subir foto del perfil del administrador', error: error.sqlMessage });
+    }
+    res.status(201).json({ message: 'Foto de perfil del estudiante subida correctamente', data: results });
+    console.log('Foto de perfil del administrador subida correctamente: ', results);
   });
 });
 
@@ -373,34 +414,40 @@ app.get('/alumnos/carrera/:id', (req, res) => {
 
 
 //Obtener alumnos y nombre de carrera`
-app.get('/alumnos/carrera', (req, res) => {
+app.get('/students/carreras', (req, res) => {
   const query = 'SELECT alumnos. *, carrera.Nombre_Carrera as nombre_carrera, semestre.sem as nombre_semestre FROM alumnos JOIN carrera ON alumnos.programa = carrera.Id_Carreras JOIN semestre ON alumnos.semestre = semestre.id';
   connection.query(query, (error, results) => {
     if (error) {
       return res.status(500).send(error);
     }
+    console.log('Alumnos: ', results);
     res.json(results);
   });
 });
 
-//obtener foto de perfil de estudiante
-app.get('/alumnos/profile-image/:id', (req, res) => {
+// Obtener foto de perfil del estudiante
+app.get('/student/profile-image/:id', (req, res) => {
   const { id } = req.params;
-  const query = 'SELECT perfil from alumnos WHERE matricula = ?'
+  const query = 'SELECT perfil FROM alumnos WHERE matricula = ?';
+
   connection.query(query, [id], (error, results) => {
     if (error) {
       return res.status(500).json({ message: 'Error en el servidor', error: error.sqlMessage });
     }
-    if (results.lenght === 0) {
+    if (results.length === 0) {
       return res.status(404).json({ message: 'Imagen no encontrada' });
     }
 
     const profilePicture = results[0].perfil;
-    res.setHeader('Content-Type', 'image/jpeg')
-    res.send(profilePicture);
-    console.log(profilePicture)
+    if (profilePicture) {
+
+      res.json(profilePicture)
+    } else {
+      res.status(404).json({ message: 'Imagen no encontrada' });
+    }
   });
 });
+
 
 // Insertar un nuevo alumno
 app.post('/alumnos', (req, res) => {
@@ -417,21 +464,22 @@ app.post('/alumnos', (req, res) => {
   });
 });
 
-//Cambiar foto de perfil
-app.post('/alumnos/upload-profile/:id', upload.single('perfil'), (req, res) => {
+//Cambiar foto de perfil del alumno
+app.post('/student/upload-profile/:id', upload.single('perfil'), (req, res) => {
   const { id } = req.params;
-  const perfilBuffer = req.file.buffer;
+  const perfilPath = `/uploads/${req.file.filename}`;
 
-  const profilePictureQuery = 'UPDATE Alumnos set perfil = ? WHERE matricula = ?';
-  connection.query(profilePictureQuery, [perfilBuffer, id], (error, results) => {
+  const profilePictureQuery = 'UPDATE alumnos SET perfil = ? WHERE matricula = ?';
+  connection.query(profilePictureQuery, [perfilPath, id], (error, results) => {
     if (error) {
-      console.error('Error al subir foto de perfil del alumno ', error)
-      return res.status(500).json({ message: 'Error al subir foto del perfil del alumno', error: error.sqlMessage });
-      }
-    res.status(201).json({ message: 'Foto de perfil del alumno subida correctamente', data: results });
-    console.log('Foto de perfil del alumno subida correctamente: ', results)
+      console.error('Error al subir foto de perfil del estudiante', error);
+      return res.status(500).json({ message: 'Error al subir foto del perfil del estudiante', error: error.sqlMessage });
+    }
+    res.status(201).json({ message: 'Foto de perfil del estudiante subida correctamente', data: results });
+    console.log('Foto de perfil del estudiante subida correctamente: ', results);
   });
 });
+
 
 // Actualizar un alumno
 app.put('/alumnos/:matricula', (req, res) => {
@@ -811,37 +859,49 @@ app.get('/docentes/:id/horarios-disponibles', (req, res) => {
 });
 
 //obtener foto de perfil de docente
-app.get('/docentes/profile-image/:id', (req, res) => {
+app.get('/docente/profile-image/:id', (req, res) => {
   const { id } = req.params;
-  const query = 'SELECT perfil from docentes WHERE Id_docente = ?'
+  const query = 'SELECT perfil FROM docentes WHERE Id_docente = ?';
+
   connection.query(query, [id], (error, results) => {
     if (error) {
       return res.status(500).json({ message: 'Error en el servidor', error: error.sqlMessage });
     }
-    if (results.lenght === 0) {
+    if (results.length === 0) {
       return res.status(404).json({ message: 'Imagen no encontrada' });
     }
 
     const profilePicture = results[0].perfil;
-    res.setHeader('Content-Type', 'image/jpeg')
-    res.send(profilePicture);
-    console.log(profilePicture)
+    if (profilePicture) {
+
+      res.json(profilePicture)
+    } else {
+      res.status(404).json({ message: 'Imagen no encontrada' });
+    }
   });
 });
 
 //Cambiar foto de perfil del docente
-app.post('/docentes/upload-profile/:id', upload.single('perfil'), (req, res) => {
+app.post('/docente/upload-profile/:id', upload.single('perfil'), (req, res) => {
   const { id } = req.params;
-  const perfilBuffer = req.file.buffer;
+  const perfilPath = `/uploads/${req.file.filename}`;
 
-  const profilePictureQuery = 'UPDATE docentes set perfil = ? WHERE Id_docente = ?';
-  connection.query(profilePictureQuery, [perfilBuffer, id], (error, results) => {
+  const profilePictureQuery = 'UPDATE docentes SET perfil = ? WHERE Id_docente = ?';
+  connection.query(profilePictureQuery, [perfilPath, id], (error, results) => {
     if (error) {
-      console.error('Error al subir foto de perfil del docente ', error)
+      console.error('Error al subir foto de perfil del docente', error);
       return res.status(500).json({ message: 'Error al subir foto del perfil del docente', error: error.sqlMessage });
-      }
+    }
     res.status(201).json({ message: 'Foto de perfil del docente subida correctamente', data: results });
-    console.log('Foto de perfil del docente subida correctamente: ', results)
+    console.log('Foto de perfil del docente subida correctamente: ', results);
+  });
+});
+
+// Obtener todos los alumnos
+app.get('/alumnos', (req, res) => {
+  connection.query('SELECT * FROM alumnos', (error, results) => {
+    if (error) return res.status(500).send(error);
+      res.json(results);
   });
 });
 
@@ -1197,11 +1257,6 @@ app.delete('/asesorias/:id', (req, res) => {
 });
 
 
-// Iniciar tu servidor en el puerto 3000
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log('Servidor corriendo en localhost:' + PORT);
-});
 
 //cerrar la conexion
 process.on('SIGINT', () => {

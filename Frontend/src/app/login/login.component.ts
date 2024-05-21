@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
@@ -8,14 +8,35 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent {
-  username: string = '';
-  password: string = '';
+export class LoginComponent implements OnInit {
+  loginForm: FormGroup;
+  submitted = false
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private router: Router, private authService: AuthService, private fb: FormBuilder) {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]]
+    });
+  }
 
+  ngOnInit(): void {
+      
+  }
+
+  get f() {
+    return this.loginForm.controls;
+  }
   onSubmit() {
-    this.authService.login(this.username, this.password).subscribe({
+    this.submitted = true;
+    if (this.loginForm.invalid) {
+      console.error("Invalido")
+      return;
+    }
+    const email = this.loginForm.get('email')?.value.trim();
+    const password = this.loginForm.get('password')?.value.trim();
+    console.log(email, password)
+    ;
+    this.authService.login(email, password).subscribe({
       next: (response) => {
         this.authService.saveToken(response.token);
         console.log('Token: ', response.token)

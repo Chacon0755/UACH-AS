@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AdminService } from '../services/admin.service';
 import { MatMenuModule } from '@angular/material/menu';
 import { Admin } from '../models/admin.model';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-admin-home',
@@ -23,9 +24,10 @@ export class AdminHomeComponent implements OnInit{
   }
   
   selectedFile: File | null = null;
-  
+  safeProfilePictureUrl: SafeUrl = '';
 
-  constructor(private authService: AuthService, private router: Router, private adminService: AdminService) { }
+
+  constructor(private authService: AuthService, private router: Router, private adminService: AdminService, private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
     const userDetails = this.authService.getUserDetails();
@@ -36,14 +38,12 @@ export class AdminHomeComponent implements OnInit{
   }
 
   loadProfileImage(adminId: number): void{
-    this.adminService.getProfilePicture(adminId).subscribe(blob => {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.admin.profilePicture = e.target.result;
-      };
-      reader.readAsDataURL(blob);
-      
-    })
+    this.adminService.getProfilePicture(adminId).subscribe(response => {
+      this.safeProfilePictureUrl = this.sanitizer.bypassSecurityTrustUrl(`http://localhost:3000${response}`);
+      console.log(this.safeProfilePictureUrl)
+    }, error => {
+      console.error('Error loading profile picture', error);
+    });
   }
   loadAdminData(adminId: number) {
     this.adminService.getAdminDataById(adminId).subscribe({

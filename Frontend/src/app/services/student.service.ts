@@ -52,8 +52,8 @@ export class StudentService {
   getStudentDataById(studentId: number): Observable<any> {
     return this.http.get<any>(`${this.apiURL}/alumnos/${studentId}`)
   }
-  getStudentsAndMajorName(): Observable<Student[]>{
-    return this.http.get<Student[]>(`${this.apiURL}/alumnos/carrera`);
+  getStudentsAndMajorName(): Observable<any>{
+    return this.http.get<any>(`${this.apiURL}/students/carreras`);
   }
   getStudentMajorNameById(studentId: number): Observable<any>{
     return this.http.get<any>(`${this.apiURL}/alumnos/carrera/${studentId}`);
@@ -64,12 +64,14 @@ export class StudentService {
   }
   uploadProfileImage(studentId: number, file: File): Observable<any>{
     const formData = new FormData();
+    formData.append('matricula', studentId.toString());
     formData.append('perfil', file);
-    return this.http.post(`${this.apiURL}/alumnos/upload-profile/${studentId}`, formData);
+
+    return this.http.post(`${this.apiURL}/student/upload-profile/${studentId}`, formData);
   }
 
-  getProfilePicture(studentId: number): Observable<Blob>{
-    return this.http.get(`${this.apiURL}/alumnos/profile-image/${studentId}`, {responseType: 'blob'})
+  getProfilePicture(studentId: number): Observable<string> {
+    return this.http.get<string>(`${this.apiURL}/student/profile-image/${studentId}`);
   }
 
 }

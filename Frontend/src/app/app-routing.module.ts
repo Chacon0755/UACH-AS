@@ -21,6 +21,7 @@ import { ViewMajorComponent } from './view-major/view-major.component';
 import { ViewCourseComponent } from './view-course/view-course.component';
 import { ViewTeacherAdvisorysComponent } from './view-teacher-advisorys/view-teacher-advisorys.component';
 
+
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'admin-home', component: AdminHomeComponent, canActivate: [authGuard]},

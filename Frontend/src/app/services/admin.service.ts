@@ -30,12 +30,13 @@ export class AdminService {
 
   uploadProfileImage(adminId: number, file: File): Observable<any>{
     const formData = new FormData();
+    formData.append('matricula', adminId.toString());
     formData.append('perfil', file);
     return this.http.post(`${this.apiUrl}/admin/upload-profile/${adminId}`, formData);
   }
 
-  getProfilePicture(adminId: number): Observable<Blob>{
-    return this.http.get(`${this.apiUrl}/admin/profile-image/${adminId}`, {responseType: 'blob'})
+  getProfilePicture(adminId: number): Observable<string>{
+    return this.http.get<string>(`${this.apiUrl}/admin/profile-image/${adminId}`)
   }
 
   getAdminDataById(adminId: number): Observable<any> {

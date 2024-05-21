@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
-import { ForumService } from '../services/forum.service';
-import { Post } from '../models/forum.model';
 import { Student } from '../models/student.model';
 import { StudentService } from '../services/student.service';
 import { AdvisoryService } from '../services/advisory.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 
 @Component({
@@ -29,15 +28,14 @@ export class StudentHomeComponent implements OnInit {
   }
   
   selectedFile: File | null = null
-  posts: Post[] = [];
-  newPostContent: string = '';
-  newResponseContent: string = '';
   userRole: string = 'student';
   courses: string[] = [];
   advisorys: any[] = [];
+  showNewPostForm = false;
+  safeProfilePictureUrl: SafeUrl = '';
 
 
-  constructor(private authService: AuthService, private router: Router, private forumService: ForumService, private studentService: StudentService, private advisoryService: AdvisoryService) { }
+  constructor(private authService: AuthService, private router: Router, private studentService: StudentService, private advisoryService: AdvisoryService, private sanitizer: DomSanitizer) { }
   
   ngOnInit(): void {
     const userDetails = this.authService.getUserDetails();
@@ -49,14 +47,12 @@ export class StudentHomeComponent implements OnInit {
   }
 
   loadProfileImage(studentId: number): void{
-    this.studentService.getProfilePicture(studentId).subscribe(blob => {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.student.profilePicture = e.target.result;
-      };
-      reader.readAsDataURL(blob);
-      console.log(this.student.profilePicture)
-    })
+    this.studentService.getProfilePicture(studentId).subscribe(response => {
+      this.safeProfilePictureUrl = this.sanitizer.bypassSecurityTrustUrl(`http://localhost:3000${response}`);
+      console.log(this.safeProfilePictureUrl)
+    }, error => {
+      console.error('Error loading profile picture', error);
+    });
   }
   loadStudentData(studentId: number): void {
     this.studentService.getStudentDataById(studentId).subscribe({
@@ -98,68 +94,6 @@ export class StudentHomeComponent implements OnInit {
     this.router.navigate(['/login'])
   }
 
-  loadPosts(): void{
-    this.forumService.getPosts().subscribe(posts => {
-      this.posts = posts;
-    })
-  }
-
-  postPublication(): void{
-    if (this.newPostContent.trim()) {
-      const newPost: Post = {
-        id: 0,
-        author: this.student.name,
-        role: this.student.role,
-        content: this.newPostContent,
-        createdAt: new Date(),
-        responses: []
-      };
-      this.forumService.addPost(newPost).subscribe(post => {
-        this.posts.push(post);
-        this.newPostContent = '';
-      });
-    }
-  }
-
-  reply(postId: number, postIndex: number, archivoAdjunto: File | null): void {
-    if (this.newResponseContent.trim()) {
-      //const response: Response = {
-      const formData = new FormData();
-      formData.append('content', this.newResponseContent);
-      if (archivoAdjunto) {
-        formData.append('archivoAdjunto', archivoAdjunto);
-      }
-      //   id: 0,
-      //   author: this.userName,
-      //   role: this.userRole,
-      //   content: this.newResponseContent,
-      //   createdAt: new Date()
-      // };
-      // this.forumService.addResponse(postId, response).subscribe(res => {
-      //   this.posts[postIndex].responses?.push(res);
-      //   this.newResponseContent = ';'
-      // });
-      this.forumService.addResponse(postId, formData).subscribe(res => {
-        this.posts[postIndex].responses?.push(res);
-        this.newResponseContent = '';
-    
-      });
-  
-    }
-  }
-  
-
-  // loadStudentData(): Student{
-  //   const studentId = 1; //cambiar
-  //   this.studentService.getStudentDataById(studentId).subscribe({
-  //     next: (response) => {
-  //       return response
-  //     },
-  //     error: (error) => console.error('Sigo sin poder Martha ', error),
-  //   });
-  // }
-
-
   onFileSelectedEvent(event: any) {
     const file: File = event.target.files[0];
     this.selectedFile = file;
@@ -184,6 +118,15 @@ export class StudentHomeComponent implements OnInit {
         }
       });
     }
+  }
+
+  toggleNewPostForm() {
+    this.showNewPostForm = !this.showNewPostForm;
+  }
+
+  onPostCreated() {
+    this.showNewPostForm = false;
+    window.location.reload();
   }
     
 }
