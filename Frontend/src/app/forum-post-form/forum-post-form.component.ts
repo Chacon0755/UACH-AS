@@ -8,7 +8,7 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './forum-post-form.component.html',
   styleUrl: './forum-post-form.component.css'
 })
-export class ForumPostFormComponent implements OnInit, AfterViewInit{
+export class ForumPostFormComponent implements OnInit{
   @Output() postCreated = new EventEmitter<void>();
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -63,7 +63,8 @@ export class ForumPostFormComponent implements OnInit, AfterViewInit{
     this.forumService.addPost(formData).subscribe(post => {
       console.log('Post added: ', post)
     })
-    this.postCreated.emit();
+    console.log(formData.get('file'))
+    // this.postCreated.emit();
   }
   onCancel() {
     this.postCreated.emit();

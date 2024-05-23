@@ -8,10 +8,10 @@
         <mat-card-content>
             <p>{{ post.content }}</p>
             <div *ngIf="post.imageUrl">
-                <img [src]="post.imageUrl" alt="Image" style="max-width: 200px;">
+                <img [src]="'http://localhost:3000'+post.imageUrl" alt="Image" style="max-width: 200px;">
             </div>
             <div *ngIf="post.pdfUrl">
-                <a [href]="post.pdfUrl" target="_blank">View PDF</a>
+                <a [href]="'http://localhost:3000'+post.pdfUrl" target="_blank">View PDF</a>
             </div>
         </mat-card-content>
         <mat-card-actions>
@@ -35,10 +35,10 @@
                 <mat-card-content>
                     <p>{{ response.content }}</p>
                     <div *ngIf="response.imageUrl">
-                        <img [src]="response.imageUrl" alt="Image" style="max-width: 200px;">
+                        <img [src]="'http://localhost:3000'+response.imageUrl" alt="Image" style="max-width: 200px;">
                     </div>
                     <div *ngIf="response.pdfUrl">
-                        <a [href]="response.pdfUrl" target="_blank">View PDF</a>
+                        <a [href]="'http://localhost:3000'+response.pdfUrl" target="_blank">View PDF</a>
                     </div>
                 </mat-card-content>
             </mat-card>

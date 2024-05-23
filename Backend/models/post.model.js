@@ -19,7 +19,7 @@ const Post = sequelize.define('Post', {
         type: DataTypes.TEXT,
         allowNull: false
     },
-    imageURL: {
+    imageUrl: {
         type: DataTypes.STRING,
         allowNull: true
     },

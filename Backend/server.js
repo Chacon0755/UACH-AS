@@ -30,8 +30,26 @@ connection.connect(err => {
   console.log('Conectado a la base de datos con el ID ' + connection.threadId);
 });
 
+const fileFilter = (req, file, cb) => {
+  const allowedImageExtensions = ['.jpg', '.jpeg', '.png'];
+  const allowedPdfExtensions = ['.pdf'];
+  console.log('file:',file)
+  
+  const fileExtension = path.extname(file.originalname).toLowerCase();
+  console.log('fileExtension: ',fileExtension)
+  
+  if (allowedImageExtensions.includes(fileExtension)) {
+    req.fileType = 'image'; // Marcar el tipo de archivo como imagen
+    cb(null, true); // Aceptar el archivo de imagen
+  } else if (allowedPdfExtensions.includes(fileExtension)) {
+    req.fileType = 'pdf'; // Marcar el tipo de archivo como PDF
+    cb(null, true); // Aceptar el archivo PDF
+  } else {
+    cb(new Error('El archivo debe ser una imagen (JPEG, PNG) o un PDF.'), false); // Rechazar el archivo
+  }
+}
+
 //Configurar multer
-// const storage = multer.memoryStorage(); CHECAR
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads');
@@ -40,7 +58,10 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + '-' + path.extname(file.originalname));
   }
 });
-const upload = multer({ storage: storage });
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter
+});
 
 //rutas del foro
 const forumRoutes = require('./routes/forum.routes')
@@ -571,6 +592,7 @@ app.delete('/carrera/:id', (req, res) => {
   const deleteMateriasQuery = 'DELETE FROM materias WHERE N_Carr = ?';
   const deleteCarrerasQuery = 'DELETE FROM carrera WHERE Id_Carreras = ?';
   const deleteCourseTeacherQuery = 'DELETE FROM Docente_Materia WHERE id_materia IN (SELECT Id_Materias FROM materias WHERE N_Carr = ?)';
+  const deleteAdvisoryQuery = 'DELETE FROM asesorias WHERE id_materia IN (SELECT Id_Materias FROM materias WHERE N_Carr = ?)'
 
   // Inicia una transacción
   connection.beginTransaction(error => {
@@ -600,6 +622,16 @@ app.delete('/carrera/:id', (req, res) => {
         }
 
         console.log('Relaciones de materias eliminadas correctamente: ', results);
+
+        //Elimina las asesorias relacionadas
+        connection.query(deleteAdvisoryQuery, [id], (error, results) => {
+          if (error) {
+            return connection.rollback(() => {
+              console.error('Error al eliminar asesorias relacionadas: ', error);
+              res.status(500).json({ message: 'error al eliminar asesorias relacionadas ', error: error.sqlMessage });
+            });
+          }
+        
 
         // Elimina las materias relacionadas
         connection.query(deleteMateriasQuery, [id], (error, results) => {
@@ -632,6 +664,7 @@ app.delete('/carrera/:id', (req, res) => {
 
               res.status(200).json({ message: 'Carrera eliminada correctamente, materias relacionadas eliminadas correctamente y docentes relacionados actualizados correctamente' });
               console.log('Carrera eliminada correctamente: ', results);
+            });
             });
           });
         });

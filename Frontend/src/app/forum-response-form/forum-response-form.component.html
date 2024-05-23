@@ -18,12 +18,12 @@
             </mat-form-field>
             <div class="file-input">
                 <label class="file-label">Archivo</label>
-                <button mat-raised-button color="primary" (click)="triggerFileInputClick()">Seleccionar Imagen</button>
-                <input id="image-upload" type="file" (change)="onFileSelected($event)" #imageInput hidden>
+                <button mat-raised-button color="primary" (click)="triggerFileInputClick()" type="button">Seleccionar Imagen</button>
+                <input id="image-upload" type="file" name="file" (change)="onFileSelected($event)" #fileInput hidden>
             </div>
             <div class="button-group">
-                <button mat-raised-button color="primary" class="mat-raised-button" type="submit">Crear Post</button>
-                <button mat-raised-button color="warn" class="mat-raised-button" (click)="onCancel()">Cancelar</button>
+                <button mat-raised-button color="primary" class="mat-raised-button" type="button" (click)="onSubmit()">Crear Post</button>
+                <button mat-raised-button color="warn" class="mat-raised-button" type="button" (click)="onCancel()">Cancelar</button>
             </div>
         </form>
     </mat-card-content>

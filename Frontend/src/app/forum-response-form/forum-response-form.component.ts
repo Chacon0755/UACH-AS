@@ -44,7 +44,7 @@ export class ForumResponseFormComponent implements OnInit, AfterViewInit{
   }
 
   ngAfterViewInit(): void {
-      
+     this.fileInput 
   }
 
   onFileSelected(event: any) {

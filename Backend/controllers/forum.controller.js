@@ -13,8 +13,18 @@ exports.getPosts = async (req, res) => {
 exports.addPost = async (req, res) => {
     try {
         const { author, role, content } = req.body;
-        const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
-        const pdfUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        let imageUrl = null;
+        let pdfUrl = null;
+        console.log('fileType: ',req.fileType)
+
+        if (req.fileType === 'image') {
+            imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        } else if (req.fileType === 'pdf') {
+            pdfUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        }
+
+        console.log('Imagen: ', imageUrl)
+        console.log('pdf ', pdfUrl)
 
         const post = await Post.create({ author, role, content, imageUrl, pdfUrl });
         res.json(post);
@@ -26,10 +36,20 @@ exports.addPost = async (req, res) => {
 exports.addResponse = async (req, res) => {
     try {
         const { postId, author, role, content } = req.body;
-        const imageURL = req.file ? `/uploads/${req.file.filename}` : null;
-        const pdfUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        
+        let imageUrl = null;
+        let pdfUrl = null;
+        console.log('fileType: ',req.fileType)
 
-        const response = await Response.create({ postId, author, role, content, imageURL, pdfUrl });
+        if (req.fileType === 'image') {
+            imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        } else if (req.fileType === 'pdf') {
+            pdfUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        }
+        console.log('imageUrl:', imageUrl);
+        console.log('pdfUrl: ', pdfUrl)
+
+        const response = await Response.create({ postId, author, role, content, imageUrl, pdfUrl });
         res.json(response)
     } catch (error) {
         res.status(500).json({ error: error.message });
