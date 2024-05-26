@@ -41,7 +41,7 @@
           <mat-form-field appearance="fill" class="mat-form-field">
             <mat-label>¿Cuándo te gustaría recibir la asesoría?</mat-label>
             <mat-select [(ngModel)]="advisory.scheduleId" name="days">
-              <mat-option *ngFor="let schedule of allAvailableSchedules" [value]="schedule.id_horario">{{ schedule.dia }}: {{schedule.hora_inicio}} </mat-option>
+              <mat-option *ngFor="let schedule of allAvailableSchedules" [value]="schedule.id_docente_horario">{{ schedule.dia }}: {{schedule.hora_inicio}} </mat-option>
             </mat-select>
           </mat-form-field>
         </div>

@@ -45,6 +45,7 @@ export class ViewTeacherAdvisorysComponent implements OnInit {
   deleteSelectedAdvisory(): void {
     console.log(this.selection.selected[0])
     const selectedAdvisory = this.selection.selected[0]; 
+    console.log(selectedAdvisory)
     if (selectedAdvisory) {
       this.advisoryService.deleteAdvisoryByTeacher(selectedAdvisory.id_as, this.teacherId, selectedAdvisory.id_docente_horario).subscribe(
         response => {
@@ -57,6 +58,7 @@ export class ViewTeacherAdvisorysComponent implements OnInit {
       );
     }
   }
+  
   onCancel(): void{
     this.router.navigate(['/teacher-home'])
   }

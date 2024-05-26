@@ -1,6 +1,17 @@
 <main>
+    <div class="filter-section">
+        <mat-form-field appearance="fill">
+            <mat-label>Seleccionar Carrera</mat-label>
+            <mat-select [(value)]="selectedMajor" (selectionChange)="onMajorChange($event.value)">
+                <mat-option value="">Todas las Carreras</mat-option>
+                <mat-option *ngFor="let major of allMajors" [value]="major.Nombre_Carrera">
+                    {{ major.Nombre_Carrera }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
     <div class="teacher-list">
-        <table mat-table [dataSource]="allCourses" class="mat-elevation-z8">
+        <table mat-table [dataSource]="filteredCourses" class="mat-elevation-z8">
             <!-- ID Column -->
             <ng-container matColumnDef="Id_Materias">
                 <th mat-header-cell *matHeaderCellDef> ID </th>
