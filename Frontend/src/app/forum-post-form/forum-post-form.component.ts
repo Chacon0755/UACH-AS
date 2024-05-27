@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output, OnInit, AfterViewInit, ViewChild, Elem
 import { ForumService } from '../services/forum.service';
 import { Post } from '../models/forum.model';
 import { AuthService } from '../services/auth.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-forum-post-form',
@@ -21,8 +22,10 @@ export class ForumPostFormComponent implements OnInit{
   };
   selectedFile: File | null = null;
   role: string = '';
+  myForm!: FormGroup 
 
-  constructor(private forumService: ForumService, private authService: AuthService) { }
+  constructor(private forumService: ForumService, private authService: AuthService, private fb: FormBuilder) { 
+  }
 
   ngOnInit(): void {
     const userDetails = this.authService.getUserDetails();
@@ -36,7 +39,11 @@ export class ForumPostFormComponent implements OnInit{
     } else if (this.post.role === 'teacher') {
       this.role = 'Maestro'
     }
+    this.myForm = this.fb.group({
+      myTextField: ['', [Validators.required, Validators.maxLength(5000)]]
+    });
     console.log(userDetails)
+  
   }
 
   ngAfterViewInit(): void {
@@ -51,8 +58,13 @@ export class ForumPostFormComponent implements OnInit{
     this.fileInput.nativeElement.click();
   }
 
+  get myTextField() {
+    return this.myForm.get('myTextField');
+  }
+
   onSubmit() {
-    const formData = new FormData();
+    if (this.post.content.length >= 5000) {
+      const formData = new FormData();
     formData.append('author', this.post.author);
     formData.append('role', this.post.role);
     formData.append('content', this.post.content);
@@ -64,7 +76,11 @@ export class ForumPostFormComponent implements OnInit{
       console.log('Post added: ', post)
     })
     console.log(formData.get('file'))
-    // this.postCreated.emit();
+    this.postCreated.emit();
+    } else {
+      console.error("El post debe tener menos de 5000 caracteres")
+    }
+    
   }
   onCancel() {
     this.postCreated.emit();

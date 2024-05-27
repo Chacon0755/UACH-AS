@@ -113,7 +113,7 @@ export class AdvisoryRequestStudentComponent implements OnInit {
     this.advisoryService.createAdvisory(this.advisory).subscribe({
       next: (response) => {
         console.log('Asesoria creada correctamente: ', response);
-        // this.router.navigate(['/student-home'])
+        this.router.navigate(['/student-home'])
       },
       error: (error) => {
         console.error('Error al crear asesoria: ', error);
