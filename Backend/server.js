@@ -967,7 +967,7 @@ app.post('/docentes', (req, res) => {
   
   const insertTeacherQuery = 'INSERT INTO docentes (Id_docente, nombre_doc, Apellido, id_mat_as, id_carrera_mat, correo, apei2, perfil, rol_doc, contra_docente) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
   const insertCourseTeacherQuery = 'INSERT INTO Docente_Materia (id_docente, id_materia) VALUES ?';
-  const insertHorarioTeacherQuery = 'INSERT INTO Docente_Horario (id_docente, id_horario) VALUES ?';
+  const insertHorarioTeacherQuery = 'INSERT INTO Docente_Horario (id_docente, id_horario, ocupado) VALUES ?';
 
   // Inicia una transacción
   connection.beginTransaction(error => {
