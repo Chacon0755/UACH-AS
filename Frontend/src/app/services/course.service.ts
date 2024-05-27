@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Course } from '../models/course.model';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,14 +12,18 @@ export class CourseService {
 
   constructor(private http: HttpClient) { }
 
-  createCourse(course: Course): Observable<Course> {
+  createCourse(course: Course): Observable<any> {
     const payload = {
       Id_Materias: course.id,
       N_Carr: course.majorId,
       N_Sem: course.NumberOfSemester,
       N_Mat: course.name
     };
-    return this.http.post<Course>(`${this.apiUrl}/materias`, payload);
+    return this.http.post<any>(`${this.apiUrl}/materias`, payload).pipe(
+      map(response => ({
+        ...response
+      }))
+    );
   }
 
   editCourse(id: number, course: Course):Observable<Course> {

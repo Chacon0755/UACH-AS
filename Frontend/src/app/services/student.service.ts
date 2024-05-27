@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Student } from '../models/student.model';
 import { UtilitiesService } from './utilities.service';
+import { map } from 'rxjs';
 
 
 @Injectable({
@@ -13,7 +14,7 @@ export class StudentService {
 
   constructor(private http: HttpClient, private utilitiesService: UtilitiesService) { }
 
-  createStudent(student: Student): Observable<Student> {
+  createStudent(student: Student): Observable<any> {
     const password = this.utilitiesService.createPassword();
     
     const payload = {
@@ -29,7 +30,12 @@ export class StudentService {
       Contra_alum: password
     }
     console.log(password);
-    return this.http.post<Student>(`${this.apiURL}/alumnos`, payload);
+    return this.http.post<any>(`${this.apiURL}/alumnos`, payload).pipe(
+      map(response => ({
+        ...response,
+        password: password
+      }))
+    );
   }
 
   editStudent(id: number, student: Student): Observable<Student> {

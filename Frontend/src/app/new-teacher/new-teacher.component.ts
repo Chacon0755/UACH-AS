@@ -5,6 +5,8 @@ import { TeacherService } from '../services/teacher.service';
 import { MajorService } from '../services/major.service';
 import { CourseService } from '../services/course.service';
 import { ScheduleService } from '../services/schedule.service';
+import { MatDialog } from '@angular/material/dialog';
+import { UserInfoDialogComponent } from '../user-info-dialog/user-info-dialog.component';
 
 
 @Component({
@@ -34,7 +36,7 @@ export class NewTeacherComponent implements OnInit {
   selectedMajorCode: number | null = null;
   allSchedules: any[] = [];
 
-  constructor(private router: Router, private teacherService: TeacherService, private majorService: MajorService, private courseService: CourseService, private scheduleService: ScheduleService) {}
+  constructor(private router: Router, private teacherService: TeacherService, private majorService: MajorService, private courseService: CourseService, private scheduleService: ScheduleService, private dialog: MatDialog) {}
 
   ngOnInit(): void{
     this.loadMajors();
@@ -114,7 +116,15 @@ export class NewTeacherComponent implements OnInit {
     
     this.teacherService.createTeacher(this.teacher).subscribe({
       next: (response) => {
-        console.log('Si se armo ', response);
+        console.log('Docente creado correctamente: ', response);
+        this.dialog.open(UserInfoDialogComponent, {
+          data: {
+            name: `${this.teacher.name} ${this.teacher.lastName1} ${this.teacher.lastName2}`,
+            email: this.teacher.email,
+            password: response.password,
+            subject: 'Docente'
+          }
+        });
         this.router.navigate(['/admin-home']);
       },
       error: (error) => console.error('Error al crear profesor ', error)

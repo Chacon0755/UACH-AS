@@ -6,6 +6,8 @@ import { MajorService } from '../services/major.service';
 import { Major } from '../models/major.model';
 import { FormControl, FormGroup } from '@angular/forms';
 import { SemesterService } from '../services/semester.service';
+import { MatDialog } from '@angular/material/dialog';
+import { UserInfoDialogComponent } from '../user-info-dialog/user-info-dialog.component';
 
 @Component({
   selector: 'app-new-course',
@@ -23,7 +25,7 @@ export class NewCourseComponent implements OnInit {
   allSemesters: any[] = [];
 
 
-  constructor(private router: Router, private majorService: MajorService, private courseService: CourseService, private semesterService: SemesterService) { }
+  constructor(private router: Router, private majorService: MajorService, private courseService: CourseService, private semesterService: SemesterService, private dialog: MatDialog) { }
 
   ngOnInit() {
     this.loadMajors();
@@ -54,6 +56,14 @@ export class NewCourseComponent implements OnInit {
     this.courseService.createCourse(this.course).subscribe({
       next: (response) => {
         console.log('Materia creada correctamente', response);
+        this.dialog.open(UserInfoDialogComponent, {
+          data: {
+            name: this.course.name,
+            semester: this.course.NumberOfSemester,
+            code: this.course.id,
+            subject: 'Materia'
+          }
+        })
         this.router.navigate(['/admin-home'])
       },
       error: (error) => console.error('Error al crear materia', error)

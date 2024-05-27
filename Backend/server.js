@@ -1002,7 +1002,7 @@ app.post('/docentes', (req, res) => {
         console.log('Materias del docente insertadas correctamente: ', results);
 
         // Prepara los datos para la tabla intermedia Docente_Horario
-        const horarioTeacherValues = scheduleIds.map(horarioId => [Id_docente, horarioId]);
+        const horarioTeacherValues = scheduleIds.map(horarioId => [Id_docente, horarioId, false]);
 
         // Inserta los horarios en la tabla intermedia
         connection.query(insertHorarioTeacherQuery, [horarioTeacherValues], (error, results) => {

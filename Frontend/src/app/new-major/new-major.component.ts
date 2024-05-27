@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MajorService } from '../services/major.service';
 import { Major } from '../models/major.model';
+import { MatDialog } from '@angular/material/dialog';
+import { UserInfoDialogComponent } from '../user-info-dialog/user-info-dialog.component';
+
 
 @Component({
   selector: 'app-new-major',
@@ -21,7 +24,7 @@ export class NewMajorComponent implements OnInit{
   showError: boolean = false;
 
 
-  constructor(private router: Router, private majorService: MajorService) { 
+  constructor(private router: Router, private majorService: MajorService, private dialog: MatDialog) { 
     this.fetchAllIds();
   }
   
@@ -63,6 +66,12 @@ export class NewMajorComponent implements OnInit{
     this.majorService.createMajor(this.major).subscribe({
       next: (response) => {
         console.log('Respuesta del servidor: ', response);
+        this.dialog.open(UserInfoDialogComponent, {
+          data: {
+            name: this.major.name,
+            code: this.major.id
+          }
+        });
         this.router.navigate(['/admin-home']);
       },
       error: (error) => {

@@ -30,7 +30,7 @@
         <div class="form-group">
           <mat-form-field appearance="fill" class="mat-form-field">
             <mat-label>Modalidad</mat-label>
-            <mat-select [(ngModel)]="advisory.mode" name="mode">
+            <mat-select [(ngModel)]="advisory.mode" name="mode" (selectionChange)="onModalityChange($event.value)">
               <mat-option *ngFor="let mode of modes" [value]="mode.id">{{ mode.name }}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -40,7 +40,7 @@
         <div class="form-group">
           <mat-form-field appearance="fill" class="mat-form-field">
             <mat-label>¿Cuándo te gustaría recibir la asesoría?</mat-label>
-            <mat-select [(ngModel)]="advisory.scheduleId" name="days">
+            <mat-select [(ngModel)]="advisory.scheduleId" name="days" (selectionChange)="onScheduleChange($event.value)">
               <mat-option *ngFor="let schedule of allAvailableSchedules" [value]="schedule.id_docente_horario">{{ schedule.dia }}: {{schedule.hora_inicio}} </mat-option>
             </mat-select>
           </mat-form-field>

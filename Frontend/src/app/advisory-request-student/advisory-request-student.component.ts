@@ -9,7 +9,8 @@ import { AuthService } from '../services/auth.service';
 import { StudentService } from '../services/student.service';
 import { ScheduleService } from '../services/schedule.service';
 import { Advisory } from '../models/advisory.model';
-
+import { MatDialog } from '@angular/material/dialog';
+import { UserInfoDialogComponent } from '../user-info-dialog/user-info-dialog.component';
 
 
 @Component({
@@ -31,21 +32,25 @@ export class AdvisoryRequestStudentComponent implements OnInit {
   teachers: any[] = [];
   modes = [{id: true, name: 'Presencial'}, {id: false, name: 'Virtual'}]
   allAvailableSchedules: any[] = [];
+  confirmedSchedule: string = '';
+  confirmedScheduleHour: string = '';
+  confirmedCourseName: string = '';
+  confirmedTeacherName: string = '';
+  confirmedModeName: string = '';
+
   
 
   majorId: number= 0;
   majorName: string= '';
 
-  constructor(private advisoryService: AdvisoryService, private fb: FormBuilder, private router: Router, private majorService: MajorService, private teacherService: TeacherService, private courseService: CourseService, private authService: AuthService, private studentService: StudentService, private scheduleService: ScheduleService) {}
+  constructor(private advisoryService: AdvisoryService, private fb: FormBuilder, private router: Router, private majorService: MajorService, private teacherService: TeacherService, private courseService: CourseService, private authService: AuthService, private studentService: StudentService, private scheduleService: ScheduleService, private dialog: MatDialog) {}
   
   ngOnInit(): void {
     const userDetails = this.authService.getUserDetails();
     if (userDetails) {
       this.loadStudentMajorName(userDetails.id);
       this.advisory.studentId = userDetails.id;
-
     }
-    
   }
   
   loadStudentMajorName(studentId: number): void {
@@ -79,6 +84,14 @@ export class AdvisoryRequestStudentComponent implements OnInit {
     this.teacherService.getTeachersByCourseId(courseId).subscribe({
       next: (teachers) => {
         this.teachers = teachers;
+        if (this.teachers.length === 1) {
+          this.loadSchedulesByTeacherId(this.teachers[0]);
+          const selectedCourse = this.allCourses.find(course => course.Id_Materias === courseId);
+          if (selectedCourse) {
+            this.confirmedCourseName = selectedCourse.N_Mat
+            console.log('Curso confirmado: ',this.confirmedCourseName)
+          }
+        }
         console.log('Teachers:', this.teachers)
       },
       error: (error) => {
@@ -100,20 +113,61 @@ export class AdvisoryRequestStudentComponent implements OnInit {
   }
   onCourseChange(courseId: number): void {
     this.loadTeachersByCourseId(courseId);
-    console.log('id: ',courseId)
+    console.log('id: ', courseId);
+    const selectedCourse = this.allCourses.find(course => course.Id_Materias === courseId);
+      if (selectedCourse) {
+        this.confirmedCourseName = selectedCourse.N_Mat
+        console.log('Curso confirmado: ',this.confirmedCourseName)
+    }
+    
+  }
+
+  onScheduleChange(scheduleId: number) {
+    const selectedSchedule = this.allAvailableSchedules.find(schedule => schedule.id_docente_horario === scheduleId);
+    if (selectedSchedule) {
+      this.confirmedSchedule = selectedSchedule.dia + ': ' + selectedSchedule.hora_inicio;
+      console.log("Horario confirmado: ", this.confirmedSchedule)
+    }
+  }
+
+  onModalityChange(mode: boolean) {
+    const selectedMode = this.modes.find(modes => modes.id === mode);
+    if (selectedMode) {
+      this.confirmedModeName = selectedMode.name;
+      console.log('Modalidad Confirmada: ', this.confirmedModeName);
+    }
   }
   
   onTeacherChange(teacherId: number): void { 
     this.loadSchedulesByTeacherId(teacherId);
     console.log('Teacher ID:', teacherId);
+    const selectedTeacher = this.teachers.find(teacher => teacher.Id_docente === teacherId);
+    if (selectedTeacher) {
+      this.confirmedTeacherName = selectedTeacher.nombre_doc + ' ' + selectedTeacher.Apellido;
+      console.log('Docente confirmado: ', this.confirmedTeacherName)
+    }
   }
 
   submitForm() {
+    if (this.advisory.mode === false) {
+      this.confirmedModeName = 'Virtual'
+    } else if (this.advisory.mode === true) {
+      this.confirmedModeName == 'Presencial'
+    }
     console.log(this.advisory)
     this.advisoryService.createAdvisory(this.advisory).subscribe({
       next: (response) => {
         console.log('Asesoria creada correctamente: ', response);
-        this.router.navigate(['/student-home'])
+        this.dialog.open(UserInfoDialogComponent, {
+          data: {
+            subject: 'Asesoria',
+            teacher: this.confirmedTeacherName,
+            course: this.confirmedCourseName,
+            mode: this.confirmedModeName,
+            schedule: this.confirmedSchedule
+          }
+        });
+        this.router.navigate(['/student-home']);
       },
       error: (error) => {
         console.error('Error al crear asesoria: ', error);

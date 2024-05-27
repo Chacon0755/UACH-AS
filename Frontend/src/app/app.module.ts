@@ -40,6 +40,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ForumResponseFormComponent } from './forum-response-form/forum-response-form.component';
+import { UserInfoDialogComponent } from './user-info-dialog/user-info-dialog.component';
 
 
 
@@ -68,6 +69,7 @@ import { ForumResponseFormComponent } from './forum-response-form/forum-response
     ForumPostsComponent,
     ForumPostFormComponent,
     ForumResponseFormComponent,
+    UserInfoDialogComponent,
 
   ],
   imports: [

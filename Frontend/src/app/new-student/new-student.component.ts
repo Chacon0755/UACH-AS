@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { StudentService } from '../services/student.service';
 import { MajorService } from '../services/major.service';
 import { CourseService } from '../services/course.service';
 import { SemesterService } from '../services/semester.service';
 import { Student } from '../models/student.model';
-import { Major } from '../models/major.model';
-import { Course } from '../models/course.model';
+import { UserInfoDialogComponent } from '../user-info-dialog/user-info-dialog.component';
 
 @Component({
   selector: 'app-new-student',
@@ -30,7 +30,7 @@ export class NewStudentComponent implements OnInit {
   allMajors: any[] = [];
   allSemesters: any[] = [];
 
-  constructor(private router: Router, private studentService: StudentService, private majorService: MajorService, private courseService: CourseService, private semesterService: SemesterService){}
+  constructor(private router: Router, private studentService: StudentService, private majorService: MajorService, private courseService: CourseService, private semesterService: SemesterService, private dialog: MatDialog){}
 
   ngOnInit(): void {
     this.loadMajors();
@@ -62,6 +62,14 @@ export class NewStudentComponent implements OnInit {
     this.studentService.createStudent(this.student).subscribe({
       next: (response) => {
         console.log('Estudiante creado correctamente', response);
+        this.dialog.open(UserInfoDialogComponent, {
+          data: {
+            name: `${this.student.name} ${this.student.lastName1} ${this.student.lastName2}`,
+            email: this.student.email,
+            password: response.password,
+            subject: 'Alumno'
+          }
+        });
         this.router.navigate(['/admin-home'])
       },
       error: (error) => {

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Teacher } from '../models/teacher.model';
 import { Course } from '../models/course.model';
 import { UtilitiesService } from './utilities.service';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class TeacherService {
   constructor(private http: HttpClient, private utilitiesService: UtilitiesService) { }
 
   
-  createTeacher(teacher: Teacher): Observable<Teacher> {
+  createTeacher(teacher: Teacher): Observable<any> {
     const password = this.utilitiesService.createPassword();
     const payload = {
       Id_docente: teacher.id,
@@ -31,7 +32,12 @@ export class TeacherService {
 
     }
     console.log(password)
-    return this.http.post<Teacher>(`${this.apiUrl}/docentes`, payload);
+    return this.http.post<any>(`${this.apiUrl}/docentes`, payload).pipe(
+      map(response => ({
+        ...response,
+        password: password
+      }))
+    );
   }
 
   editTeacher(id: number, teacher: Teacher): Observable<Teacher>{

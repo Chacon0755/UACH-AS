@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { UtilitiesService } from './utilities.service';
 import { Admin } from '../models/admin.model';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class AdminService {
   private apiUrl = 'http://localhost:3000';
 
   constructor(private http: HttpClient, private utilitiesService: UtilitiesService) { }
-  createAdmin(admin: Admin): Observable<Admin> {
+  createAdmin(admin: Admin): Observable<any> {
     const password = this.utilitiesService.createPassword();
 
     const payload = {
@@ -25,7 +26,12 @@ export class AdminService {
       perfil: 'n'
     }
     console.log(password);
-    return this.http.post<Admin>(`${this.apiUrl}/admin`, payload)
+    return this.http.post<any>(`${this.apiUrl}/admin`, payload).pipe(
+      map(response => ({
+        ...response,
+        password: password
+      }))
+    );
   }
 
   uploadProfileImage(adminId: number, file: File): Observable<any>{

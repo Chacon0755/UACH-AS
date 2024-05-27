@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Advisory } from '../models/advisory.model';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,11 @@ export class AdvisoryService {
       modalidad: advisory.mode,
       id_docente_horario: advisory.scheduleId
     };
-    return this.http.post<Advisory>(`${this.apiUrl}/asesorias`, payload);
+    return this.http.post<Advisory>(`${this.apiUrl}/asesorias`, payload).pipe(
+      map(response => ({
+        ...response
+      }))
+    );
   }
 
   getAdvisorysByStudentId(studentId: number): Observable<any>{
