@@ -63,7 +63,7 @@ export class ForumPostFormComponent implements OnInit{
   }
 
   onSubmit() {
-    if (this.post.content.length >= 5000) {
+    if (this.post.content.length <= 5000) {
       const formData = new FormData();
     formData.append('author', this.post.author);
     formData.append('role', this.post.role);

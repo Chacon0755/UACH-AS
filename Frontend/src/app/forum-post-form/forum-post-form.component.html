@@ -14,13 +14,8 @@
             </mat-form-field>
             <mat-form-field appearance="outline">
                 <mat-label>Contenido</mat-label>
-                <textarea matInput formControlName="myTextField" [(ngModel)]="post.content" name="content" maxlength="5000" required></textarea>
-                <mat-error *ngIf="myTextField?.hasError('required')">
-                    Este campo es obligatorio
-                  </mat-error>
-                  <mat-error *ngIf="myTextField?.hasError('maxlength')">
-                    No puede exceder los 5000 caracteres
-                  </mat-error>
+                <textarea matInput  [(ngModel)]="post.content" name="content"  required></textarea>
+                
             </mat-form-field>
             <div class="file-input">
                 <label for="file-upload" class="file-label">Archivo</label>
